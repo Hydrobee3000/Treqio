@@ -1,3 +1,7 @@
+// Конфиг TypeScript для Node.js окружения (vite.config.ts).
+// Отдельный от tsconfig.app.json, потому что vite.config.ts запускается
+// на машине разработчика в Node.js, а не в браузере.
+// Здесь доступны __dirname, process, path — в браузерном коде их нет.
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -5,7 +9,12 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
+
+    // Явно подключаем типы Node.js: __dirname, path, process и т.д.
+    // Намеренно не добавляем в tsconfig.app.json, чтобы Node-глобалы
+    // не были доступны в браузерном коде.
     "types": ["node"],
+
     "noEmit": true
   },
   "include": ["vite.config.ts"]
