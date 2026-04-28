@@ -1,0 +1,11 @@
+// Корневой tsconfig для apps/web.
+// Сам ничего не проверяет — только объединяет два конфига через references:
+// - tsconfig.app.json  → браузерный код (src/)
+// - tsconfig.node.json → код для Node.js (vite.config.ts)
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
