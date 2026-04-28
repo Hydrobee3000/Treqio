@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-.pnpm-store/
 
 # Build outputs
 dist/
@@ -19,7 +18,6 @@ out/
 # Logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 
 # OS
 .DS_Store
