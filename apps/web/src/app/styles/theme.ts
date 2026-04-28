@@ -4,37 +4,37 @@
 import { createTheme } from '@mui/material/styles'
 
 export const theme = createTheme({
-  // Палитра цветов — тёплая, уютная, минималистичная.
-  // primary используется для кнопок, ссылок, акцентов.
-  // secondary — дополнительный акцент (теги, статусы).
+  // Палитра: Sage Library — природная, спокойная, зелёная.
   palette: {
     mode: 'light',
     primary: {
-      main: '#8B5E3C',
-      light: '#B8845A',
-      dark: '#5C3D20',
-      contrastText: '#FAF6F0',
+      main: '#4E7B6A',
+      light: '#6E9B8A',
+      dark: '#3D6A59',
+      contrastText: '#FAFCF9',
     },
     secondary: {
-      main: '#6B8F71',
-      light: '#90B896',
-      dark: '#4A6B50',
-      contrastText: '#FAF6F0',
+      main: '#8B7355',
+      light: '#A89070',
+      dark: '#6E5A40',
+      contrastText: '#FAFCF9',
     },
     background: {
       // default — фон страницы, paper — фон карточек и модалок
-      default: '#FAF6F0',
-      paper: '#FFF8F2',
+      default: '#F2F5F1',
+      paper: '#FAFCF9',
     },
     text: {
-      primary: '#2C1810',
-      secondary: '#6B4C35',
+      primary: '#1E3328',
+      secondary: '#5A7A6A',
     },
-    divider: '#E8DDD0',
+    divider: '#D5E4D8',
+    error:   { main: '#B94040' },
+    warning: { main: '#C49A3A' },
+    success: { main: '#4E7B6A' },
   },
 
-  // Типографика: шрифт, размеры, межстрочный интервал.
-  // Inter — современный шрифт, читается комфортно на экране.
+  // Типографика: шрифт Inter, комфортный межстрочный интервал.
   typography: {
     fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
     h1: { fontWeight: 700, letterSpacing: '-0.025em' },
@@ -44,16 +44,14 @@ export const theme = createTheme({
     body2: { lineHeight: 1.5 },
   },
 
-  // Радиус скругления углов — 10px для карточек, кнопок и т.д.
   shape: { borderRadius: 10 },
 
-  // Переопределяем стили конкретных MUI-компонентов глобально.
-  // Это позволяет не передавать одни и те же пропсы каждый раз.
+  // Глобальные переопределения стилей MUI-компонентов.
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none', // убираем ALL CAPS который MUI ставит по умолчанию
+          textTransform: 'none', // убираем ALL CAPS по умолчанию
           fontWeight: 500,
         },
       },
@@ -61,8 +59,8 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: '1px solid #E8DDD0',
-          boxShadow: '0px 2px 8px rgba(44, 24, 16, 0.06)',
+          border: '1px solid #D5E4D8',
+          boxShadow: '0px 2px 8px rgba(30,51,40,0.07)',
         },
       },
     },
