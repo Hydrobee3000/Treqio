@@ -1,21 +1,14 @@
 // Корневой компонент приложения.
-// Провайдеры вложены в порядке: Store → Theme → остальное приложение.
-// Store снаружи Theme — чтобы в будущем можно было читать тему из store если понадобится.
+// Порядок провайдеров: Store → Theme → Router.
+// Router идёт последним — страницы уже имеют доступ к store и теме.
 import { StoreProvider } from './app/providers/StoreProvider'
 import { ThemeProvider } from './app/providers/ThemeProvider'
-import { Box, Typography } from '@mui/material'
+import { RouterProvider } from './app/providers/RouterProvider'
 
 export const App = () => (
   <StoreProvider>
     <ThemeProvider>
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h3" color="primary">
-          Treqio
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-          Track what matters
-        </Typography>
-      </Box>
+      <RouterProvider />
     </ThemeProvider>
   </StoreProvider>
 )
