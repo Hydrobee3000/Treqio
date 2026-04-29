@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.env
+.env.local
+**/.env
+**/.env.local
+.turbo
+**/.turbo
+*.tsbuildinfo
+.husky
