@@ -2,36 +2,25 @@ import { useState } from 'react'
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material'
 import { Outlet } from 'react-router'
 import { Sidebar } from './Sidebar'
+import { MobileNav } from './MobileNav'
 
 export const SIDEBAR_WIDTH = 220
 export const SIDEBAR_COLLAPSED_WIDTH = 64
 
 /**
  * Layout приложения: сайдбар слева + контент справа.
- * Используется как родительский маршрут в роутере — состояние collapsed
- * сохраняется при навигации между страницами.
+ * На мобильном сайдбар заменяется нижней навигацией.
  */
 export const AppLayout = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   const sidebarWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-      {isMobile ? (
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-          ModalProps={{ keepMounted: true }}
-          sx={{ '& .MuiDrawer-paper': { width: SIDEBAR_WIDTH, border: 'none' } }}
-        >
-          <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
-        </Drawer>
-      ) : (
+      {!isMobile && (
         <Drawer
           variant="permanent"
           sx={{
@@ -50,9 +39,20 @@ export const AppLayout = () => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', minWidth: 0 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          overflow: 'auto',
+          minWidth: 0,
+          // Отступ снизу на мобильном чтобы контент не перекрывался нижней навигацией
+          pb: isMobile ? '56px' : 0,
+        }}
+      >
         <Outlet />
       </Box>
+
+      {isMobile && <MobileNav />}
     </Box>
   )
 }
