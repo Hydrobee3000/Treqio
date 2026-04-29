@@ -1,0 +1,18 @@
+services:
+  # База данных PostgreSQL для локальной разработки.
+  # Запуск: docker compose up db -d
+  # Флаг -d (detached) — запускает в фоне, не занимает терминал.
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - '5432:5432'       # порт_хоста:порт_контейнера
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # сохраняем данные между перезапусками
+
+volumes:
+  postgres_data:
