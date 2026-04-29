@@ -1,10 +1,9 @@
-// Тема MUI для всего приложения.
-// Определяет цвета, типографику, скругления и стили компонентов.
-// Подключается один раз через ThemeProvider в корне приложения.
 import { createTheme } from '@mui/material/styles'
 
+/**
+ * Тема приложения — палитра Sage Library
+ */
 export const theme = createTheme({
-  // Палитра: Sage Library — природная, спокойная, зелёная.
   palette: {
     mode: 'light',
     primary: {
@@ -20,9 +19,8 @@ export const theme = createTheme({
       contrastText: '#FAFCF9',
     },
     background: {
-      // default — фон страницы, paper — фон карточек и модалок
-      default: '#F2F5F1',
-      paper: '#FAFCF9',
+      default: '#F2F5F1',  // фон страницы
+      paper: '#FAFCF9',    // фон карточек и модалок
     },
     text: {
       primary: '#1E3328',
@@ -34,7 +32,6 @@ export const theme = createTheme({
     success: { main: '#4E7B6A' },
   },
 
-  // Типографика: шрифт Inter, комфортный межстрочный интервал.
   typography: {
     fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
     h1: { fontWeight: 700, letterSpacing: '-0.025em' },
@@ -46,12 +43,11 @@ export const theme = createTheme({
 
   shape: { borderRadius: 10 },
 
-  // Глобальные переопределения стилей MUI-компонентов.
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none', // убираем ALL CAPS по умолчанию
+          textTransform: 'none', // убираем ALL CAPS — дефолт MUI
           fontWeight: 500,
         },
       },
