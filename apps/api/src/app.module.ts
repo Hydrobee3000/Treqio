@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { PrismaModule } from './prisma/prisma.module'
 
 /**
  * Корневой модуль приложения.
- * Все остальные модули (AuthModule, BooksModule и т.д.) будут импортироваться сюда.
  */
 @Module({
+  imports: [PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
