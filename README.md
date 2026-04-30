@@ -26,7 +26,7 @@ A personal media tracker — books, games, movies and more. Track what you've re
 | -------------------------------------------- | ----------------- |
 | [NestJS 11](https://nestjs.com)              | Node.js framework |
 | [TypeScript](https://www.typescriptlang.org) | Type safety       |
-| [Prisma](https://www.prisma.io)              | ORM               |
+| [Prisma 7](https://www.prisma.io)            | ORM               |
 | [PostgreSQL 16](https://www.postgresql.org)  | Database          |
 
 ### Infrastructure
@@ -95,7 +95,16 @@ See [Environment Variables](#environment-variables) for details.
 docker compose up db -d
 ```
 
-### 5. Start the applications
+### 5. Run database migrations
+
+```bash
+cd apps/api
+npx prisma migrate dev
+```
+
+> On first run this creates all tables. Re-run whenever you change `prisma/schema.prisma`.
+
+### 6. Start the applications
 
 ```bash
 # Frontend only (http://localhost:3000)
@@ -128,9 +137,14 @@ treqio/
 │   │
 │   └── api/                  # NestJS backend
 │       ├── src/
+│       │   ├── prisma/       # PrismaService + PrismaModule
 │       │   ├── app.module.ts
 │       │   ├── app.controller.ts
 │       │   └── main.ts
+│       ├── prisma/
+│       │   ├── schema.prisma # Database schema
+│       │   └── migrations/   # SQL migration history
+│       ├── prisma.config.ts  # Prisma 7 datasource config
 │       └── Dockerfile
 │
 ├── .husky/                   # Git hooks (pre-commit, commit-msg)
@@ -178,6 +192,26 @@ Run from the **project root**:
 | `npm run lint:fix`  | Auto-fix lint errors           |
 | `npm run typecheck` | Type-check all apps            |
 | `npm run format`    | Format all files with Prettier |
+
+Database commands live in `apps/api/` — run them with the workspace flag from the project root, or `cd` into the folder first:
+
+```bash
+# From project root (recommended)
+npm run db:migrate  --workspace=@treqio/api
+npm run db:studio   --workspace=@treqio/api
+
+# Or from apps/api/
+cd apps/api
+npm run db:migrate
+npm run db:studio
+```
+
+| Script        | Description                                    |
+| ------------- | ---------------------------------------------- |
+| `db:migrate`  | Create and apply a new migration               |
+| `db:generate` | Regenerate Prisma Client after schema changes  |
+| `db:studio`   | Open visual database browser at localhost:5555 |
+| `db:reset`    | Reset database and replay all migrations       |
 
 ---
 

@@ -1,0 +1,31 @@
+generator client {
+  provider     = "prisma-client"
+  // Генерируем CJS-совместимый клиент — NestJS использует CommonJS
+  moduleFormat = "cjs"
+  // Выводим в src/ чтобы TypeScript включал файлы в компиляцию
+  output       = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL подключения берётся из prisma.config.ts → process.env["DATABASE_URL"]
+}
+
+model User {
+  // cuid() — непредсказуемый ID, защищает от перебора записей по числовому порядку
+  id          String   @id @default(cuid())
+  email       String   @unique // email используется для идентификации через OAuth
+  username    String   @unique // публичное имя пользователя в URL профиля
+  displayName String           // отображаемое имя (может содержать пробелы и спецсимволы)
+  avatarUrl   String?          // ссылка на аватар, берётся от OAuth-провайдера при регистрации
+  bio         String?          // краткое описание профиля, заполняется пользователем
+
+  provider   String // OAuth-провайдер: 'google' | 'github'
+  providerId String // ID пользователя на стороне провайдера
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // обновляется автоматически при каждом изменении записи
+
+  // Один провайдер не может иметь два одинаковых providerId
+  @@unique([provider, providerId])
+}
