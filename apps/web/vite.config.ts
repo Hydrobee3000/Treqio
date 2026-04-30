@@ -30,7 +30,14 @@ export default defineConfig({
 
   server: {
     port: 3000,
-    // Автоматически открывает браузер при запуске dev-сервера.
     open: true,
+    proxy: {
+      // Все запросы на /api/* перенаправляются на NestJS.
+      // В продакшне эту роль выполняет nginx.
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
   },
 })
