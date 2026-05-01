@@ -46,6 +46,9 @@ A personal media tracker — books, games, movies and more. Track what you've re
 | [Husky](https://typicode.github.io/husky)                 | Git hooks                   |
 | [lint-staged](https://github.com/lint-staged/lint-staged) | Run linters on staged files |
 | [commitlint](https://commitlint.js.org)                   | Commit message validation   |
+| [Vitest](https://vitest.dev)                              | Frontend unit testing       |
+| [React Testing Library](https://testing-library.com)      | Component testing           |
+| [Jest](https://jestjs.io)                                 | Backend unit testing        |
 
 ---
 
@@ -127,19 +130,20 @@ treqio/
 │   ├── web/                  # React frontend (Vite)
 │   │   ├── src/
 │   │   │   ├── app/          # App-level setup: store, router, providers, theme
-│   │   │   ├── pages/        # Route-level page components
-│   │   │   ├── widgets/      # Large reusable UI blocks (layout, sidebar)
+│   │   │   ├── pages/        # Route-level page components (+ *.test.tsx next to each)
+│   │   │   ├── widgets/      # Large reusable UI blocks (layout, sidebar, mobile nav)
 │   │   │   ├── features/     # User interactions (planned)
 │   │   │   ├── entities/     # Business entities: Book, User (planned)
-│   │   │   └── shared/       # Shared utilities, API client, typed hooks
+│   │   │   └── shared/       # Shared utilities, API client, typed hooks, test setup
 │   │   ├── index.html
-│   │   └── vite.config.ts
+│   │   └── vite.config.ts    # Vite + Vitest config
 │   │
 │   └── api/                  # NestJS backend
 │       ├── src/
 │       │   ├── prisma/       # PrismaService + PrismaModule
 │       │   ├── app.module.ts
 │       │   ├── app.controller.ts
+│       │   ├── app.service.ts
 │       │   └── main.ts
 │       ├── prisma/
 │       │   ├── schema.prisma # Database schema
@@ -182,16 +186,21 @@ Used by Docker Compose to configure PostgreSQL.
 
 Run from the **project root**:
 
-| Script              | Description                    |
-| ------------------- | ------------------------------ |
-| `npm run web`       | Start frontend dev server      |
-| `npm run api`       | Start backend dev server       |
-| `npm run dev`       | Start all apps simultaneously  |
-| `npm run build`     | Build all apps                 |
-| `npm run lint`      | Lint all apps                  |
-| `npm run lint:fix`  | Auto-fix lint errors           |
-| `npm run typecheck` | Type-check all apps            |
-| `npm run format`    | Format all files with Prettier |
+> To run a script for a specific package only, add `--workspace=@treqio/web` (frontend) or `--workspace=@treqio/api` (backend). Example: `npm run test --workspace=@treqio/web`.
+
+| Script                  | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| `npm run web`           | Start frontend dev server                                       |
+| `npm run api`           | Start backend dev server                                        |
+| `npm run dev`           | Start all apps simultaneously                                   |
+| `npm run build`         | Build all apps                                                  |
+| `npm run lint`          | Lint all apps                                                   |
+| `npm run lint:fix`      | Auto-fix lint errors                                            |
+| `npm run typecheck`     | Type-check all apps                                             |
+| `npm run format`        | Format all files with Prettier                                  |
+| `npm run test`          | Run all tests across all packages                               |
+| `npm run test:watch`    | Watch mode — re-runs tests on file changes (`@treqio/web` only) |
+| `npm run test:coverage` | Run tests with coverage report (per workspace)                  |
 
 Database commands live in `apps/api/` — run them with the workspace flag from the project root, or `cd` into the folder first:
 
