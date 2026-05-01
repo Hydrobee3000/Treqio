@@ -2,6 +2,7 @@
   "name": "treqio",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "npm@11.12.1",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -18,6 +19,7 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,css}\"",
+    "test": "turbo run test",
     "web": "npm run dev --workspace=@treqio/web",
     "api": "npm run dev --workspace=@treqio/api",
     "prepare": "husky"
