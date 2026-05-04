@@ -9,14 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import type { Request, Response } from 'express'
 import type { User } from '../generated/prisma/client'
-import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import type { AuthService } from './auth.service'
+import { JwtAuthGuard } from './guards/jwt-auth.guard'
 
 /**
  * Контроллер авторизации.
  */
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,6 +27,8 @@ export class AuthController {
    * Редирект на страницу авторизации Google.
    * Passport перехватывает запрос и формирует URL сам — код метода не выполняется.
    */
+  @ApiOperation({ summary: 'Редирект на страницу авторизации Google' })
+  @ApiResponse({ status: 302, description: 'Редирект на Google OAuth' })
   @Get('google')
   @UseGuards(AuthGuard('google'))
   googleLogin(): void {}
@@ -33,6 +37,8 @@ export class AuthController {
    * Обработка ответа от Google после авторизации пользователя.
    * Passport проверил code, получил профиль и положил пользователя в req.user.
    */
+  @ApiOperation({ summary: 'Callback после авторизации через Google' })
+  @ApiResponse({ status: 302, description: 'Редирект на фронтенд с accessToken' })
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   googleCallback(@Req() req: Request, @Res() res: Response): void {
@@ -55,6 +61,10 @@ export class AuthController {
   /**
    * Данные текущего авторизованного пользователя.
    */
+  @ApiOperation({ summary: 'Данные текущего пользователя' })
+  @ApiResponse({ status: 200, description: 'Профиль пользователя' })
+  @ApiResponse({ status: 401, description: 'Токен отсутствует или невалидный' })
+  @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@Req() req: Request): Promise<User> {
@@ -67,6 +77,9 @@ export class AuthController {
   /**
    * Выдача нового access token по refresh token из cookie.
    */
+  @ApiOperation({ summary: 'Обновление access token' })
+  @ApiResponse({ status: 200, description: 'Новый access token' })
+  @ApiResponse({ status: 401, description: 'Refresh token невалидный или истёк' })
   @Post('refresh')
   @HttpCode(200)
   refresh(@Req() req: Request): { accessToken: string } {
@@ -78,6 +91,8 @@ export class AuthController {
   /**
    * Выход из системы — очистка refresh token cookie.
    */
+  @ApiOperation({ summary: 'Выход из системы' })
+  @ApiResponse({ status: 200, description: 'Cookie очищен' })
   @Post('logout')
   @HttpCode(200)
   logout(@Res() res: Response): void {
