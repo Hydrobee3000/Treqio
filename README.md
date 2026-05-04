@@ -6,6 +6,19 @@ A personal media tracker — books, games, movies and more. Track what you've re
 
 ---
 
+## Contents
+
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Available Scripts](#available-scripts)
+- [Development Workflow](#development-workflow)
+- [API](#api)
+
+---
+
 ## Tech Stack
 
 ### Frontend
@@ -22,14 +35,15 @@ A personal media tracker — books, games, movies and more. Track what you've re
 
 ### Backend
 
-| Tool                                                                                    | Purpose                   |
-| --------------------------------------------------------------------------------------- | ------------------------- |
-| [NestJS 11](https://nestjs.com)                                                         | Node.js framework         |
-| [TypeScript](https://www.typescriptlang.org)                                            | Type safety               |
-| [Prisma 7](https://www.prisma.io)                                                       | ORM                       |
-| [PostgreSQL 16](https://www.postgresql.org)                                             | Database                  |
-| [Passport.js](https://www.passportjs.org)                                               | Authentication strategies |
-| [passport-google-oauth20](https://www.passportjs.org/packages/passport-google-oauth20/) | Google OAuth 2.0          |
+| Tool                                                                                    | Purpose                             |
+| --------------------------------------------------------------------------------------- | ----------------------------------- |
+| [NestJS 11](https://nestjs.com)                                                         | Node.js framework                   |
+| [TypeScript](https://www.typescriptlang.org)                                            | Type safety                         |
+| [Prisma 7](https://www.prisma.io)                                                       | ORM                                 |
+| [PostgreSQL 16](https://www.postgresql.org)                                             | Database                            |
+| [Passport.js](https://www.passportjs.org)                                               | Authentication strategies           |
+| [passport-google-oauth20](https://www.passportjs.org/packages/passport-google-oauth20/) | Google OAuth 2.0                    |
+| [Swagger (OpenAPI)](https://swagger.io)                                                 | Interactive API docs at `/api/docs` |
 
 ### Infrastructure
 
@@ -191,6 +205,7 @@ Used by Docker Compose to configure PostgreSQL.
 | `GOOGLE_CALLBACK_URL`  | OAuth redirect URI (must match Google Console)  | `http://localhost:4000/api/auth/google/callback`       |
 | `FRONTEND_URL`         | Frontend origin for post-auth redirect          | `http://localhost:3000`                                |
 | `NODE_ENV`             | Runtime environment — set by platform or Docker | `production`                                           |
+| `SWAGGER_ENABLED`      | Enable Swagger UI at `/api/docs`                | `true`                                                 |
 
 ---
 

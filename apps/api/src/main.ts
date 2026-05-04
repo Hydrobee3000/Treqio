@@ -2,8 +2,10 @@
 // Он добавляет поддержку метаданных декораторов в runtime.
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import cookieParser from 'cookie-parser'
 import { AppModule } from './app.module'
+import pkg from '../package.json'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -13,6 +15,19 @@ async function bootstrap() {
 
   // Префикс /api для всех маршрутов: /api/health, /api/books и т.д.
   app.setGlobalPrefix('api')
+
+  // Swagger UI включается явно через переменную окружения
+  if (process.env['SWAGGER_ENABLED'] === 'true') {
+    const config = new DocumentBuilder()
+      .setTitle('Treqio API')
+      .setDescription('REST API приложения Treqio')
+      .setVersion(pkg.version)
+      .addBearerAuth()
+      .build()
+
+    const document = SwaggerModule.createDocument(app, config)
+    SwaggerModule.setup('api/docs', app, document)
+  }
 
   const port = process.env['PORT'] ?? 4000
   await app.listen(port)
