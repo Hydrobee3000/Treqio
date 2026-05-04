@@ -2,10 +2,14 @@
 // Он добавляет поддержку метаданных декораторов в runtime.
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'
+import cookieParser from 'cookie-parser'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  // Парсинг cookie — нужен для чтения refresh_token в /auth/refresh
+  app.use(cookieParser())
 
   // Префикс /api для всех маршрутов: /api/health, /api/books и т.д.
   app.setGlobalPrefix('api')

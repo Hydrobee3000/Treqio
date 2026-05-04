@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import type { JwtService } from '@nestjs/jwt'
 import type { User } from '../generated/prisma/client'
 import type { PrismaService } from '../prisma/prisma.service'
 
+/**
+ * Данные профиля пользователя, полученные от Google OAuth.
+ */
 interface GoogleProfile {
+  /** Уникальный ID пользователя на стороне Google. */
   googleId: string
+  /** Основной email аккаунта. */
   email: string
+  /** Отображаемое имя пользователя. */
   displayName: string
+  /** URL аватара, может отсутствовать. */
   avatarUrl: string | null
 }
 
@@ -73,6 +80,27 @@ export class AuthService {
         providerId: profile.googleId,
       },
     })
+  }
+
+  /**
+   * Поиск пользователя по ID.
+   */
+  async getUserById(userId: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { id: userId } })
+  }
+
+  /**
+   * Проверка refresh token и извлечение userId из payload.
+   */
+  verifyRefreshToken(token: string): string {
+    try {
+      const payload = this.jwt.verify<{ sub: string }>(token, {
+        secret: process.env['JWT_REFRESH_SECRET'],
+      })
+      return payload.sub
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token')
+    }
   }
 
   /**

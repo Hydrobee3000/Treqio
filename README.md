@@ -22,12 +22,14 @@ A personal media tracker — books, games, movies and more. Track what you've re
 
 ### Backend
 
-| Tool                                         | Purpose           |
-| -------------------------------------------- | ----------------- |
-| [NestJS 11](https://nestjs.com)              | Node.js framework |
-| [TypeScript](https://www.typescriptlang.org) | Type safety       |
-| [Prisma 7](https://www.prisma.io)            | ORM               |
-| [PostgreSQL 16](https://www.postgresql.org)  | Database          |
+| Tool                                                                                    | Purpose                   |
+| --------------------------------------------------------------------------------------- | ------------------------- |
+| [NestJS 11](https://nestjs.com)                                                         | Node.js framework         |
+| [TypeScript](https://www.typescriptlang.org)                                            | Type safety               |
+| [Prisma 7](https://www.prisma.io)                                                       | ORM                       |
+| [PostgreSQL 16](https://www.postgresql.org)                                             | Database                  |
+| [Passport.js](https://www.passportjs.org)                                               | Authentication strategies |
+| [passport-google-oauth20](https://www.passportjs.org/packages/passport-google-oauth20/) | Google OAuth 2.0          |
 
 ### Infrastructure
 
@@ -140,6 +142,9 @@ treqio/
 │   │
 │   └── api/                  # NestJS backend
 │       ├── src/
+│       │   ├── auth/         # Авторизация: стратегии, guards, контроллер, сервис
+│       │   │   ├── guards/   # JwtAuthGuard
+│       │   │   └── strategies/ # JwtStrategy, GoogleStrategy
 │       │   ├── prisma/       # PrismaService + PrismaModule
 │       │   ├── app.module.ts
 │       │   ├── app.controller.ts
@@ -175,10 +180,17 @@ Used by Docker Compose to configure PostgreSQL.
 
 ### `apps/api/.env`
 
-| Variable       | Description              | Example                                                |
-| -------------- | ------------------------ | ------------------------------------------------------ |
-| `PORT`         | API server port          | `4000`                                                 |
-| `DATABASE_URL` | Prisma connection string | `postgresql://postgres:postgres@localhost:5432/treqio` |
+| Variable               | Description                                     | Example                                                |
+| ---------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| `PORT`                 | API server port                                 | `4000`                                                 |
+| `DATABASE_URL`         | Prisma connection string                        | `postgresql://postgres:postgres@localhost:5432/treqio` |
+| `JWT_ACCESS_SECRET`    | Secret for signing access tokens (15 min)       | random 64-byte hex string                              |
+| `JWT_REFRESH_SECRET`   | Secret for signing refresh tokens (7 days)      | random 64-byte hex string                              |
+| `GOOGLE_CLIENT_ID`     | Google OAuth app client ID                      | `xxx.apps.googleusercontent.com`                       |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth app client secret                  | `GOCSPX-xxx`                                           |
+| `GOOGLE_CALLBACK_URL`  | OAuth redirect URI (must match Google Console)  | `http://localhost:4000/api/auth/google/callback`       |
+| `FRONTEND_URL`         | Frontend origin for post-auth redirect          | `http://localhost:3000`                                |
+| `NODE_ENV`             | Runtime environment — set by platform or Docker | `production`                                           |
 
 ---
 
