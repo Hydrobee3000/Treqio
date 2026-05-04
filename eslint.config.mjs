@@ -15,4 +15,11 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
+  {
+    // NestJS DI требует реальных импортов классов — reflect-metadata читает их в runtime
+    files: ['apps/api/**'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': 'off',
+    },
+  },
 )

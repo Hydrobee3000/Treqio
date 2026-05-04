@@ -11,9 +11,7 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-      // NestJS DI требует реальных импортов классов (не type-only) —
-      // reflect-metadata читает их в runtime для внедрения зависимостей
+      // NestJS DI требует реальных импортов классов — reflect-metadata читает их в runtime
       '@typescript-eslint/consistent-type-imports': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
     },

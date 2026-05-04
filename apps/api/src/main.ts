@@ -1,4 +1,6 @@
-// reflect-metadata должен быть импортирован первым — до любых NestJS импортов.
+// dotenv должен быть импортирован первым — загружает .env в process.env до инициализации NestJS.
+import 'dotenv/config'
+// reflect-metadata должен быть импортирован до любых NestJS импортов.
 // Он добавляет поддержку метаданных декораторов в runtime.
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'

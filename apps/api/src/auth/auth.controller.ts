@@ -12,7 +12,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import type { Request, Response } from 'express'
 import type { User } from '../generated/prisma/client'
-import type { AuthService } from './auth.service'
+import { AuthService } from './auth.service'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 
 /**

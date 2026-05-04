@@ -1,11 +1,14 @@
+import { AuthProvider } from './app/providers/AuthProvider'
+import { RouterProvider } from './app/providers/RouterProvider'
 import { StoreProvider } from './app/providers/StoreProvider'
 import { ThemeProvider } from './app/providers/ThemeProvider'
-import { RouterProvider } from './app/providers/RouterProvider'
 
 export const App = () => (
   <StoreProvider>
     <ThemeProvider>
-      <RouterProvider />
+      <AuthProvider>
+        <RouterProvider />
+      </AuthProvider>
     </ThemeProvider>
   </StoreProvider>
 )

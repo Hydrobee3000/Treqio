@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import type { Profile } from 'passport-google-oauth20'
 import { Strategy } from 'passport-google-oauth20'
 import type { User } from '../../generated/prisma/client'
-import type { AuthService } from '../auth.service'
+import { AuthService } from '../auth.service'
 
 /**
  * Стратегия авторизации через Google OAuth 2.0.
