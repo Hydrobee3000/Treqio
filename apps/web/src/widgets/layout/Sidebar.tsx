@@ -1,15 +1,15 @@
-import { Box, IconButton, List, Typography } from '@mui/material'
-import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
-import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { Link, useMatch } from 'react-router'
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
+import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
-import { sidebarColors as c } from '@/app/styles/theme'
+import { Box, IconButton, List, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import { Link, useMatch } from 'react-router'
 
 interface NavItemConfig {
   to: string
@@ -18,11 +18,11 @@ interface NavItemConfig {
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
-  { to: '/profile',  icon: AccountCircleOutlinedIcon, label: 'Профиль' },
-  { to: '/library',  icon: AutoStoriesOutlinedIcon,   label: 'Библиотека' },
-  { to: '/feed',     icon: RssFeedOutlinedIcon,       label: 'Лента' },
-  { to: '/friends',  icon: PeopleOutlinedIcon,        label: 'Друзья' },
-  { to: '/search',   icon: SearchOutlinedIcon,        label: 'Поиск' },
+  { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
+  { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
+  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента' },
+  { to: '/friends', icon: PeopleOutlinedIcon, label: 'Друзья' },
+  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
 ]
 
 const FOOTER_ITEMS: NavItemConfig[] = [
@@ -35,6 +35,8 @@ interface NavItemProps extends NavItemConfig {
 
 const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
   const isActive = !!useMatch(to)
+  const { palette } = useTheme()
+  const s = palette.sidebar
 
   return (
     <Box
@@ -48,13 +50,13 @@ const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
         py: '8px',
         borderRadius: '8px',
         textDecoration: 'none',
-        color: isActive ? c.text : c.muted,
-        bgcolor: isActive ? c.activeBg : 'transparent',
+        color: isActive ? s.text : s.muted,
+        bgcolor: isActive ? s.activeBg : 'transparent',
         justifyContent: collapsed ? 'center' : 'flex-start',
         cursor: 'pointer',
         flexShrink: 0,
         transition: 'background 0.15s, color 0.15s',
-        '&:hover': { bgcolor: c.activeBg, color: c.text },
+        '&:hover': { bgcolor: s.activeBg, color: s.text },
       }}
     >
       <Icon sx={{ fontSize: 22, flexShrink: 0 }} />
@@ -73,54 +75,100 @@ interface Props {
 }
 
 /**
- * Боковое меню приложения
+ * Боковое меню приложения.
  */
-export const Sidebar = ({ collapsed, onToggle }: Props) => (
-  <Box sx={{ height: '100%', bgcolor: c.bg, color: c.text, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-    {/* Шапка: логотип + кнопка сворачивания */}
+export const Sidebar = ({ collapsed, onToggle }: Props) => {
+  const { palette } = useTheme()
+  const s = palette.sidebar
+
+  return (
     <Box
       sx={{
+        height: '100%',
+        bgcolor: s.bg,
+        color: s.text,
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: collapsed ? 'center' : 'space-between',
-        px: 2,
-        pt: '18px',
-        pb: '14px',
-        borderBottom: `1px solid ${c.divider}`,
-        flexShrink: 0,
+        flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
-      {!collapsed && (
-        <Typography sx={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', color: c.text, userSelect: 'none' }}>
-          Treqio
-        </Typography>
-      )}
-      <IconButton
-        onClick={onToggle}
-        size="small"
+      {/* Шапка: логотип + кнопка сворачивания */}
+      <Box
         sx={{
-          color: c.muted,
-          borderRadius: '6px',
-          bgcolor: 'rgba(255,255,255,0.05)',
-          '&:hover': { bgcolor: c.activeBg, color: c.text },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'space-between',
+          px: 2,
+          pt: '18px',
+          pb: '14px',
+          borderBottom: `1px solid ${s.divider}`,
+          flexShrink: 0,
         }}
       >
-        {collapsed ? <ChevronRightIcon sx={{ fontSize: 20 }} /> : <ChevronLeftIcon sx={{ fontSize: 20 }} />}
-      </IconButton>
-    </Box>
+        {!collapsed && (
+          <Typography
+            sx={{
+              fontSize: 17,
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              color: s.text,
+              userSelect: 'none',
+            }}
+          >
+            Treqio
+          </Typography>
+        )}
+        <IconButton
+          onClick={onToggle}
+          size="small"
+          sx={{
+            color: s.muted,
+            borderRadius: '6px',
+            bgcolor: 'rgba(255,255,255,0.05)',
+            '&:hover': { bgcolor: s.activeBg, color: s.text },
+          }}
+        >
+          {collapsed ? (
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          )}
+        </IconButton>
+      </Box>
 
-    {/* Основная навигация */}
-    <Box sx={{ flex: 1, px: 1, py: '12px', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'stretch' }}>
-      {NAV_ITEMS.map((item) => (
-        <NavItem key={item.to} {...item} collapsed={collapsed} />
-      ))}
-    </Box>
+      {/* Основная навигация */}
+      <Box
+        sx={{
+          flex: 1,
+          px: 1,
+          py: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          alignItems: 'stretch',
+        }}
+      >
+        {NAV_ITEMS.map((item) => (
+          <NavItem key={item.to} {...item} collapsed={collapsed} />
+        ))}
+      </Box>
 
-    {/* Футер: настройки и профиль */}
-    <List disablePadding sx={{ px: 1, py: '12px', borderTop: `1px solid ${c.divider}`, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-      {FOOTER_ITEMS.map((item) => (
-        <NavItem key={item.to} {...item} collapsed={collapsed} />
-      ))}
-    </List>
-  </Box>
-)
+      {/* Футер: настройки */}
+      <List
+        disablePadding
+        sx={{
+          px: 1,
+          py: '12px',
+          borderTop: `1px solid ${s.divider}`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        {FOOTER_ITEMS.map((item) => (
+          <NavItem key={item.to} {...item} collapsed={collapsed} />
+        ))}
+      </List>
+    </Box>
+  )
+}
