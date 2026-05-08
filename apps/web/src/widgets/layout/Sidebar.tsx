@@ -11,9 +11,15 @@ import { Box, IconButton, List, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { Link, useMatch } from 'react-router'
 
+/**
+ * Конфигурация одного пункта навигации.
+ */
 interface NavItemConfig {
+  /** Путь роута. */
   to: string
+  /** Иконка MUI. */
   icon: SvgIconComponent
+  /** Подпись пункта меню. */
   label: string
 }
 
@@ -29,7 +35,11 @@ const FOOTER_ITEMS: NavItemConfig[] = [
   { to: '/settings', icon: SettingsOutlinedIcon, label: 'Настройки' },
 ]
 
+/**
+ * Свойства пункта навигации с состоянием сайдбара.
+ */
 interface NavItemProps extends NavItemConfig {
+  /** Флаг свёрнутости сайдбара. */
   collapsed: boolean
 }
 
@@ -51,12 +61,12 @@ const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
         borderRadius: '8px',
         textDecoration: 'none',
         color: isActive ? s.text : s.muted,
-        bgcolor: isActive ? s.activeBg : 'transparent',
+        bgcolor: isActive ? s.activeBackground : 'transparent',
         justifyContent: collapsed ? 'center' : 'flex-start',
         cursor: 'pointer',
         flexShrink: 0,
         transition: 'background 0.15s, color 0.15s',
-        '&:hover': { bgcolor: s.activeBg, color: s.text },
+        '&:hover': { bgcolor: s.activeBackground, color: s.text },
       }}
     >
       <Icon sx={{ fontSize: 22, flexShrink: 0 }} />
@@ -69,8 +79,13 @@ const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
   )
 }
 
+/**
+ * Свойства сайдбара.
+ */
 interface Props {
+  /** Флаг свёрнутости сайдбара. */
   collapsed: boolean
+  /** Функция переключения состояния свёрнутости. */
   onToggle: () => void
 }
 
@@ -85,7 +100,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
     <Box
       sx={{
         height: '100%',
-        bgcolor: s.bg,
+        bgcolor: s.background,
         color: s.text,
         display: 'flex',
         flexDirection: 'column',
@@ -125,7 +140,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
             color: s.muted,
             borderRadius: '6px',
             bgcolor: 'rgba(255,255,255,0.05)',
-            '&:hover': { bgcolor: s.activeBg, color: s.text },
+            '&:hover': { bgcolor: s.activeBackground, color: s.text },
           }}
         >
           {collapsed ? (
