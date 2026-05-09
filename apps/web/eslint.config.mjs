@@ -18,6 +18,11 @@ export default tseslint.config(
       react: reactPlugin,
       'react-hooks': reactHooks,
     },
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     settings: {
       // Автоопределение версии React из package.json
       react: { version: 'detect' },
