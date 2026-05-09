@@ -1,4 +1,5 @@
-import { CssBaseline, ThemeProvider as MuiThemeProvider } from '@mui/material'
+import { useEffect } from 'react'
+import { CssBaseline, StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material'
 import type { ReactNode } from 'react'
 import { useAppSelector } from '@/shared/lib/store'
 import { buildTheme } from '../styles/theme'
@@ -18,10 +19,36 @@ export const ThemeProvider = ({ children }: Props) => {
   const variant = useAppSelector((s) => s.theme.variant)
   const theme = buildTheme(variant)
 
+  useEffect(() => {
+    const root = document.documentElement
+    const { sidebar, primary, divider } = theme.palette
+
+    // Токены сайдбара и hero-секций
+    root.style.setProperty('--sidebar-bg', sidebar.background)
+    root.style.setProperty('--sidebar-text', sidebar.text)
+    root.style.setProperty('--sidebar-muted', sidebar.muted)
+    root.style.setProperty('--sidebar-divider', sidebar.divider)
+
+    // Токены акцентного цвета и разделителей
+    root.style.setProperty('--color-primary', primary.main)
+    root.style.setProperty('--color-primary-dark', primary.dark)
+    root.style.setProperty('--color-divider', divider)
+
+    // Токены кнопок на тёмном фоне сайдбара
+    root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)
+    root.style.setProperty('--sidebar-btn-outlined-border', 'rgba(255,255,255,.25)')
+    root.style.setProperty('--sidebar-btn-disabled-border', 'rgba(255,255,255,.15)')
+    root.style.setProperty('--sidebar-btn-disabled-color', 'rgba(255,255,255,.35)')
+  }, [theme])
+
   return (
-    <MuiThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      {/* StyledEngineProvider с injectFirst гарантирует, что наши CSS-переменные и классы из SCSS будут иметь приоритет над стилями MUI. */}
+      <MuiThemeProvider theme={theme}>
+        {/* MuiThemeProvider предоставляет тему всем компонентам MUI внутри приложения. */}
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
+    </StyledEngineProvider>
   )
 }
