@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material/styles'
 import { Link, useMatch } from 'react-router'
 
 /**
- * Конфигурация одного пункта навигации.
+ * Конфигурация пункта навигации.
  */
 interface NavItemConfig {
   /** Путь роута. */
@@ -23,6 +23,9 @@ interface NavItemConfig {
   label: string
 }
 
+/**
+ * Основные пункты навигации.
+ */
 const NAV_ITEMS: NavItemConfig[] = [
   { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
   { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
@@ -31,6 +34,9 @@ const NAV_ITEMS: NavItemConfig[] = [
   { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
 ]
 
+/**
+ * Пункты в подвале сайдбара.
+ */
 const FOOTER_ITEMS: NavItemConfig[] = [
   { to: '/settings', icon: SettingsOutlinedIcon, label: 'Настройки' },
 ]
@@ -46,7 +52,7 @@ interface NavItemProps extends NavItemConfig {
 const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
   const isActive = !!useMatch(to)
   const { palette } = useTheme()
-  const s = palette.sidebar
+  const sidebar = palette.sidebar
 
   return (
     <Box
@@ -60,13 +66,13 @@ const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
         py: '8px',
         borderRadius: '8px',
         textDecoration: 'none',
-        color: isActive ? s.text : s.muted,
-        bgcolor: isActive ? s.activeBackground : 'transparent',
+        color: isActive ? sidebar.text : sidebar.muted,
+        bgcolor: isActive ? sidebar.activeBackground : 'transparent',
         justifyContent: collapsed ? 'center' : 'flex-start',
         cursor: 'pointer',
         flexShrink: 0,
         transition: 'background 0.15s, color 0.15s',
-        '&:hover': { bgcolor: s.activeBackground, color: s.text },
+        '&:hover': { bgcolor: sidebar.activeBackground, color: sidebar.text },
       }}
     >
       <Icon sx={{ fontSize: 22, flexShrink: 0 }} />
@@ -94,14 +100,14 @@ interface Props {
  */
 export const Sidebar = ({ collapsed, onToggle }: Props) => {
   const { palette } = useTheme()
-  const s = palette.sidebar
+  const sidebar = palette.sidebar
 
   return (
     <Box
       sx={{
         height: '100%',
-        bgcolor: s.background,
-        color: s.text,
+        bgcolor: sidebar.background,
+        color: sidebar.text,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -116,7 +122,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
           px: 2,
           pt: '18px',
           pb: '14px',
-          borderBottom: `1px solid ${s.divider}`,
+          borderBottom: `1px solid ${sidebar.divider}`,
           flexShrink: 0,
         }}
       >
@@ -126,7 +132,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
               fontSize: 17,
               fontWeight: 700,
               letterSpacing: '-0.02em',
-              color: s.text,
+              color: sidebar.text,
               userSelect: 'none',
             }}
           >
@@ -137,10 +143,10 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
           onClick={onToggle}
           size="small"
           sx={{
-            color: s.muted,
+            color: sidebar.muted,
             borderRadius: '6px',
             bgcolor: 'rgba(255,255,255,0.05)',
-            '&:hover': { bgcolor: s.activeBackground, color: s.text },
+            '&:hover': { bgcolor: sidebar.activeBackground, color: sidebar.text },
           }}
         >
           {collapsed ? (
@@ -174,7 +180,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
         sx={{
           px: 1,
           py: '12px',
-          borderTop: `1px solid ${s.divider}`,
+          borderTop: `1px solid ${sidebar.divider}`,
           display: 'flex',
           flexDirection: 'column',
           gap: '4px',

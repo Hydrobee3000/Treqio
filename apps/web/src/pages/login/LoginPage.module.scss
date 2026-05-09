@@ -1,0 +1,342 @@
+$bp-sm: 600px;
+$bp-md: 900px;
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+@keyframes card-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Корневой контейнер ───────────────────────────────────────────────────────
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ─── Hero-секция ──────────────────────────────────────────────────────────────
+
+.login-page__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding-top: 112px; // pt xs=14 → 14×8px
+  padding-bottom: 0;
+  overflow: hidden;
+  flex: 1;
+
+  @media (min-width: $bp-md) {
+    padding-top: 128px; // pt md=16 → 16×8px
+  }
+}
+
+// ─── Логотип ──────────────────────────────────────────────────────────────────
+
+.login-page__logo {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--sidebar-text);
+  margin-bottom: 16px;
+  animation: fade-slide-up 0.6s ease both;
+
+  @media (min-width: $bp-md) {
+    font-size: 52px;
+  }
+}
+
+// ─── Описание ─────────────────────────────────────────────────────────────────
+
+.login-page__description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--sidebar-muted);
+  max-width: 420px;
+  margin-bottom: 32px;
+  animation: fade-slide-up 0.6s ease 0.15s both;
+
+  @media (min-width: $bp-md) {
+    font-size: 17px;
+  }
+}
+
+// ─── Блок кнопок ──────────────────────────────────────────────────────────────
+
+.login-page__buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  width: 100%;
+  padding: 0 32px;
+  animation: fade-slide-up 0.6s ease 0.3s both;
+
+  @media (min-width: $bp-sm) {
+    flex-direction: row;
+    gap: 12px;
+    width: auto;
+    padding: 0;
+  }
+}
+
+// ─── Кнопки ───────────────────────────────────────────────────────────────────
+
+.login-page__google-btn {
+  font-weight: 600;
+  padding-left: 28px;
+  padding-right: 28px;
+  width: 100%;
+
+  @media (min-width: $bp-sm) {
+    width: auto;
+  }
+}
+
+// ─── Разделитель "или" (только мобилка) ───────────────────────────────────────
+
+.login-page__or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 12px 0;
+  color: var(--sidebar-muted);
+  font-size: 13px;
+
+  @media (min-width: $bp-sm) {
+    display: none;
+  }
+}
+
+.login-page__or-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+// ─── Обёртка кнопки "Продолжить без входа" ────────────────────────────────────
+
+.login-page__guest-btn-wrapper {
+  display: block;
+  width: 100%;
+
+  @media (min-width: $bp-sm) {
+    display: inline;
+    width: auto;
+  }
+
+  // Вложенность даёт специфичность 0,2,0 / 0,3,0 — стабильно бьёт MUI без !important
+  .login-page__guest-btn {
+    padding-left: 28px;
+    padding-right: 28px;
+    width: 100%;
+    border-color: var(--sidebar-btn-outlined-border);
+    color: var(--sidebar-text);
+
+    &.Mui-disabled {
+      border-color: var(--sidebar-btn-disabled-border);
+      color: var(--sidebar-btn-disabled-color);
+    }
+
+    @media (min-width: $bp-sm) {
+      width: auto;
+    }
+  }
+}
+
+// ─── Хинт (только мобилка) ────────────────────────────────────────────────────
+
+.login-page__hint {
+  font-size: 12px;
+  color: var(--sidebar-muted);
+  margin-top: 12px;
+  text-align: center;
+
+  @media (min-width: $bp-sm) {
+    display: none;
+  }
+}
+
+// ─── Превью карточек ──────────────────────────────────────────────────────────
+
+.login-page__cards {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 32px 24px 0;
+  margin-top: auto;
+  height: 265px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  @media (min-width: $bp-sm) {
+    height: 240px;
+  }
+}
+
+.login-page__card-wrapper {
+  flex-shrink: 0;
+  transform: translateY(var(--card-y));
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(calc(var(--card-y) - 25px));
+
+    .login-page__card {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.login-page__card {
+  width: 56px;
+  height: 245px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  animation: card-fade-in 0.4s ease both;
+
+  @media (min-width: $bp-sm) {
+    width: 96px;
+    height: 215px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 9px;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.23);
+    border-radius: 1px;
+  }
+}
+
+// ─── Панель фич ───────────────────────────────────────────────────────────────
+
+.login-page__features {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  @media (min-width: $bp-sm) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.login-page__feature-item {
+  padding: 10px 16px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  @media (min-width: $bp-sm) {
+    padding: 14px 20px;
+
+    &:not(:last-child) {
+      border-bottom: none;
+      border-right: 1px solid var(--color-divider);
+    }
+  }
+}
+
+.login-page__feature-label-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  @media (min-width: $bp-sm) {
+    width: auto;
+    margin-bottom: 10px;
+  }
+}
+
+.login-page__feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px 0 0 8px;
+  background: #c8ddd2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.login-page__feature-label {
+  padding: 0 12px;
+  height: 36px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border-radius: 0 8px 8px 0;
+  background: #ebf5ef;
+  animation: reveal-right 1s ease both;
+}
+
+.login-page__feature-label-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3d6a59;
+  white-space: nowrap;
+}
+
+.login-page__feature-description {
+  display: none;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.36);
+
+  @media (min-width: $bp-sm) {
+    display: block;
+  }
+}
