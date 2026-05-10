@@ -1,18 +1,18 @@
 import { Box, Paper } from '@mui/material'
-import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
-import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
+import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { useNavigate, useLocation } from 'react-router'
 import type { SvgIconComponent } from '@mui/icons-material'
 
 const NAV_ITEMS: { to: string; icon: SvgIconComponent; label: string }[] = [
-  { to: '/profile',  icon: AccountCircleOutlinedIcon, label: 'Профиль' },
-  { to: '/library',  icon: AutoStoriesOutlinedIcon,   label: 'Библиотека' },
-  { to: '/feed',     icon: RssFeedOutlinedIcon,       label: 'Лента' },
-  { to: '/friends',  icon: PeopleOutlinedIcon,        label: 'Друзья' },
-  { to: '/search',   icon: SearchOutlinedIcon,        label: 'Поиск' },
+  { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
+  { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
+  { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
+  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента' },
+  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
 ]
 
 /**
@@ -37,7 +37,8 @@ export const MobileNav = () => {
     >
       <Box sx={{ display: 'flex', height: 56, bgcolor: 'background.paper' }}>
         {NAV_ITEMS.map(({ to, icon: Icon, label }) => {
-          const isActive = pathname.startsWith(to)
+          // Для "/" нужно точное совпадение, иначе будет активен на всех страницах
+          const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to)
           return (
             <Box
               key={to}

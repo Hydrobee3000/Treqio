@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router'
 import { Box, CircularProgress } from '@mui/material'
 import { AuthCallbackPage } from '@/pages/auth-callback'
+import { HomePage } from '@/pages/home'
 import { LibraryPage } from '@/pages/library'
 import { LoginPage } from '@/pages/login'
 import { ProfilePage } from '@/pages/profile'
@@ -43,10 +44,10 @@ export const router = createBrowserRouter([
   {
     element: <RequireAuth />,
     children: [
-      { path: '/', element: <Navigate to="/library" replace /> },
       {
         element: <AppLayout />,
         children: [
+          { path: '/', element: <HomePage /> }, // Домашняя страница
           { path: '/library', element: <LibraryPage /> }, // Библиотека
           { path: '/profile', element: <ProfilePage /> }, // Профиль пользователя
         ],
