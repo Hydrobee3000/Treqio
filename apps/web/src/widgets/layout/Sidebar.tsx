@@ -2,6 +2,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
@@ -27,6 +28,7 @@ interface NavItemConfig {
  * Основные пункты навигации.
  */
 const NAV_ITEMS: NavItemConfig[] = [
+  { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
   { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
   { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
   { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента' },
