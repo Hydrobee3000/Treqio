@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { DEFAULT_THEME } from '@/app/styles/theme'
-import type { ThemeVariant } from '@/app/styles/theme'
+import { DEFAULT_THEME } from '@/shared/config/themes'
+import type { ThemeVariant } from '@/shared/config/themes'
 
 const STORAGE_KEY = 'treqio_theme'
 

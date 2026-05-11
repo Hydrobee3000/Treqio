@@ -1,12 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { DEFAULT_LAYOUT } from '@/shared/config/layout'
+import type { LayoutVariant } from '@/shared/config/layout'
 
 const STORAGE_KEY = 'treqio_layout'
-
-/**
- * Доступные виды представления домашней страницы.
- */
-export type LayoutVariant = 'grid' | 'bento'
 
 /**
  * Состояние вида представления домашней страницы.
@@ -16,9 +13,9 @@ interface LayoutState {
   variant: LayoutVariant
 }
 
-/** Начальное состояние — читаем из localStorage, иначе сетка. */
+/** Начальное состояние — читаем из localStorage, иначе дефолт. */
 const initialState: LayoutState = {
-  variant: (localStorage.getItem(STORAGE_KEY) as LayoutVariant | null) ?? 'grid',
+  variant: (localStorage.getItem(STORAGE_KEY) as LayoutVariant | null) ?? DEFAULT_LAYOUT,
 }
 
 /**
