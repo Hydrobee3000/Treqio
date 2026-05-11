@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Check, Palette, Settings } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
-import { setTheme } from '@/app/store/themeSlice'
-import { THEMES_META } from '@/app/styles/theme'
-import type { ThemeVariant } from '@/app/styles/theme'
+import { setTheme } from '@/features/theme'
+import { THEMES_META } from '@/shared/config/themes'
+import type { ThemeVariant } from '@/shared/config/themes'
 import styles from './SettingsPage.module.scss'
 
 /**

@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authReducer } from '@/features/auth'
+import { themeReducer } from '@/features/theme'
+import { layoutReducer } from '@/features/layout'
 import { baseApi } from '@/shared/api/baseApi'
-import themeReducer from './store/themeSlice'
-import layoutReducer from './store/layoutSlice'
 
 /**
  * Redux store приложения.

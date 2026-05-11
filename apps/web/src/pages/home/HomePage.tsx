@@ -1,8 +1,8 @@
 import { BookOpen, Gamepad2, LayoutGrid, Palette, PanelTop, User } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
-import { setLayout } from '@/app/store/layoutSlice'
-import type { LayoutVariant } from '@/app/store/layoutSlice'
+import { setLayout } from '@/features/layout'
+import type { LayoutVariant } from '@/shared/config/layout'
 import styles from './HomePage.module.scss'
 
 /**
