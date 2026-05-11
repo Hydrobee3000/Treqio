@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { authReducer } from '@/features/auth'
 import { themeReducer } from '@/features/theme'
 import { layoutReducer } from '@/features/layout'
+import { animationsReducer } from '@/features/animations'
 import { baseApi } from '@/shared/api/baseApi'
 
 /**
@@ -12,6 +13,7 @@ export const store = configureStore({
     auth: authReducer,
     theme: themeReducer,
     layout: layoutReducer,
+    animations: animationsReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),

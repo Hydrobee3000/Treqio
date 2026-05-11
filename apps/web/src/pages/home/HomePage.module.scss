@@ -73,7 +73,7 @@ $bp-md: 900px;
   }
 
   &--active {
-    background: white;
+    background: var(--color-paper, white);
     color: var(--color-primary, #4e7b6a);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
@@ -124,7 +124,7 @@ $bp-md: 900px;
     gap: 8px;
     min-height: 120px;
   }
-  background: white;
+  background: var(--color-paper, white);
   border: 1px solid var(--color-divider, #e0e0e0);
   border-radius: 16px;
   cursor: pointer;
@@ -251,7 +251,7 @@ $bp-md: 900px;
   flex-direction: column;
   justify-content: space-between;
   padding: 22px;
-  background: white;
+  background: var(--color-paper, white);
   border: 1px solid var(--color-divider, #e0e0e0);
   border-radius: 18px;
   cursor: pointer;
@@ -311,9 +311,13 @@ $bp-md: 900px;
 
   // Тёмная карточка
   &--dark {
-    background: var(--sidebar-bg, #243d35);
+    background: var(--color-surface-variant, #243d35);
     border-color: transparent;
     color: var(--sidebar-text, #d8ebe4);
+
+    .bento__cell-title {
+      color: var(--sidebar-text, #d8ebe4);
+    }
 
     .bento__cell-desc {
       color: var(--sidebar-muted, rgba(216, 235, 228, 0.6));
@@ -347,6 +351,7 @@ $bp-md: 900px;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
 
   .bento__cell--hero & {
     font-size: 26px;
@@ -442,12 +447,20 @@ $bp-md: 900px;
   }
 }
 
+.bento__cell-cta-arrow {
+  display: none;
+
+  @media (max-width: $bp-sm) {
+    display: flex;
+  }
+}
+
 // ─── Полоска импорта ──────────────────────────────────────────────────────────
 
 .import-strip {
   margin: 0 36px 32px;
   padding: 10px 20px;
-  background: white;
+  background: var(--color-paper, white);
   border: 1px solid var(--color-divider, #e0e0e0);
   border-radius: 14px;
   display: flex;
@@ -542,5 +555,13 @@ $bp-md: 900px;
 .import-strip__btn-text {
   @media (max-width: $bp-sm) {
     display: none;
+  }
+}
+
+.import-strip__btn-arrow {
+  display: none;
+
+  @media (max-width: $bp-sm) {
+    display: flex;
   }
 }

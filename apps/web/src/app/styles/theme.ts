@@ -80,9 +80,11 @@ const palettes = Object.fromEntries(
  * Создаёт MUI тему для заданного варианта палитры.
  */
 export function buildTheme(variant: ThemeVariant) {
+  const isDark = THEME_COLORS[variant].isDark ?? false
+
   return createTheme({
     palette: {
-      mode: 'light',
+      mode: isDark ? 'dark' : 'light',
       ...palettes[variant],
       error: { main: '#B94040' },
       warning: { main: '#C49A3A' },
