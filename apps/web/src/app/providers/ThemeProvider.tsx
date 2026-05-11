@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { CssBaseline, StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material'
 import type { ReactNode } from 'react'
 import { useAppSelector } from '@/shared/lib/store'
+import { THEME_COLORS } from '@/shared/config/themes'
 import { buildTheme } from '../styles/theme'
 
 /**
@@ -43,6 +44,14 @@ export const ThemeProvider = ({ children }: Props) => {
     // Токены чипов и плиток
     root.style.setProperty('--color-chip-bg', primary.light + '33')
     root.style.setProperty('--color-chip-text', primary.dark)
+
+    // Цвет заголовков на тематическом фоне — тёмный для светлых тем, светлый для тёмных
+    const isDark = THEME_COLORS[variant].isDark ?? false
+    root.style.setProperty('--header-title-color', isDark ? sidebar.text : sidebar.background)
+
+    // Акцентная поверхность для тёмных блоков (bento dark cell и т.п.)
+    const surfaceVariant = THEME_COLORS[variant].surfaceVariant ?? sidebar.background
+    root.style.setProperty('--color-surface-variant', surfaceVariant)
 
     // Токены кнопок на тёмном фоне сайдбара
     root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)

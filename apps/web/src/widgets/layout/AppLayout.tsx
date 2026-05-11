@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material'
 import { Outlet } from 'react-router'
+import { useAppSelector } from '@/shared/lib/store'
+import { THEME_COLORS } from '@/shared/config/themes'
+import { ParticleCanvas } from '@/features/animations'
 import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
 
@@ -17,6 +20,11 @@ export const AppLayout = () => {
   const [collapsed, setCollapsed] = useState(false)
 
   const sidebarWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH
+
+  const themeVariant = useAppSelector((s) => s.theme.variant)
+  const particlesEnabled = useAppSelector((s) => s.animations.particlesEnabled)
+  const particleType = THEME_COLORS[themeVariant].particle
+  const showParticles = particlesEnabled && !!particleType
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -45,10 +53,11 @@ export const AppLayout = () => {
           flexGrow: 1,
           overflow: 'auto',
           minWidth: 0,
-          // Отступ снизу на мобильном чтобы контент не перекрывался нижней навигацией
+          position: 'relative',
           pb: isMobile ? '56px' : 0,
         }}
       >
+        {showParticles && <ParticleCanvas type={particleType!} />}
         <Outlet />
       </Box>
 

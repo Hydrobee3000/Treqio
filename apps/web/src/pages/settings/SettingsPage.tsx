@@ -1,8 +1,9 @@
-import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Check, Palette, Settings } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setTheme } from '@/features/theme'
-import { THEMES_META } from '@/shared/config/themes'
+import { toggleParticles } from '@/features/animations'
+import { THEME_COLORS, THEMES_META } from '@/shared/config/themes'
 import type { ThemeVariant } from '@/shared/config/themes'
 import styles from './SettingsPage.module.scss'
 
@@ -26,7 +27,8 @@ interface SettingsSection {
  * Страница настроек приложения.
  */
 export function SettingsPage() {
-  const [activeSection, setActiveSection] = useState<string | null>(null)
+  const { section } = useParams<{ section: string }>()
+  const navigate = useNavigate()
 
   const sections: SettingsSection[] = [
     {
@@ -38,7 +40,7 @@ export function SettingsPage() {
     },
   ]
 
-  const active = sections.find((s) => s.id === activeSection)
+  const active = sections.find((s) => s.id === section)
 
   return (
     <div className={styles['settings']}>
@@ -54,16 +56,16 @@ export function SettingsPage() {
         <nav
           className={`${styles['settings__nav']} ${active ? styles['settings__nav--hidden'] : ''}`}
         >
-          {sections.map((section) => (
+          {sections.map((s) => (
             <button
-              key={section.id}
-              className={`${styles['settings__nav-item']} ${activeSection === section.id ? styles['settings__nav-item--active'] : ''}`}
-              onClick={() => setActiveSection(section.id)}
+              key={s.id}
+              className={`${styles['settings__nav-item']} ${section === s.id ? styles['settings__nav-item--active'] : ''}`}
+              onClick={() => navigate(`/settings/${s.id}`)}
             >
-              <div className={styles['settings__nav-icon']}>{section.icon}</div>
+              <div className={styles['settings__nav-icon']}>{s.icon}</div>
               <div className={styles['settings__nav-info']}>
-                <span className={styles['settings__nav-label']}>{section.label}</span>
-                <span className={styles['settings__nav-desc']}>{section.desc}</span>
+                <span className={styles['settings__nav-label']}>{s.label}</span>
+                <span className={styles['settings__nav-desc']}>{s.desc}</span>
               </div>
               <ChevronRight size={16} className={styles['settings__nav-chevron']} />
             </button>
@@ -73,7 +75,7 @@ export function SettingsPage() {
         {/* Контент выбранного раздела */}
         {active && (
           <div className={styles['settings__content']}>
-            <button className={styles['settings__back']} onClick={() => setActiveSection(null)}>
+            <button className={styles['settings__back']} onClick={() => navigate('/settings')}>
               <ChevronLeft size={16} />
               Назад
             </button>
@@ -101,22 +103,44 @@ export function SettingsPage() {
 function AppearanceContent() {
   const dispatch = useAppDispatch()
   const activeVariant = useAppSelector((s) => s.theme.variant)
+  const particlesEnabled = useAppSelector((s) => s.animations.particlesEnabled)
+  const isDarkTheme = THEME_COLORS[activeVariant].isDark ?? false
+  const hasParticles = !!THEME_COLORS[activeVariant].particle
 
   const handleSelect = (variant: ThemeVariant) => {
     dispatch(setTheme(variant))
   }
 
   return (
-    <div className={styles['theme-grid']}>
-      {THEMES_META.map((theme) => (
-        <ThemeCard
-          key={theme.variant}
-          theme={theme}
-          isActive={theme.variant === activeVariant}
-          onSelect={handleSelect}
-        />
-      ))}
-    </div>
+    <>
+      <div className={styles['theme-grid']}>
+        {THEMES_META.map((theme) => (
+          <ThemeCard
+            key={theme.variant}
+            theme={theme}
+            isActive={theme.variant === activeVariant}
+            isDarkTheme={isDarkTheme}
+            onSelect={handleSelect}
+          />
+        ))}
+      </div>
+
+      {hasParticles && (
+        <div className={styles['animation-row']}>
+          <div className={styles['animation-row__info']}>
+            <span className={styles['animation-row__label']}>Анимация</span>
+            <span className={styles['animation-row__desc']}>Фоновая анимация</span>
+          </div>
+          <button
+            className={`${styles['animation-toggle']} ${particlesEnabled ? styles['animation-toggle--on'] : ''}`}
+            onClick={() => dispatch(toggleParticles())}
+            aria-label={particlesEnabled ? 'Выключить анимацию' : 'Включить анимацию'}
+          >
+            <span className={styles['animation-toggle__thumb']} />
+          </button>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -128,6 +152,8 @@ interface ThemeCardProps {
   theme: (typeof THEMES_META)[number]
   /** Флаг активной темы. */
   isActive: boolean
+  /** Флаг тёмной активной темы — используется для стилизации footer. */
+  isDarkTheme: boolean
   /** Функция выбора темы. */
   onSelect: (variant: ThemeVariant) => void
 }
@@ -135,7 +161,11 @@ interface ThemeCardProps {
 /**
  * Карточка выбора темы с визуальным превью цветов.
  */
-function ThemeCard({ theme, isActive, onSelect }: ThemeCardProps) {
+function ThemeCard({ theme, isActive, isDarkTheme, onSelect }: ThemeCardProps) {
+  const footerStyle = isDarkTheme
+    ? { background: '#1B1E25', color: isActive ? '#C97B5C' : '#E8E3DA' }
+    : undefined
+
   return (
     <button
       className={`${styles['theme-card']} ${isActive ? styles['theme-card--active'] : ''}`}
@@ -154,7 +184,9 @@ function ThemeCard({ theme, isActive, onSelect }: ThemeCardProps) {
           </span>
         )}
       </div>
-      <div className={styles['theme-card__footer']}>{theme.name}</div>
+      <div className={styles['theme-card__footer']} style={footerStyle}>
+        {theme.name}
+      </div>
     </button>
   )
 }
