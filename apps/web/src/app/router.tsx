@@ -52,6 +52,7 @@ export const router = createBrowserRouter([
           { path: '/library', element: <LibraryPage /> }, // Библиотека
           { path: '/profile', element: <ProfilePage /> }, // Профиль пользователя
           { path: '/settings', element: <SettingsPage /> }, // Настройки
+          { path: '/settings/:section', element: <SettingsPage /> }, // Раздел настроек
         ],
       },
     ],

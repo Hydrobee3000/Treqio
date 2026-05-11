@@ -196,7 +196,9 @@ function BentoLayout() {
         </div>
         <span className={styles['bento__cell-cta']}>
           <span className={styles['bento__cell-cta-text']}>Подключить</span>
-          <ArrowIcon />
+          <span className={styles['bento__cell-cta-arrow']}>
+            <ArrowIcon />
+          </span>
         </span>
       </button>
     </div>
@@ -220,7 +222,9 @@ function ImportStrip() {
       </div>
       <button className={styles['import-strip__btn']} disabled>
         <span className={styles['import-strip__btn-text']}>Подключить</span>
-        <ArrowIcon />
+        <span className={styles['import-strip__btn-arrow']}>
+          <ArrowIcon />
+        </span>
       </button>
     </div>
   )

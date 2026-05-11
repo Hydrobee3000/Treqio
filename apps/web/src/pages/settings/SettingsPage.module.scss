@@ -2,18 +2,34 @@ $bp-sm: 600px;
 $bp-md: 900px;
 
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slide-in {
-  from { opacity: 0; transform: translateX(12px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 // ─── Страница ─────────────────────────────────────────────────────────────────
@@ -41,7 +57,7 @@ $bp-md: 900px;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--sidebar-bg, #243d35);
+  color: var(--header-title-color, #243d35);
   animation: rise 0.6s ease both;
   display: flex;
   align-items: center;
@@ -90,8 +106,10 @@ $bp-md: 900px;
   @media (min-width: $bp-md) {
     width: 280px;
     padding: 12px 16px 24px;
-    background: var(--color-paper, white);
+    background: color-mix(in srgb, var(--color-paper, white) 70%, transparent);
     border-right: 1px solid var(--color-divider, #e0e0e0);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 }
 
@@ -110,7 +128,9 @@ $bp-md: 900px;
   cursor: pointer;
   text-align: left;
   width: 100%;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: var(--color-paper-2, rgba(0, 0, 0, 0.05));
@@ -170,7 +190,9 @@ $bp-md: 900px;
 .settings__content {
   flex: 1;
   min-width: 0;
-  background: var(--color-paper-2, #f5f5f5);
+  background: color-mix(in srgb, var(--color-paper-2, #f5f5f5) 30%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   animation: slide-in 0.25s ease both;
 
   // На мобилке — прячем если нет выбранного раздела
@@ -217,6 +239,73 @@ $bp-md: 900px;
   letter-spacing: 0.06em;
 }
 
+// ─── Переключатель анимации ───────────────────────────────────────────────────
+
+.animation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  // Непрозрачный фон — частицы за блоком не просвечивают
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider, #e0e0e0);
+  position: relative;
+  isolation: isolate;
+}
+
+.animation-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.animation-row__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text, inherit);
+}
+
+.animation-row__desc {
+  font-size: 12px;
+  color: var(--color-text-2, #666);
+}
+
+.animation-toggle {
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-divider, #ccc);
+  padding: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.2s;
+
+  &--on {
+    background: var(--color-primary, #4e7b6a);
+  }
+}
+
+.animation-toggle__thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+
+  .animation-toggle--on & {
+    transform: translateX(18px);
+  }
+}
+
 // ─── Сетка тем ────────────────────────────────────────────────────────────────
 
 .theme-grid {
@@ -240,7 +329,10 @@ $bp-md: 900px;
   background: none;
   padding: 0;
   text-align: left;
-  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-2px);
@@ -286,8 +378,12 @@ $bp-md: 900px;
   background: var(--color-divider, #e0e0e0);
   opacity: 0.6;
 
-  &--wide { width: 70%; }
-  &--narrow { width: 45%; }
+  &--wide {
+    width: 70%;
+  }
+  &--narrow {
+    width: 45%;
+  }
 }
 
 .theme-card__check {
@@ -310,7 +406,7 @@ $bp-md: 900px;
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text, inherit);
-  background: white;
+  background: var(--color-paper, white);
 }
 
 .theme-card--active .theme-card__footer {
