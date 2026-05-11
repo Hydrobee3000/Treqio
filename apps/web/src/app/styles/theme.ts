@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles'
-import type { PaletteOptions } from '@mui/material/styles'
+import type { PaletteOptions, SimplePaletteColorOptions } from '@mui/material/styles'
 
 declare module '@mui/material/styles' {
   /**
@@ -172,3 +172,27 @@ export function buildTheme(variant: ThemeVariant) {
 
 /** Дефолтная тема приложения. */
 export const DEFAULT_THEME: ThemeVariant = 'sageLibrary'
+
+/**
+ * Отображаемые названия вариантов темы.
+ */
+const THEME_NAMES: Record<ThemeVariant, string> = {
+  sageLibrary: 'Sage Library',
+  warmLatte: 'Warm Latte',
+  slate: 'Slate',
+  dustyPlum: 'Dusty Plum',
+}
+
+/**
+ * Метаданные тем для UI выбора темы — цвета берутся из palettes.
+ */
+export const THEMES_META = (Object.keys(palettes) as ThemeVariant[]).map((variant) => {
+  const p = palettes[variant]
+  return {
+    variant,
+    name: THEME_NAMES[variant],
+    sidebarColor: p.sidebar!.background!,
+    primaryColor: (p.primary as SimplePaletteColorOptions).main,
+    bgColor: p.background!.default!,
+  }
+})

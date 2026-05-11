@@ -5,6 +5,7 @@ import { HomePage } from '@/pages/home'
 import { LibraryPage } from '@/pages/library'
 import { LoginPage } from '@/pages/login'
 import { ProfilePage } from '@/pages/profile'
+import { SettingsPage } from '@/pages/settings'
 import { useAppSelector } from '@/shared/lib/store'
 import { AppLayout } from '@/widgets/layout'
 
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
           { path: '/', element: <HomePage /> }, // Домашняя страница
           { path: '/library', element: <LibraryPage /> }, // Библиотека
           { path: '/profile', element: <ProfilePage /> }, // Профиль пользователя
+          { path: '/settings', element: <SettingsPage /> }, // Настройки
         ],
       },
     ],
