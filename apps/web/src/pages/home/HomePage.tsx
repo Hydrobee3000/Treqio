@@ -1,4 +1,5 @@
 import { BookOpen, Gamepad2, LayoutGrid, Palette, PanelTop, User } from 'lucide-react'
+import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/app/store/layoutSlice'
 import type { LayoutVariant } from '@/app/store/layoutSlice'
@@ -110,10 +111,16 @@ export function HomePage() {
  * Сетка 2×2.
  */
 function GridLayout() {
+  const navigate = useNavigate()
+
   return (
     <div className={styles['grid']}>
       {TILES.map((tile) => (
-        <button key={tile.title} className={styles['grid__tile']}>
+        <button
+          key={tile.title}
+          className={styles['grid__tile']}
+          onClick={() => navigate(tile.href)}
+        >
           <div className={styles['grid__tile-icon']}>{tile.icon}</div>
           <div>
             <p className={styles['grid__tile-title']}>{tile.title}</p>
@@ -132,11 +139,18 @@ function GridLayout() {
  * Bento-раскладка.
  */
 function BentoLayout() {
-  const [books, games, profile, theme] = TILES
+  const navigate = useNavigate()
+  const books = TILES[0]!
+  const games = TILES[1]!
+  const profile = TILES[2]!
+  const theme = TILES[3]!
 
   return (
     <div className={styles['bento']}>
-      <button className={`${styles['bento__cell']} ${styles['bento__cell--hero']}`}>
+      <button
+        className={`${styles['bento__cell']} ${styles['bento__cell--hero']}`}
+        onClick={() => navigate(books.href)}
+      >
         <div className={styles['bento__cell-icon']}>{books.icon}</div>
         <div className={styles['bento__cell-content']}>
           <p className={styles['bento__cell-title']}>{books.title}</p>
@@ -144,7 +158,10 @@ function BentoLayout() {
         </div>
       </button>
 
-      <button className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}>
+      <button
+        className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+        onClick={() => navigate(games.href)}
+      >
         <div className={styles['bento__cell-icon']}>{games.icon}</div>
         <div className={styles['bento__cell-content']}>
           <p className={styles['bento__cell-title']}>{games.title}</p>
@@ -152,7 +169,7 @@ function BentoLayout() {
         </div>
       </button>
 
-      <button className={styles['bento__cell']}>
+      <button className={styles['bento__cell']} onClick={() => navigate(profile.href)}>
         <div className={styles['bento__cell-icon']}>{profile.icon}</div>
         <div className={styles['bento__cell-content']}>
           <p className={styles['bento__cell-title']}>{profile.title}</p>
@@ -160,7 +177,7 @@ function BentoLayout() {
         </div>
       </button>
 
-      <button className={styles['bento__cell']}>
+      <button className={styles['bento__cell']} onClick={() => navigate(theme.href)}>
         <div className={styles['bento__cell-icon']}>{theme.icon}</div>
         <div className={styles['bento__cell-content']}>
           <p className={styles['bento__cell-title']}>{theme.title}</p>
