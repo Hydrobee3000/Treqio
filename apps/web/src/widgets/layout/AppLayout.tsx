@@ -21,9 +21,10 @@ export const AppLayout = () => {
 
   const sidebarWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH
 
-  const themeVariant = useAppSelector((s) => s.theme.variant)
+  const { lightVariant, darkVariant, isDark } = useAppSelector((s) => s.theme)
+  const activeVariant = isDark ? darkVariant : lightVariant
   const particlesEnabled = useAppSelector((s) => s.animations.particlesEnabled)
-  const particleType = THEME_COLORS[themeVariant].particle
+  const particleType = THEME_COLORS[activeVariant].particle
   const showParticles = particlesEnabled && !!particleType
 
   return (
