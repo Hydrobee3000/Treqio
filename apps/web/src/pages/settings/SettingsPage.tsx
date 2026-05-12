@@ -1,11 +1,22 @@
-import { ChevronLeft, ChevronRight, Check, Palette, Settings } from 'lucide-react'
+import { useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  Palette,
+  Settings,
+  Layers,
+  LayoutGrid,
+} from 'lucide-react'
 import { useNavigate, useParams } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
-import { setTheme } from '@/features/theme'
+import { setPair, setLightVariant, setDarkVariant } from '@/features/theme'
 import { toggleParticles } from '@/features/animations'
-import { THEME_COLORS, THEMES_META } from '@/shared/config/themes'
+import { THEME_COLORS, LIGHT_THEMES, DARK_THEMES } from '@/shared/config/themes'
 import type { ThemeVariant } from '@/shared/config/themes'
 import styles from './SettingsPage.module.scss'
+
+const THEME_MODE_KEY = 'treqio_theme_picker_mode'
 
 /**
  * Раздел настроек.
@@ -52,7 +63,6 @@ export function SettingsPage() {
       </div>
 
       <div className={styles['settings__body']}>
-        {/* Список разделов */}
         <nav
           className={`${styles['settings__nav']} ${active ? styles['settings__nav--hidden'] : ''}`}
         >
@@ -72,7 +82,6 @@ export function SettingsPage() {
           ))}
         </nav>
 
-        {/* Контент выбранного раздела */}
         {active && (
           <div className={styles['settings__content']}>
             <button className={styles['settings__back']} onClick={() => navigate('/settings')}>
@@ -86,7 +95,6 @@ export function SettingsPage() {
           </div>
         )}
 
-        {/* На десктопе — показываем контент сразу при выборе из списка */}
         {!active && (
           <div
             className={`${styles['settings__content']} ${styles['settings__content--hidden']}`}
@@ -102,28 +110,88 @@ export function SettingsPage() {
  */
 function AppearanceContent() {
   const dispatch = useAppDispatch()
-  const activeVariant = useAppSelector((s) => s.theme.variant)
+  const { lightVariant, darkVariant, isDark } = useAppSelector((s) => s.theme)
   const particlesEnabled = useAppSelector((s) => s.animations.particlesEnabled)
-  const isDarkTheme = THEME_COLORS[activeVariant].isDark ?? false
+  const activeVariant = isDark ? darkVariant : lightVariant
   const hasParticles = !!THEME_COLORS[activeVariant].particle
 
-  const handleSelect = (variant: ThemeVariant) => {
-    dispatch(setTheme(variant))
+  const [advancedMode, setAdvancedMode] = useState<boolean>(
+    () => localStorage.getItem(THEME_MODE_KEY) === 'advanced',
+  )
+
+  const handleModeChange = (mode: 'simple' | 'advanced') => {
+    setAdvancedMode(mode === 'advanced')
+    localStorage.setItem(THEME_MODE_KEY, mode)
+  }
+
+  const handleSimpleSelect = (variant: ThemeVariant) => {
+    dispatch(setPair(variant))
   }
 
   return (
     <>
-      <div className={styles['theme-grid']}>
-        {THEMES_META.map((theme) => (
-          <ThemeCard
-            key={theme.variant}
-            theme={theme}
-            isActive={theme.variant === activeVariant}
-            isDarkTheme={isDarkTheme}
-            onSelect={handleSelect}
-          />
-        ))}
+      <div className={styles['theme-mode-header']}>
+        <span className={styles['theme-mode-label']}>Тема оформления</span>
+        <div className={styles['theme-mode-toggle']}>
+          <button
+            className={`${styles['theme-mode-btn']} ${!advancedMode ? styles['theme-mode-btn--active'] : ''}`}
+            onClick={() => handleModeChange('simple')}
+          >
+            <LayoutGrid size={13} />
+            Простой
+          </button>
+          <button
+            className={`${styles['theme-mode-btn']} ${advancedMode ? styles['theme-mode-btn--active'] : ''}`}
+            onClick={() => handleModeChange('advanced')}
+          >
+            <Layers size={13} />
+            Расширенный
+          </button>
+        </div>
       </div>
+
+      {!advancedMode ? (
+        <div className={styles['theme-grid']}>
+          {LIGHT_THEMES.map((t) => (
+            <ThemeCard
+              key={t.variant}
+              theme={t}
+              isActive={t.variant === lightVariant}
+              onSelect={handleSimpleSelect}
+            />
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className={styles['theme-section']}>
+            <p className={styles['theme-section__label']}>Светлая тема</p>
+            <div className={styles['theme-grid']}>
+              {LIGHT_THEMES.map((t) => (
+                <ThemeCard
+                  key={t.variant}
+                  theme={t}
+                  isActive={t.variant === lightVariant}
+                  onSelect={(v) => dispatch(setLightVariant(v))}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className={styles['theme-section']}>
+            <p className={styles['theme-section__label']}>Тёмная тема</p>
+            <div className={styles['theme-grid']}>
+              {DARK_THEMES.map((t) => (
+                <ThemeCard
+                  key={t.variant}
+                  theme={t}
+                  isActive={t.variant === darkVariant}
+                  onSelect={(v) => dispatch(setDarkVariant(v))}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {hasParticles && (
         <div className={styles['animation-row']}>
@@ -144,26 +212,22 @@ function AppearanceContent() {
   )
 }
 
-/**
- * Свойства карточки темы.
- */
-interface ThemeCardProps {
-  /** Метаданные темы. */
-  theme: (typeof THEMES_META)[number]
-  /** Флаг активной темы. */
-  isActive: boolean
-  /** Флаг тёмной активной темы — используется для стилизации footer. */
-  isDarkTheme: boolean
-  /** Функция выбора темы. */
-  onSelect: (variant: ThemeVariant) => void
-}
+type ThemeMeta = (typeof LIGHT_THEMES)[number]
 
 /**
  * Карточка выбора темы с визуальным превью цветов.
  */
-function ThemeCard({ theme, isActive, isDarkTheme, onSelect }: ThemeCardProps) {
-  const footerStyle = isDarkTheme
-    ? { background: '#1B1E25', color: isActive ? '#C97B5C' : '#E8E3DA' }
+function ThemeCard({
+  theme,
+  isActive,
+  onSelect,
+}: {
+  theme: ThemeMeta
+  isActive: boolean
+  onSelect: (variant: ThemeVariant) => void
+}) {
+  const footerStyle = theme.isDark
+    ? { background: theme.bgColor, color: isActive ? theme.primaryColor : '#E8E3DA' }
     : undefined
 
   return (

@@ -48,8 +48,8 @@ $bp-md: 900px;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background: var(--sidebar-bg);
-  color: var(--sidebar-text);
+  background: var(--login-hero-bg);
+  color: var(--login-hero-text);
   padding-top: 112px; // pt xs=14 → 14×8px
   padding-bottom: 0;
   overflow: hidden;
@@ -66,7 +66,7 @@ $bp-md: 900px;
   font-size: 40px;
   font-weight: 800;
   letter-spacing: -0.05em;
-  color: var(--sidebar-text);
+  color: var(--login-hero-text);
   margin-bottom: 16px;
   animation: fade-slide-up 0.6s ease both;
 
@@ -80,7 +80,7 @@ $bp-md: 900px;
 .login-page__description {
   font-size: 15px;
   line-height: 1.6;
-  color: var(--sidebar-muted);
+  color: var(--login-hero-muted);
   max-width: 420px;
   margin-bottom: 32px;
   animation: fade-slide-up 0.6s ease 0.15s both;
@@ -132,7 +132,7 @@ $bp-md: 900px;
   gap: 12px;
   width: 100%;
   margin: 12px 0;
-  color: var(--sidebar-muted);
+  color: var(--login-hero-muted);
   font-size: 13px;
 
   @media (min-width: $bp-sm) {
@@ -163,7 +163,7 @@ $bp-md: 900px;
     padding-right: 28px;
     width: 100%;
     border-color: var(--sidebar-btn-outlined-border);
-    color: var(--sidebar-text);
+    color: var(--login-hero-text);
 
     &.Mui-disabled {
       border-color: var(--sidebar-btn-disabled-border);
@@ -180,7 +180,7 @@ $bp-md: 900px;
 
 .login-page__hint {
   font-size: 12px;
-  color: var(--sidebar-muted);
+  color: var(--login-hero-muted);
   margin-top: 12px;
   text-align: center;
 
