@@ -4,7 +4,6 @@ import {
   ChevronRight,
   Check,
   Palette,
-  Settings,
   SlidersHorizontal,
   LayoutGrid,
   Sun,
@@ -68,8 +67,22 @@ export function SettingsPage() {
     <div className={styles['settings']}>
       <div className={styles['settings__header']}>
         <h1 className={styles['settings__title']}>
-          Настройки
-          <Settings size={28} className={styles['settings__title-icon']} />
+          {active ? (
+            <button
+              className={styles['settings__breadcrumb']}
+              onClick={() => navigate('/settings')}
+            >
+              Настройки
+            </button>
+          ) : (
+            <span className={styles['settings__breadcrumb-static']}>Настройки</span>
+          )}
+          {active && (
+            <>
+              <ChevronRight size={14} className={styles['settings__breadcrumb-sep']} />
+              <span className={styles['settings__breadcrumb-current']}>{active.label}</span>
+            </>
+          )}
         </h1>
       </div>
 
@@ -99,10 +112,7 @@ export function SettingsPage() {
               <ChevronLeft size={16} />
               Назад
             </button>
-            <div className={styles['settings__section']}>
-              <p className={styles['settings__section-title']}>{active.label}</p>
-              {active.content}
-            </div>
+            <div className={styles['settings__section']}>{active.content}</div>
           </div>
         )}
 
