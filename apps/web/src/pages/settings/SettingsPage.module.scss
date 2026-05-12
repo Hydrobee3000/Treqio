@@ -38,7 +38,7 @@ $bp-md: 900px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .settings__header {
@@ -76,11 +76,7 @@ $bp-md: 900px;
   display: flex;
   flex: 1;
   min-height: 0;
-  gap: 0;
-
-  @media (min-width: $bp-md) {
-    gap: 0;
-  }
+  overflow: hidden;
 }
 
 // ─── Список разделов ──────────────────────────────────────────────────────────
@@ -190,6 +186,8 @@ $bp-md: 900px;
 .settings__content {
   flex: 1;
   min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: color-mix(in srgb, var(--color-paper-2, #f5f5f5) 30%, transparent);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
