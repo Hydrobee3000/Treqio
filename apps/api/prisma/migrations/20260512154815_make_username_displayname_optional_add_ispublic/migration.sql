@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "isPublic" BOOLEAN NOT NULL DEFAULT true,
+ALTER COLUMN "username" DROP NOT NULL,
+ALTER COLUMN "displayName" DROP NOT NULL;
