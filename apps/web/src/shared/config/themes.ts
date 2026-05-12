@@ -53,6 +53,8 @@ export interface ThemeColors {
   surfaceVariant?: string
   /** Тип анимации на главной странице. */
   particle?: 'leaf' | 'dust' | 'dot' | 'ember'
+  /** Парная тема (светлая ↔ тёмная). */
+  pair: ThemeVariant
 }
 
 /**
@@ -60,6 +62,7 @@ export interface ThemeColors {
  */
 export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
   sageLibrary: {
+    pair: 'sageDark',
     particle: 'leaf',
     primary: '#4E7B6A',
     primaryLight: '#6E9B8A',
@@ -81,6 +84,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.07)',
   },
   linen: {
+    pair: 'dune',
     particle: 'dust',
     primary: '#8C5A3C',
     primaryLight: '#A87D5A',
@@ -102,6 +106,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.07)',
   },
   slate: {
+    pair: 'slateDark',
     particle: 'dot',
     primary: '#4361B0',
     primaryLight: '#6481C8',
@@ -123,6 +128,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.07)',
   },
   dustyPlum: {
+    pair: 'plumDark',
     particle: 'dust',
     primary: '#7C5CA8',
     primaryLight: '#9C7CC8',
@@ -144,6 +150,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.07)',
   },
   navy: {
+    pair: 'navyDark',
     particle: 'dot',
     primary: '#3B4A66',
     primaryLight: '#5B6A86',
@@ -165,6 +172,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.07)',
   },
   inkLight: {
+    pair: 'ink',
     particle: 'ember',
     primary: '#A8623A',
     primaryLight: '#C97B5C',
@@ -189,6 +197,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
   // ─── Тёмные пары к светлым темам ─────────────────────────────────────────────
 
   sageDark: {
+    pair: 'sageLibrary',
     isDark: true,
     particle: 'leaf',
     surfaceVariant: '#1E2D28',
@@ -212,6 +221,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.05)',
   },
   dune: {
+    pair: 'linen',
     isDark: true,
     particle: 'dust',
     surfaceVariant: '#2A2521',
@@ -235,6 +245,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.05)',
   },
   slateDark: {
+    pair: 'slate',
     isDark: true,
     particle: 'dot',
     surfaceVariant: '#1E2438',
@@ -258,6 +269,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.05)',
   },
   plumDark: {
+    pair: 'dustyPlum',
     isDark: true,
     particle: 'dust',
     surfaceVariant: '#1E1A2E',
@@ -281,6 +293,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.05)',
   },
   navyDark: {
+    pair: 'navy',
     isDark: true,
     particle: 'dot',
     surfaceVariant: '#161B2E',
@@ -304,6 +317,7 @@ export const THEME_COLORS: Record<ThemeVariant, ThemeColors> = {
     sidebarDivider: 'rgba(255,255,255,0.05)',
   },
   ink: {
+    pair: 'inkLight',
     isDark: true,
     particle: 'ember',
     surfaceVariant: '#21252D',
@@ -337,12 +351,12 @@ const THEME_NAMES: Record<ThemeVariant, string> = {
   slate: 'Slate',
   dustyPlum: 'Dusty Plum',
   navy: 'Navy',
-  inkLight: 'Ink Light',
-  sageDark: 'Sage Dark',
-  dune: 'Dune',
-  slateDark: 'Slate Dark',
-  plumDark: 'Plum Dark',
-  navyDark: 'Navy Dark',
+  inkLight: 'Ink',
+  sageDark: 'Sage Library',
+  dune: 'Linen',
+  slateDark: 'Slate',
+  plumDark: 'Dusty Plum',
+  navyDark: 'Navy',
   ink: 'Ink',
 }
 
@@ -357,3 +371,9 @@ export const THEMES_META = (Object.keys(THEME_COLORS) as ThemeVariant[]).map((va
   bgColor: THEME_COLORS[variant].bgDefault,
   isDark: THEME_COLORS[variant].isDark ?? false,
 }))
+
+/** Метаданные только светлых тем. */
+export const LIGHT_THEMES = THEMES_META.filter((t) => !t.isDark)
+
+/** Метаданные только тёмных тем. */
+export const DARK_THEMES = THEMES_META.filter((t) => t.isDark)

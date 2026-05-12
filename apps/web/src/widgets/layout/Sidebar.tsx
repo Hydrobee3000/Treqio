@@ -8,25 +8,22 @@ import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
-import { Box, IconButton, List, Typography } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { Tooltip } from '@mui/material'
+import { Moon, Sun } from 'lucide-react'
 import { Link, useMatch } from 'react-router'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { toggleDark } from '@/features/theme'
+import styles from './Sidebar.module.scss'
 
 /**
  * Конфигурация пункта навигации.
  */
 interface NavItemConfig {
-  /** Путь роута. */
   to: string
-  /** Иконка MUI. */
   icon: SvgIconComponent
-  /** Подпись пункта меню. */
   label: string
 }
 
-/**
- * Основные пункты навигации.
- */
 const NAV_ITEMS: NavItemConfig[] = [
   { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
   { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
@@ -36,54 +33,25 @@ const NAV_ITEMS: NavItemConfig[] = [
   { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
 ]
 
-/**
- * Пункты в подвале сайдбара.
- */
 const FOOTER_ITEMS: NavItemConfig[] = [
   { to: '/settings', icon: SettingsOutlinedIcon, label: 'Настройки' },
 ]
 
-/**
- * Свойства пункта навигации с состоянием сайдбара.
- */
 interface NavItemProps extends NavItemConfig {
-  /** Флаг свёрнутости сайдбара. */
   collapsed: boolean
 }
 
 const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
-  const isActive = !!useMatch(to)
-  const { palette } = useTheme()
-  const sidebar = palette.sidebar
+  const isActive = !!useMatch({ path: to, end: to === '/' })
 
   return (
-    <Box
-      component={Link}
+    <Link
       to={to}
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        px: '10px',
-        py: '8px',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        color: isActive ? sidebar.text : sidebar.muted,
-        bgcolor: isActive ? sidebar.activeBackground : 'transparent',
-        justifyContent: collapsed ? 'center' : 'flex-start',
-        cursor: 'pointer',
-        flexShrink: 0,
-        transition: 'background 0.15s, color 0.15s',
-        '&:hover': { bgcolor: sidebar.activeBackground, color: sidebar.text },
-      }}
+      className={`${styles['nav-item']} ${isActive ? styles['nav-item--active'] : ''} ${collapsed ? styles['nav-item--collapsed'] : ''}`}
     >
-      <Icon sx={{ fontSize: 22, flexShrink: 0 }} />
-      {!collapsed && (
-        <Typography sx={{ fontSize: 14, fontWeight: 500, whiteSpace: 'nowrap', color: 'inherit' }}>
-          {label}
-        </Typography>
-      )}
-    </Box>
+      <Icon style={{ fontSize: 22, flexShrink: 0 }} />
+      {!collapsed && <span className={styles['nav-item__label']}>{label}</span>}
+    </Link>
   )
 }
 
@@ -91,9 +59,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
  * Свойства сайдбара.
  */
 interface Props {
-  /** Флаг свёрнутости сайдбара. */
   collapsed: boolean
-  /** Функция переключения состояния свёрнутости. */
   onToggle: () => void
 }
 
@@ -101,97 +67,49 @@ interface Props {
  * Боковое меню приложения.
  */
 export const Sidebar = ({ collapsed, onToggle }: Props) => {
-  const { palette } = useTheme()
-  const sidebar = palette.sidebar
+  const dispatch = useAppDispatch()
+  const isDark = useAppSelector((s) => s.theme.isDark)
 
   return (
-    <Box
-      sx={{
-        height: '100%',
-        bgcolor: sidebar.background,
-        color: sidebar.text,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Шапка: логотип + кнопка сворачивания */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'space-between',
-          px: 2,
-          pt: '18px',
-          pb: '14px',
-          borderBottom: `1px solid ${sidebar.divider}`,
-          flexShrink: 0,
-        }}
+    <div className={styles['sidebar']}>
+      <div
+        className={`${styles['sidebar__header']} ${collapsed ? styles['sidebar__header--collapsed'] : ''}`}
       >
-        {!collapsed && (
-          <Typography
-            sx={{
-              fontSize: 17,
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              color: sidebar.text,
-              userSelect: 'none',
-            }}
-          >
-            Treqio
-          </Typography>
-        )}
-        <IconButton
-          onClick={onToggle}
-          size="small"
-          sx={{
-            color: sidebar.muted,
-            borderRadius: '6px',
-            bgcolor: 'rgba(255,255,255,0.05)',
-            '&:hover': { bgcolor: sidebar.activeBackground, color: sidebar.text },
-          }}
-        >
+        {!collapsed && <span className={styles['sidebar__logo']}>Treqio</span>}
+        <button className={styles['sidebar__collapse-btn']} onClick={onToggle}>
           {collapsed ? (
-            <ChevronRightIcon sx={{ fontSize: 20 }} />
+            <ChevronRightIcon style={{ fontSize: 20 }} />
           ) : (
-            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+            <ChevronLeftIcon style={{ fontSize: 20 }} />
           )}
-        </IconButton>
-      </Box>
+        </button>
+      </div>
 
-      {/* Основная навигация */}
-      <Box
-        sx={{
-          flex: 1,
-          px: 1,
-          py: '12px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-          alignItems: 'stretch',
-        }}
-      >
+      <nav className={styles['sidebar__nav']}>
         {NAV_ITEMS.map((item) => (
           <NavItem key={item.to} {...item} collapsed={collapsed} />
         ))}
-      </Box>
+      </nav>
 
-      {/* Футер: настройки */}
-      <List
-        disablePadding
-        sx={{
-          px: 1,
-          py: '12px',
-          borderTop: `1px solid ${sidebar.divider}`,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-        }}
-      >
+      <div className={styles['sidebar__footer']}>
+        <Tooltip title={isDark ? 'Светлая тема' : 'Тёмная тема'} placement="right">
+          <button
+            className={`${styles['theme-toggle']} ${collapsed ? styles['theme-toggle--collapsed'] : ''}`}
+            onClick={() => dispatch(toggleDark())}
+          >
+            {isDark ? <Sun size={22} /> : <Moon size={22} />}
+            {!collapsed && (
+              <span className={styles['theme-toggle__label']}>
+                {isDark ? 'Светлая тема' : 'Тёмная тема'}
+              </span>
+            )}
+          </button>
+        </Tooltip>
+
         {FOOTER_ITEMS.map((item) => (
           <NavItem key={item.to} {...item} collapsed={collapsed} />
         ))}
-      </List>
-    </Box>
+      </div>
+    </div>
   )
 }

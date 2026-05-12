@@ -17,48 +17,49 @@ interface Props {
  * Оборачивает приложение MUI ThemeProvider с текущей темой из store.
  */
 export const ThemeProvider = ({ children }: Props) => {
-  const variant = useAppSelector((s) => s.theme.variant)
-  const theme = useMemo(() => buildTheme(variant), [variant])
+  const { lightVariant, darkVariant, isDark } = useAppSelector((s) => s.theme)
+  const activeVariant = isDark ? darkVariant : lightVariant
+  const theme = useMemo(() => buildTheme(activeVariant), [activeVariant])
 
   useEffect(() => {
     const root = document.documentElement
     const { sidebar, primary, divider, text, background } = theme.palette
 
-    // Токены сайдбара и hero-секций
+    // Токены активной темы — используются во всём приложении
     root.style.setProperty('--sidebar-bg', sidebar.background)
     root.style.setProperty('--sidebar-text', sidebar.text)
     root.style.setProperty('--sidebar-muted', sidebar.muted)
     root.style.setProperty('--sidebar-divider', sidebar.divider)
 
-    // Токены акцентного цвета и разделителей
     root.style.setProperty('--color-primary', primary.main)
     root.style.setProperty('--color-primary-dark', primary.dark)
     root.style.setProperty('--color-divider', divider)
 
-    // Токены текста и поверхностей
     root.style.setProperty('--color-text', text.primary)
     root.style.setProperty('--color-text-2', text.secondary)
     root.style.setProperty('--color-paper', background.paper)
     root.style.setProperty('--color-paper-2', background.default)
 
-    // Токены чипов и плиток
     root.style.setProperty('--color-chip-bg', primary.light + '33')
     root.style.setProperty('--color-chip-text', primary.dark)
 
-    // Цвет заголовков на тематическом фоне — тёмный для светлых тем, светлый для тёмных
-    const isDark = THEME_COLORS[variant].isDark ?? false
     root.style.setProperty('--header-title-color', isDark ? sidebar.text : sidebar.background)
 
-    // Акцентная поверхность для тёмных блоков (bento dark cell и т.п.)
-    const surfaceVariant = THEME_COLORS[variant].surfaceVariant ?? sidebar.background
+    const surfaceVariant = THEME_COLORS[activeVariant].surfaceVariant ?? sidebar.background
     root.style.setProperty('--color-surface-variant', surfaceVariant)
 
-    // Токены кнопок на тёмном фоне сайдбара
     root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)
     root.style.setProperty('--sidebar-btn-outlined-border', 'rgba(255,255,255,.25)')
     root.style.setProperty('--sidebar-btn-disabled-border', 'rgba(255,255,255,.15)')
     root.style.setProperty('--sidebar-btn-disabled-color', 'rgba(255,255,255,.35)')
-  }, [theme, variant])
+
+    // Токены для страницы входа — всегда из светлой темы, не зависят от isDark.
+    // Это гарантирует что login page выглядит одинаково при любом режиме.
+    const lightColors = THEME_COLORS[lightVariant]
+    root.style.setProperty('--login-hero-bg', lightColors.sidebarBg)
+    root.style.setProperty('--login-hero-text', lightColors.sidebarText)
+    root.style.setProperty('--login-hero-muted', lightColors.sidebarMuted)
+  }, [theme, activeVariant, isDark, lightVariant])
 
   return (
     <StyledEngineProvider injectFirst>

@@ -31,7 +31,7 @@ const TILES = [
     icon: <Palette size={22} />,
     title: 'Настроить тему',
     desc: 'Цветовая палитра и шрифт интерфейса.',
-    href: '/settings',
+    href: '/settings/appearance',
   },
 ]
 

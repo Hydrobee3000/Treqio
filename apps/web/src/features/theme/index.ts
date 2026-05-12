@@ -1,1 +1,8 @@
-export { default as themeReducer, setTheme } from './model/themeSlice'
+export {
+  default as themeReducer,
+  setPair,
+  setLightVariant,
+  setDarkVariant,
+  toggleDark,
+  setDark,
+} from './model/themeSlice'
