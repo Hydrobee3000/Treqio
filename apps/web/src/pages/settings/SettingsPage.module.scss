@@ -237,6 +237,62 @@ $bp-md: 900px;
   letter-spacing: 0.06em;
 }
 
+// ─── Разделитель между блоками ────────────────────────────────────────────────
+
+.settings-divider {
+  border: none;
+  border-top: 1px solid var(--color-divider, #e0e0e0);
+  margin: 20px 0;
+}
+
+// ─── Метка блока настроек ─────────────────────────────────────────────────────
+
+.settings-block-label {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-2, #666);
+}
+
+// ─── Цветовая схема (light / dark / system) ───────────────────────────────────
+
+.theme-color-mode {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-color-mode__btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 2px solid var(--color-divider, #e0e0e0);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+    color: var(--color-text, inherit);
+  }
+
+  &--active {
+    border-color: var(--color-primary, #4e7b6a);
+    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 10%, transparent);
+    color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 0 0 1px var(--color-primary, #4e7b6a);
+  }
+}
+
 // ─── Переключатель анимации ───────────────────────────────────────────────────
 
 .animation-row {
@@ -244,42 +300,37 @@ $bp-md: 900px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 20px;
+  width: 100%;
+  margin-top: 12px;
   padding: 14px 16px;
   border-radius: 12px;
-  // Непрозрачный фон — частицы за блоком не просвечивают
   background: var(--color-paper, white);
   border: 1px solid var(--color-divider, #e0e0e0);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
   position: relative;
   isolation: isolate;
-}
+  transition: border-color 0.15s;
 
-.animation-row__info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.animation-row__label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text, inherit);
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+  }
 }
 
 .animation-row__desc {
-  font-size: 12px;
-  color: var(--color-text-2, #666);
+  font-size: 13px;
+  color: var(--color-text, inherit);
 }
 
 .animation-toggle {
   width: 44px;
   height: 26px;
   border-radius: 999px;
-  border: none;
   background: var(--color-divider, #ccc);
   padding: 3px;
-  cursor: pointer;
   flex-shrink: 0;
+  pointer-events: none;
   position: relative;
   transition: background 0.2s;
 
@@ -304,6 +355,57 @@ $bp-md: 900px;
   }
 }
 
+// ─── Info-подсказка ───────────────────────────────────────────────────────────
+
+.info-hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-2, #999);
+  cursor: default;
+  margin-left: 6px;
+  padding: 2px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: var(--color-primary, #4e7b6a);
+    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 12%, transparent);
+  }
+
+  &:hover .info-hint__tooltip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.info-hint__tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  width: 240px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-text, #1e3328);
+  color: var(--color-paper, white);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+  white-space: normal;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
 // ─── Переключатель режима (простой / раздельный) ─────────────────────────────
 
 .theme-mode-header {
@@ -315,9 +417,13 @@ $bp-md: 900px;
 
 .theme-mode-label {
   margin: 0;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text, inherit);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-2, #666);
+  display: inline-flex;
+  align-items: center;
 }
 
 .theme-mode-toggle {
@@ -358,6 +464,12 @@ $bp-md: 900px;
   }
 }
 
+.theme-mode-btn__text {
+  @media (max-width: $bp-sm) {
+    display: none;
+  }
+}
+
 // ─── Секция тем (светлая / тёмная) ───────────────────────────────────────────
 
 .theme-section {
@@ -373,24 +485,11 @@ $bp-md: 900px;
 .theme-section__label {
   margin: 0;
   font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 500;
   color: var(--color-text-2, #666);
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.theme-section__badge {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--color-primary, #4e7b6a);
-  color: white;
 }
 
 // ─── Сетка тем ────────────────────────────────────────────────────────────────

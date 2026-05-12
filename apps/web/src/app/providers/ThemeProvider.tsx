@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { CssBaseline, StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material'
 import type { ReactNode } from 'react'
-import { useAppSelector } from '@/shared/lib/store'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { setDark } from '@/features/theme'
 import { THEME_COLORS } from '@/shared/config/themes'
 import { buildTheme } from '../styles/theme'
 
@@ -17,9 +18,20 @@ interface Props {
  * Оборачивает приложение MUI ThemeProvider с текущей темой из store.
  */
 export const ThemeProvider = ({ children }: Props) => {
-  const { lightVariant, darkVariant, isDark } = useAppSelector((s) => s.theme)
+  const dispatch = useAppDispatch()
+  const { lightVariant, darkVariant, isDark, themeMode } = useAppSelector((s) => s.theme)
   const activeVariant = isDark ? darkVariant : lightVariant
   const theme = useMemo(() => buildTheme(activeVariant), [activeVariant])
+
+  // Следим за системной темой когда выбран режим «Как на устройстве»
+  useEffect(() => {
+    if (themeMode !== 'system') return
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    dispatch(setDark(mq.matches))
+    const handler = (e: MediaQueryListEvent) => dispatch(setDark(e.matches))
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [themeMode, dispatch])
 
   useEffect(() => {
     const root = document.documentElement
