@@ -5,6 +5,8 @@ import type { ThemeVariant } from '@/shared/config/themes'
 
 const STORAGE_KEY = 'treqio_theme'
 
+export type ThemeMode = 'light' | 'dark' | 'system'
+
 /**
  * Состояние темы приложения.
  */
@@ -13,7 +15,9 @@ interface ThemeState {
   lightVariant: ThemeVariant
   /** Выбранная тёмная тема. */
   darkVariant: ThemeVariant
-  /** Текущий режим отображения. */
+  /** Текущий активный режим (light/dark/system). */
+  themeMode: ThemeMode
+  /** Вычисленный флаг тёмного режима — управляется themeMode и ОС при system. */
   isDark: boolean
   /** Пользователь вручную выбрал темы из разных пар (расширенный режим). */
   isCustomPair: boolean
@@ -24,6 +28,7 @@ function loadState(): ThemeState {
   const defaults: ThemeState = {
     lightVariant: DEFAULT_THEME,
     darkVariant: defaultDark,
+    themeMode: 'light',
     isDark: false,
     isCustomPair: false,
   }
@@ -49,7 +54,6 @@ const themeSlice = createSlice({
   reducers: {
     /**
      * Простой режим: выбор пары целиком по светлой теме.
-     * Автоматически устанавливает обе темы и сбрасывает кастомную пару.
      */
     setPair: (state, action: PayloadAction<ThemeVariant>) => {
       state.lightVariant = action.payload
@@ -59,7 +63,7 @@ const themeSlice = createSlice({
     },
 
     /**
-     * Расширенный режим: только светлая тема, тёмная не меняется.
+     * Расширенный режим: только светлая тема.
      */
     setLightVariant: (state, action: PayloadAction<ThemeVariant>) => {
       state.lightVariant = action.payload
@@ -68,7 +72,7 @@ const themeSlice = createSlice({
     },
 
     /**
-     * Расширенный режим: только тёмная тема, светлая не меняется.
+     * Расширенный режим: только тёмная тема.
      */
     setDarkVariant: (state, action: PayloadAction<ThemeVariant>) => {
       state.darkVariant = action.payload
@@ -77,15 +81,27 @@ const themeSlice = createSlice({
     },
 
     /**
-     * Переключение между светлым и тёмным режимом.
+     * Выбор режима темы: светлая / тёмная / системная.
+     * При system isDark будет обновлён ThemeProvider через prefers-color-scheme.
      */
-    toggleDark: (state) => {
-      state.isDark = !state.isDark
+    setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
+      state.themeMode = action.payload
+      if (action.payload === 'light') state.isDark = false
+      if (action.payload === 'dark') state.isDark = true
       saveState({ ...state })
     },
 
     /**
-     * Явная установка режима (светлый/тёмный).
+     * Переключение light/dark — выходит из системного режима.
+     */
+    toggleDark: (state) => {
+      state.isDark = !state.isDark
+      state.themeMode = state.isDark ? 'dark' : 'light'
+      saveState({ ...state })
+    },
+
+    /**
+     * Прямая установка isDark — используется ThemeProvider для системного режима.
      */
     setDark: (state, action: PayloadAction<boolean>) => {
       state.isDark = action.payload
@@ -94,5 +110,6 @@ const themeSlice = createSlice({
   },
 })
 
-export const { setPair, setLightVariant, setDarkVariant, toggleDark, setDark } = themeSlice.actions
+export const { setPair, setLightVariant, setDarkVariant, setThemeMode, toggleDark, setDark } =
+  themeSlice.actions
 export default themeSlice.reducer
