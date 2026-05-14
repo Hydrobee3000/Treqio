@@ -16,11 +16,29 @@
   padding: 18px 16px 14px;
   border-bottom: 1px solid var(--sidebar-divider);
   flex-shrink: 0;
-
-  &--collapsed {
-    justify-content: center;
-  }
 }
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar__logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-primary, #4e7b6a), var(--color-primary-dark, #3d6a59));
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  color: white;
+  flex-shrink: 0;
+  user-select: none;
+}
+
 
 .sidebar__logo {
   font-size: 17px;
