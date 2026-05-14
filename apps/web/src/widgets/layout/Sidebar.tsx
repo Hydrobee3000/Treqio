@@ -75,7 +75,12 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
       <div
         className={`${styles['sidebar__header']} ${collapsed ? styles['sidebar__header--collapsed'] : ''}`}
       >
-        {!collapsed && <span className={styles['sidebar__logo']}>Treqio</span>}
+        {!collapsed && (
+          <div className={styles['sidebar__brand']}>
+            <span className={styles['sidebar__logo-icon']}>tq</span>
+            <span className={styles['sidebar__logo']}>Treqio</span>
+          </div>
+        )}
         <button className={styles['sidebar__collapse-btn']} onClick={onToggle}>
           {collapsed ? (
             <ChevronRightIcon style={{ fontSize: 20 }} />

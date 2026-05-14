@@ -1,10 +1,17 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { Request } from 'express'
-import type { User } from '../generated/prisma/client'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { UpdateProfileDto } from './dto/update-profile.dto'
 import { UsersService } from './users.service'
+
+/**
+ * Данные авторизованного пользователя из JWT-токена.
+ */
+interface JwtUser {
+  /** Идентификатор пользователя. */
+  userId: string
+}
 
 /**
  * Контроллер управления профилем текущего пользователя.
@@ -21,9 +28,9 @@ export class UsersController {
    */
   @ApiOperation({ summary: 'Получить профиль текущего пользователя' })
   @Get('me')
-  getMe(@Req() req: Request): Promise<User> {
-    const user = req.user as User
-    return this.usersService.getProfile(user.id)
+  getMe(@Req() req: Request) {
+    const { userId } = req.user as JwtUser
+    return this.usersService.getProfile(userId)
   }
 
   /**
@@ -31,8 +38,8 @@ export class UsersController {
    */
   @ApiOperation({ summary: 'Обновить профиль текущего пользователя' })
   @Patch('me')
-  updateMe(@Req() req: Request, @Body() dto: UpdateProfileDto): Promise<User> {
-    const user = req.user as User
-    return this.usersService.updateProfile(user.id, dto)
+  updateMe(@Req() req: Request, @Body() dto: UpdateProfileDto) {
+    const { userId } = req.user as JwtUser
+    return this.usersService.updateProfile(userId, dto)
   }
 }
