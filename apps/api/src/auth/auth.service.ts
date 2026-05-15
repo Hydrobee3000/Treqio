@@ -73,7 +73,6 @@ export class AuthService {
     return this.prisma.user.create({
       data: {
         email: profile.email,
-        displayName: profile.displayName,
         username,
         avatarUrl: profile.avatarUrl,
         provider: 'google',

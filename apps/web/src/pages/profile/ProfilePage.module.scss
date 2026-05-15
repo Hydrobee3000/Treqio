@@ -36,7 +36,6 @@ $bp-md: 900px;
 
 // ─── Аватар ───────────────────────────────────────────────────────────────────
 
-
 .avatar-placeholder {
   width: 80px;
   height: 80px;
@@ -65,6 +64,7 @@ $bp-md: 900px;
   gap: 4px;
   min-width: 0;
   flex: 1;
+  position: relative;
 }
 
 .header__name {
@@ -93,7 +93,7 @@ $bp-md: 900px;
   gap: 6px;
   flex-wrap: wrap;
   padding-left: 14px;
-  margin-top: 6px;
+  margin-top: 14px;
 }
 
 .header__bio {
@@ -116,11 +116,14 @@ $bp-md: 900px;
   gap: 6px;
   height: 36px;
   width: 320px;
+  position: relative;
   padding: 0 6px 0 14px;
   border-radius: 8px;
   background: color-mix(in srgb, var(--color-primary, #4e7b6a) 8%, var(--color-paper-2, #f0f0f0));
   border: 1px solid transparent;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   &--editing {
     border-color: var(--color-primary, #4e7b6a);
@@ -172,7 +175,9 @@ $bp-md: 900px;
   color: var(--color-text-2, #666);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: color-mix(in srgb, var(--color-primary, #4e7b6a) 12%, transparent);
@@ -185,13 +190,32 @@ $bp-md: 900px;
   }
 }
 
+
+.name-counter {
+  position: absolute;
+  top: 26px;
+  right: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+
+  &--warn {
+    color: #f59e0b;
+  }
+
+  &--max {
+    color: #e05252;
+  }
+}
+
 // ─── Табы категорий ───────────────────────────────────────────────────────────
 
 .category-tabs {
   display: flex;
   gap: 4px;
   padding: 4px;
-  background: var(--color-paper-2, rgba(0,0,0,0.06));
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
   border-radius: 12px;
   width: fit-content;
 
@@ -213,7 +237,9 @@ $bp-md: 900px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   flex: 1;
   justify-content: center;
 
@@ -224,7 +250,7 @@ $bp-md: 900px;
   &--active {
     background: var(--color-paper, white);
     color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -258,7 +284,7 @@ $bp-md: 900px;
   text-align: left;
 
   &:hover {
-    background: var(--color-paper-2, rgba(0,0,0,0.04));
+    background: var(--color-paper-2, rgba(0, 0, 0, 0.04));
   }
 
   &--active .stat__value {
@@ -299,7 +325,9 @@ $bp-md: 900px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 
   &:hover {
     border-color: var(--color-primary, #4e7b6a);
