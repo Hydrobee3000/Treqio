@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { BookOpen, Gamepad2, Filter } from 'lucide-react'
-import { useGetMeQuery } from '@/features/user'
+import { useState, useRef, useEffect } from 'react'
+import { BookOpen, Gamepad2, Filter, Pencil, Check, X } from 'lucide-react'
+import { useGetMeQuery, useUpdateMeMutation } from '@/features/user'
+import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
 import styles from './ProfilePage.module.scss'
 
 type Category = 'books' | 'games'
@@ -26,11 +27,41 @@ const GAME_STATUSES: { id: GameStatus; label: string }[] = [
  */
 export const ProfilePage = () => {
   const { data: user, isLoading } = useGetMeQuery()
+  const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [category, setCategory] = useState<Category>('books')
   const [bookStatus, setBookStatus] = useState<BookStatus>('want')
   const [gameStatus, setGameStatus] = useState<GameStatus>('want')
+  const [editingName, setEditingName] = useState(false)
+  const [nameValue, setNameValue] = useState('')
+  const nameInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (editingName) nameInputRef.current?.focus()
+  }, [editingName])
 
   if (isLoading) return null
+
+  /** Переходит в режим редактирования имени, заполняя поле текущим значением. */
+  const handleEditName = () => {
+    setNameValue(user?.username ?? '')
+    setEditingName(true)
+  }
+
+  /** Сохраняет новый username если он изменился и не пустой. */
+  const handleSaveName = async () => {
+    const trimmed = nameValue.trim()
+    if (!trimmed || trimmed === user?.username) {
+      setEditingName(false)
+      return
+    }
+    await updateMe({ username: trimmed })
+    setEditingName(false)
+  }
+
+  /** Отменяет редактирование без сохранения. */
+  const handleCancelName = () => {
+    setEditingName(false)
+  }
 
   const statuses = category === 'books' ? BOOK_STATUSES : GAME_STATUSES
   const activeStatus = category === 'books' ? bookStatus : gameStatus
@@ -39,9 +70,12 @@ export const ProfilePage = () => {
       ? (s: string) => setBookStatus(s as BookStatus)
       : (s: string) => setGameStatus(s as GameStatus)
 
+  /** Отображаемое имя — username, затем displayName, затем дефолт. */
   const rawName = user?.username || user?.displayName || 'Мечтатель'
-  const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1)
-  const avatarLetter = displayName.charAt(0).toUpperCase()
+  /** Итоговое отображаемое имя. */
+  const displayName = rawName
+  /** Первая буква имени для аватара-заглушки. */
+  const avatarLetter = rawName.charAt(0).toUpperCase()
 
   return (
     <div className={styles['profile']}>
@@ -50,7 +84,44 @@ export const ProfilePage = () => {
         <div className={styles['header__top']}>
           <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
           <div className={styles['header__info']}>
-            <h1 className={styles['header__name']}>{displayName}</h1>
+            <div
+              className={`${styles['name-field']} ${editingName ? styles['name-field--editing'] : ''}`}
+            >
+              {editingName ? (
+                <>
+                  <input
+                    ref={nameInputRef}
+                    className={styles['name-field__input']}
+                    value={nameValue}
+                    onChange={(e) => setNameValue(e.target.value)}
+                    maxLength={DISPLAY_NAME_MAX}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveName()
+                      if (e.key === 'Escape') handleCancelName()
+                    }}
+                  />
+                  <div className={styles['name-field__actions']}>
+                    <button className={styles['name-field__btn']} onClick={handleCancelName}>
+                      <X size={15} />
+                    </button>
+                    <button
+                      className={styles['name-field__btn']}
+                      onClick={handleSaveName}
+                      disabled={isSaving}
+                    >
+                      <Check size={15} />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h1 className={styles['header__name']}>{displayName}</h1>
+                  <button className={styles['name-field__btn']} onClick={handleEditName}>
+                    <Pencil size={14} />
+                  </button>
+                </>
+              )}
+            </div>
             <div className={styles['header__meta']}>
               {user?.username && <span>@{user.username}</span>}
             </div>
