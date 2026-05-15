@@ -72,10 +72,13 @@ $bp-md: 900px;
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--color-text, inherit);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 
   @media (max-width: $bp-sm) {
     font-size: 18px;
@@ -89,6 +92,8 @@ $bp-md: 900px;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  padding-left: 14px;
+  margin-top: 6px;
 }
 
 .header__bio {
@@ -100,6 +105,83 @@ $bp-md: 900px;
 
   @media (max-width: $bp-sm) {
     display: none;
+  }
+}
+
+// ─── Инлайн-редактирование имени ─────────────────────────────────────────────
+
+.name-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  width: 320px;
+  padding: 0 6px 0 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 8%, var(--color-paper-2, #f0f0f0));
+  border: 1px solid transparent;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &--editing {
+    border-color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+  }
+
+  @media (max-width: $bp-sm) {
+    width: 240px;
+  }
+}
+
+.name-field__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-text, inherit);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+
+  @media (max-width: $bp-sm) {
+    font-size: 18px;
+  }
+}
+
+.name-field__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.name-field__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 12%, transparent);
+    color: var(--color-primary, #4e7b6a);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
