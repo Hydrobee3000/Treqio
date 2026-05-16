@@ -24,6 +24,13 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   api,
   extraOptions,
 ) => {
+  const { accessToken } = (api.getState() as RootState).auth
+
+  // если гость — возвращаем пустой результат без ошибки
+  if (!accessToken) {
+    return { data: null }
+  }
+
   let result = await baseQuery(args, api, extraOptions)
 
   if (result.error?.status === 401) {
@@ -34,8 +41,8 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     )
 
     if (refreshResult.data) {
-      const { accessToken } = refreshResult.data as { accessToken: string }
-      api.dispatch(setCredentials({ accessToken }))
+      const { accessToken: newToken } = refreshResult.data as { accessToken: string }
+      api.dispatch(setCredentials({ accessToken: newToken }))
       result = await baseQuery(args, api, extraOptions)
     } else {
       api.dispatch(logout())

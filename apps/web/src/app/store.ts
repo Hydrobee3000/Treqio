@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authReducer } from '@/features/auth'
+import { guestReducer } from '@/features/guest'
 import { themeReducer } from '@/features/theme'
 import { layoutReducer } from '@/features/layout'
 import { animationsReducer } from '@/features/animations'
@@ -11,6 +12,7 @@ import { baseApi } from '@/shared/api/baseApi'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    guest: guestReducer,
     theme: themeReducer,
     layout: layoutReducer,
     animations: animationsReducer,
