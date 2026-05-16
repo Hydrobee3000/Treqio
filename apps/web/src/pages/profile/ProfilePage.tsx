@@ -41,21 +41,26 @@ export const ProfilePage = () => {
 
   if (isLoading) return null
 
-  /** Переходит в режим редактирования имени, заполняя поле текущим значением. */
+  /** Переходит в режим редактирования имени, заполняя поле тем что сейчас отображается. */
   const handleEditName = () => {
-    setNameValue(user?.username ?? '')
+    setNameValue(user?.displayName || user?.username || '')
     setEditingName(true)
   }
 
-  /** Сохраняет новый username если он изменился и не пустой. */
+  /** Сохраняет новое displayName если оно изменилось. */
   const handleSaveName = async () => {
     const trimmed = nameValue.trim()
-    if (!trimmed || trimmed === user?.username) {
+    const current = user?.displayName || user?.username || ''
+    if (!trimmed || trimmed === current) {
       setEditingName(false)
       return
     }
-    await updateMe({ username: trimmed })
-    setEditingName(false)
+    try {
+      await updateMe({ displayName: trimmed }).unwrap()
+      setEditingName(false)
+    } catch {
+      setEditingName(false)
+    }
   }
 
   /** Отменяет редактирование без сохранения. */
@@ -65,17 +70,17 @@ export const ProfilePage = () => {
 
   const statuses = category === 'books' ? BOOK_STATUSES : GAME_STATUSES
   const activeStatus = category === 'books' ? bookStatus : gameStatus
-  const setStatus =
-    category === 'books'
-      ? (s: string) => setBookStatus(s as BookStatus)
-      : (s: string) => setGameStatus(s as GameStatus)
 
-  /** Отображаемое имя — username, затем displayName, затем дефолт. */
-  const rawName = user?.username || user?.displayName || 'Мечтатель'
-  /** Итоговое отображаемое имя. */
-  const displayName = rawName
+  /** Переключает активный статус в текущей категории. */
+  const handleStatusChange = (id: string) => {
+    if (category === 'books') setBookStatus(id as BookStatus)
+    else setGameStatus(id as GameStatus)
+  }
+
+  /** Отображаемое имя — displayName если задан, иначе username, иначе дефолт. */
+  const displayName = user?.displayName || user?.username || 'Мечтатель'
   /** Первая буква имени для аватара-заглушки. */
-  const avatarLetter = rawName.charAt(0).toUpperCase()
+  const avatarLetter = displayName.charAt(0).toUpperCase()
 
   return (
     <div className={styles['profile']}>
@@ -121,6 +126,18 @@ export const ProfilePage = () => {
                   </button>
                 </>
               )}
+              {editingName && nameValue.length >= DISPLAY_NAME_MAX - 5 && (
+                <p
+                  className={[
+                    styles['name-counter'],
+                    nameValue.length >= DISPLAY_NAME_MAX
+                      ? styles['name-counter--max']
+                      : styles['name-counter--warn'],
+                  ].join(' ')}
+                >
+                  {nameValue.length}/{DISPLAY_NAME_MAX}
+                </p>
+              )}
             </div>
             <div className={styles['header__meta']}>
               {user?.username && <span>@{user.username}</span>}
@@ -153,7 +170,7 @@ export const ProfilePage = () => {
             <button
               key={s.id}
               className={`${styles['stat']} ${activeStatus === s.id ? styles['stat--active'] : ''}`}
-              onClick={() => setStatus(s.id)}
+              onClick={() => handleStatusChange(s.id)}
             >
               <span className={styles['stat__value']}>0</span>
               <span className={styles['stat__label']}>{s.label}</span>

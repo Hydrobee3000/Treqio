@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { IsBoolean, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator'
 
 /** Максимальная длина отображаемого имени. */
-export const DISPLAY_NAME_MAX = 50
+export const DISPLAY_NAME_MAX = 25
 
 /** Минимальная длина никнейма. */
 export const USERNAME_MIN = 3
