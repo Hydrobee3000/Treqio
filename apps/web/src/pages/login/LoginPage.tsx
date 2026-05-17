@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { Button, Tooltip, useMediaQuery } from '@mui/material'
+import { Button, useMediaQuery } from '@mui/material'
 import { Activity, BarChart2, LibraryBig } from 'lucide-react'
+import { useNavigate } from 'react-router'
+import { useAppDispatch } from '@/shared/lib/store'
+import { enterAsGuest } from '@/features/auth'
 import styles from './LoginPage.module.scss'
 
 const API_URL = import.meta.env['VITE_API_URL'] as string
@@ -48,9 +51,17 @@ const FEATURES = [
  */
 export function LoginPage() {
   const isMobile = useMediaQuery('(max-width:599px)')
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const handleGoogleLogin = () => {
     window.location.href = `${API_URL}/auth/google`
+  }
+
+  /** Вход в гостевой режим без регистрации. */
+  const handleGuestLogin = () => {
+    dispatch(enterAsGuest())
+    navigate('/')
   }
 
   const cardsRef = useRef<HTMLDivElement>(null)
@@ -100,18 +111,16 @@ export function LoginPage() {
             <span className={styles['login-page__or-line']} />
           </div>
 
-          <Tooltip title="Гостевой режим — скоро" placement="bottom" arrow>
-            <span className={styles['login-page__guest-btn-wrapper']}>
-              <Button
-                variant="outlined"
-                size="large"
-                disabled
-                className={styles['login-page__guest-btn']}
-              >
-                Продолжить без входа
-              </Button>
-            </span>
-          </Tooltip>
+          <span className={styles['login-page__guest-btn-wrapper']}>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={handleGuestLogin}
+              className={styles['login-page__guest-btn']}
+            >
+              Продолжить без входа
+            </Button>
+          </span>
 
           <p className={styles['login-page__hint']}>Без входа данные хранятся только в браузере</p>
         </div>

@@ -10,10 +10,10 @@ import { useAppSelector } from '@/shared/lib/store'
 import { AppLayout } from '@/widgets/layout'
 
 /**
- * Защита приватных роутов — редирект на /login если пользователь не авторизован.
+ * Пропускает авторизованных пользователей и гостей, остальных редиректит на /login.
  */
 function RequireAuth() {
-  const { accessToken, isInitialized } = useAppSelector((s) => s.auth)
+  const { accessToken, isGuest, isInitialized } = useAppSelector((s) => s.auth)
 
   // Ждём завершения проверки сессии в AuthProvider перед редиректом
   if (!isInitialized) {
@@ -26,7 +26,7 @@ function RequireAuth() {
     )
   }
 
-  if (!accessToken) {
+  if (!accessToken && !isGuest) {
     return <Navigate to="/login" replace />
   }
 

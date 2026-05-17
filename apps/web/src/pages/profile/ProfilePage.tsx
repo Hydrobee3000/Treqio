@@ -2,7 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { BookOpen, Gamepad2, Filter, Pencil, Check, X } from 'lucide-react'
 import { useGetMeQuery, useUpdateMeMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
+import { setGuestDisplayName } from '@/features/guest'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import styles from './ProfilePage.module.scss'
+
+const DEFAULT_DISPLAY_NAME = 'Мечтатель'
 
 type Category = 'books' | 'games'
 type BookStatus = 'want' | 'reading' | 'done' | 'dropped'
@@ -26,7 +30,10 @@ const GAME_STATUSES: { id: GameStatus; label: string }[] = [
  * Страница профиля пользователя.
  */
 export const ProfilePage = () => {
-  const { data: user, isLoading } = useGetMeQuery()
+  const dispatch = useAppDispatch()
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
+  const guestDisplayName = useAppSelector((s) => s.guest.displayName)
+  const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [category, setCategory] = useState<Category>('books')
   const [bookStatus, setBookStatus] = useState<BookStatus>('want')
@@ -43,15 +50,25 @@ export const ProfilePage = () => {
 
   /** Переходит в режим редактирования имени, заполняя поле тем что сейчас отображается. */
   const handleEditName = () => {
-    setNameValue(user?.displayName || user?.username || '')
+    const current = isGuest
+      ? guestDisplayName || DEFAULT_DISPLAY_NAME
+      : user?.displayName || user?.username || ''
+    setNameValue(current)
     setEditingName(true)
   }
 
   /** Сохраняет новое displayName если оно изменилось. */
   const handleSaveName = async () => {
     const trimmed = nameValue.trim()
-    const current = user?.displayName || user?.username || ''
+    const current = isGuest
+      ? guestDisplayName || DEFAULT_DISPLAY_NAME
+      : user?.displayName || user?.username || ''
     if (!trimmed || trimmed === current) {
+      setEditingName(false)
+      return
+    }
+    if (isGuest) {
+      dispatch(setGuestDisplayName(trimmed))
       setEditingName(false)
       return
     }
@@ -78,7 +95,9 @@ export const ProfilePage = () => {
   }
 
   /** Отображаемое имя — displayName если задан, иначе username, иначе дефолт. */
-  const displayName = user?.displayName || user?.username || 'Мечтатель'
+  const displayName = isGuest
+    ? guestDisplayName || DEFAULT_DISPLAY_NAME
+    : user?.displayName || user?.username || DEFAULT_DISPLAY_NAME
   /** Первая буква имени для аватара-заглушки. */
   const avatarLetter = displayName.charAt(0).toUpperCase()
 

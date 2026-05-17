@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { User } from '@/entities/user'
 
+const GUEST_KEY = 'treqio_guest'
+
 /**
  * Состояние авторизации в Redux store.
  */
@@ -12,13 +14,16 @@ interface AuthState {
   accessToken: string | null
   /** Флаг завершения начальной проверки сессии. */
   isInitialized: boolean
+  /** Пользователь вошёл как гость без регистрации. */
+  isGuest: boolean
 }
 
-/** Начальное состояние. */
+/** Начальное состояние — восстанавливаем гостевой режим из localStorage. */
 const initialState: AuthState = {
   user: null,
   accessToken: null,
   isInitialized: false,
+  isGuest: localStorage.getItem(GUEST_KEY) === 'true',
 }
 
 /**
@@ -33,6 +38,8 @@ const authSlice = createSlice({
      */
     setCredentials: (state, action: PayloadAction<{ accessToken: string; user?: User }>) => {
       state.accessToken = action.payload.accessToken
+      state.isGuest = false
+      localStorage.removeItem(GUEST_KEY)
       if (action.payload.user) {
         state.user = action.payload.user
       }
@@ -46,11 +53,23 @@ const authSlice = createSlice({
     },
 
     /**
+     * Вход в гостевой режим без регистрации.
+     */
+    enterAsGuest: (state) => {
+      state.isGuest = true
+      state.user = null
+      state.accessToken = null
+      localStorage.setItem(GUEST_KEY, 'true')
+    },
+
+    /**
      * Очистка сессии при выходе из системы.
      */
     logout: (state) => {
       state.user = null
       state.accessToken = null
+      state.isGuest = false
+      localStorage.removeItem(GUEST_KEY)
     },
 
     /**
@@ -62,6 +81,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, setUser, logout, setInitialized } = authSlice.actions
+export const { setCredentials, setUser, enterAsGuest, logout, setInitialized } = authSlice.actions
 
 export default authSlice.reducer
