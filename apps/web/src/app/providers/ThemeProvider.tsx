@@ -35,7 +35,7 @@ export const ThemeProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const root = document.documentElement
-    const { sidebar, primary, divider, text, background } = theme.palette
+    const { sidebar, primary, warning, divider, text, background } = theme.palette
 
     // Токены активной темы — используются во всём приложении
     root.style.setProperty('--sidebar-bg', sidebar.background)
@@ -51,6 +51,10 @@ export const ThemeProvider = ({ children }: Props) => {
     root.style.setProperty('--color-text-2', text.secondary)
     root.style.setProperty('--color-paper', background.paper)
     root.style.setProperty('--color-paper-2', background.default)
+
+    root.style.setProperty('--color-warning', warning.main)
+    root.style.setProperty('--color-warning-bg', warning.main + '26') // 15% opacity
+    root.style.setProperty('--color-warning-border', warning.main + '59') // 35% opacity
 
     root.style.setProperty('--color-chip-bg', primary.light + '33')
     root.style.setProperty('--color-chip-text', primary.dark)
