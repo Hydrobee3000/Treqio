@@ -3,6 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
+  TriangleAlert,
   Palette,
   SlidersHorizontal,
   LayoutGrid,
@@ -50,6 +51,7 @@ interface SettingsSection {
 export function SettingsPage() {
   const { section } = useParams<{ section: string }>()
   const navigate = useNavigate()
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
 
   const sections: SettingsSection[] = [
     {
@@ -117,9 +119,26 @@ export function SettingsPage() {
         )}
 
         {!active && (
-          <div
-            className={`${styles['settings__content']} ${styles['settings__content--hidden']}`}
-          />
+          <div className={`${styles['settings__content']} ${styles['settings__content--hidden']}`}>
+            {isGuest && (
+              <div className={styles['guest-card']}>
+                <div className={styles['guest-card__left']}>
+                  <div className={styles['guest-card__icon']}>
+                    <TriangleAlert size={18} />
+                  </div>
+                  <div>
+                    <p className={styles['guest-card__title']}>Войдите</p>
+                    <p className={styles['guest-card__sub']}>
+                      Чтобы не потерять данные и иметь доступ с любого устройства
+                    </p>
+                  </div>
+                </div>
+                <button className={styles['guest-card__btn']} onClick={() => navigate('/login')}>
+                  Войти
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Outlet } from 'react-router'
 import { useAppSelector } from '@/shared/lib/store'
 import { THEME_COLORS } from '@/shared/config/themes'
 import { ParticleCanvas } from '@/features/animations'
+import { GuestBanner } from '@/features/guest'
 import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
 
@@ -59,6 +60,7 @@ export const AppLayout = () => {
         }}
       >
         {showParticles && <ParticleCanvas type={particleType!} />}
+        <GuestBanner />
         <Outlet />
       </Box>
 
