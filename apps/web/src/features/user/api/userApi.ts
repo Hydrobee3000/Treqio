@@ -38,17 +38,32 @@ export interface UpdateProfileDto {
   isPublic?: boolean
 }
 
+/**
+ * API пользователя.
+ */
 export const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    /**
+     * Получение профиля текущего пользователя.
+     */
     getMe: build.query<UserProfile, void>({
       query: () => '/users/me',
       providesTags: ['User'],
     }),
+    /**
+     * Обновление профиля текущего пользователя.
+     */
     updateMe: build.mutation<UserProfile, UpdateProfileDto>({
       query: (body) => ({ url: '/users/me', method: 'PATCH', body }),
       invalidatesTags: ['User'],
     }),
+    /**
+     * Выход из системы.
+     */
+    logout: build.mutation<void, void>({
+      query: () => ({ url: '/auth/logout', method: 'POST' }),
+    }),
   }),
 })
 
-export const { useGetMeQuery, useUpdateMeMutation } = userApi
+export const { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } = userApi

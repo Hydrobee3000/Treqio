@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { BookOpen, Gamepad2, Filter, Pencil, Check, X } from 'lucide-react'
-import { useGetMeQuery, useUpdateMeMutation } from '@/features/user'
+import { BookOpen, Gamepad2, Filter, Pencil, Check, X, LogIn, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router'
+import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
 import { setGuestDisplayName } from '@/features/guest'
+import { logout } from '@/features/auth'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import styles from './ProfilePage.module.scss'
 
@@ -31,10 +33,21 @@ const GAME_STATUSES: { id: GameStatus; label: string }[] = [
  */
 export const ProfilePage = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const guestDisplayName = useAppSelector((s) => s.guest.displayName)
   const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
+  const [logoutMutation] = useLogoutMutation()
+
+  /**
+   * Функция выхода из аккаунта.
+   */
+  const handleLogout = async () => {
+    await logoutMutation()
+    dispatch(logout())
+    navigate('/login')
+  }
   const [category, setCategory] = useState<Category>('books')
   const [bookStatus, setBookStatus] = useState<BookStatus>('want')
   const [gameStatus, setGameStatus] = useState<GameStatus>('want')
@@ -42,13 +55,18 @@ export const ProfilePage = () => {
   const [nameValue, setNameValue] = useState('')
   const nameInputRef = useRef<HTMLInputElement>(null)
 
+  /**
+   * Фокусировка поля ввода при открытии редактора имени.
+   */
   useEffect(() => {
     if (editingName) nameInputRef.current?.focus()
   }, [editingName])
 
   if (isLoading) return null
 
-  /** Переходит в режим редактирования имени, заполняя поле тем что сейчас отображается. */
+  /**
+   * Функция редактирования имени пользователя.
+   */
   const handleEditName = () => {
     const current = isGuest
       ? guestDisplayName || DEFAULT_DISPLAY_NAME
@@ -57,16 +75,20 @@ export const ProfilePage = () => {
     setEditingName(true)
   }
 
-  /** Сохраняет новое displayName если оно изменилось. */
+  /**
+   * Функция сохранения имени пользователя.
+   */
   const handleSaveName = async () => {
     const trimmed = nameValue.trim()
     const current = isGuest
       ? guestDisplayName || DEFAULT_DISPLAY_NAME
       : user?.displayName || user?.username || ''
+    // Если пустое значение или имя не изменилось
     if (!trimmed || trimmed === current) {
       setEditingName(false)
       return
     }
+    // Если гость - сохраняем локально без запроса к API
     if (isGuest) {
       dispatch(setGuestDisplayName(trimmed))
       setEditingName(false)
@@ -80,7 +102,9 @@ export const ProfilePage = () => {
     }
   }
 
-  /** Отменяет редактирование без сохранения. */
+  /**
+   * Функция отмены редактирования имени.
+   */
   const handleCancelName = () => {
     setEditingName(false)
   }
@@ -88,17 +112,17 @@ export const ProfilePage = () => {
   const statuses = category === 'books' ? BOOK_STATUSES : GAME_STATUSES
   const activeStatus = category === 'books' ? bookStatus : gameStatus
 
-  /** Переключает активный статус в текущей категории. */
+  /**
+   * Функция переключения статуса в текущей категории.
+   */
   const handleStatusChange = (id: string) => {
     if (category === 'books') setBookStatus(id as BookStatus)
     else setGameStatus(id as GameStatus)
   }
 
-  /** Отображаемое имя — displayName если задан, иначе username, иначе дефолт. */
   const displayName = isGuest
     ? guestDisplayName || DEFAULT_DISPLAY_NAME
     : user?.displayName || user?.username || DEFAULT_DISPLAY_NAME
-  /** Первая буква имени для аватара-заглушки. */
   const avatarLetter = displayName.charAt(0).toUpperCase()
 
   return (
@@ -163,6 +187,13 @@ export const ProfilePage = () => {
             </div>
             {user?.bio && <p className={styles['header__bio']}>{user.bio}</p>}
           </div>
+          <button
+            className={styles['header__auth-btn']}
+            onClick={isGuest ? () => navigate('/login') : handleLogout}
+          >
+            {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
+            {isGuest ? 'Войти' : 'Выйти'}
+          </button>
         </div>
 
         {/* Табы категорий */}
