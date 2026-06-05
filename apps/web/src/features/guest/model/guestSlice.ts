@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-const STORAGE_KEY = 'treqio_guest_profile'
+export const GUEST_STORAGE_KEY = 'treqio_guest_profile'
 
 /**
  * Профиль гостевого пользователя, хранимый в localStorage.
@@ -13,7 +13,7 @@ interface GuestProfile {
 
 function loadProfile(): GuestProfile {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(GUEST_STORAGE_KEY)
     if (raw) return JSON.parse(raw) as GuestProfile
   } catch {
     // ignore parse errors
@@ -22,7 +22,7 @@ function loadProfile(): GuestProfile {
 }
 
 function saveProfile(profile: GuestProfile) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profile))
+  localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(profile))
 }
 
 /**
@@ -45,7 +45,7 @@ const guestSlice = createSlice({
      */
     clearGuestProfile: (state) => {
       state.displayName = null
-      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(GUEST_STORAGE_KEY)
     },
   },
 })
