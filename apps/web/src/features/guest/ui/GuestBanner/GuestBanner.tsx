@@ -23,6 +23,7 @@ export const GuestBanner = () => {
     <Snackbar
       open={isGuest && !dismissed}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <Alert
         severity="warning"
@@ -41,7 +42,13 @@ export const GuestBanner = () => {
             >
               Войти
             </Button>
-            <IconButton size="small" color="inherit" onClick={handleDismiss} sx={{ ml: 1 }}>
+            <IconButton
+              size="small"
+              color="inherit"
+              aria-label="Закрыть"
+              onClick={handleDismiss}
+              sx={{ ml: 1 }}
+            >
               <X size={16} />
             </IconButton>
           </>
