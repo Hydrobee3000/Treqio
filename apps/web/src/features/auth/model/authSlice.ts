@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { User } from '@/entities/user'
 
-const GUEST_KEY = 'treqio_guest'
+export const GUEST_KEY = 'treqio_guest'
 
 /**
  * Состояние авторизации в Redux store.
@@ -19,11 +19,13 @@ interface AuthState {
 }
 
 /** Начальное состояние — восстанавливаем гостевой режим из localStorage. */
-const initialState: AuthState = {
-  user: null,
-  accessToken: null,
-  isInitialized: false,
-  isGuest: localStorage.getItem(GUEST_KEY) === 'true',
+function loadAuthState(): AuthState {
+  return {
+    user: null,
+    accessToken: null,
+    isInitialized: false,
+    isGuest: localStorage.getItem(GUEST_KEY) === 'true',
+  }
 }
 
 /**
@@ -31,7 +33,7 @@ const initialState: AuthState = {
  */
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: loadAuthState,
   reducers: {
     /**
      * Сохранение токена и опционально данных пользователя после логина или refresh.
