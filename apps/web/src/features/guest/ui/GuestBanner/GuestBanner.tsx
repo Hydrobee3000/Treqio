@@ -23,7 +23,7 @@ export const GuestBanner = () => {
     <Snackbar
       open={isGuest && !dismissed}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      TransitionProps={{ unmountOnExit: true }}
+      slotProps={{ transition: { unmountOnExit: true } }}
     >
       <Alert
         severity="warning"
