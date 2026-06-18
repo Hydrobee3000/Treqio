@@ -1,0 +1,191 @@
+.cover-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 170px;
+  cursor: pointer;
+}
+
+// ─── Обложка ──────────────────────────────────────────────────────────────────
+
+.cover-card__cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-primary, #4e7b6a);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px 13px;
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.22s;
+
+  // Линия корешка
+  &::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+  }
+
+  // Лёгкая текстура бумаги
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 80% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 55%);
+    pointer-events: none;
+  }
+
+  .cover-card:hover & {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px -14px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.cover-card__title {
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.cover-card__author {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Круглый бейдж оценки ─────────────────────────────────────────────────────
+
+.cover-card__score {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 20, 18, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.cover-card__score-ring {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.cover-card__score-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+
+  &--empty {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+  }
+}
+
+// ─── Подпись под обложкой ─────────────────────────────────────────────────────
+
+.cover-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cover-card__footer-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-text, inherit);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.cover-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cover-card__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.cover-card__status--reading {
+  background: rgba(90, 160, 200, 0.16);
+  color: #4a92bd;
+
+  .cover-card__status-dot { background: #5aa0c8; }
+}
+
+.cover-card__status--done {
+  background: color-mix(in oklab, var(--color-primary, #4e7b6a) 16%, transparent);
+  color: var(--color-primary-dark, #3d6a55);
+
+  .cover-card__status-dot { background: var(--color-primary, #4e7b6a); }
+}
+
+.cover-card__status--want {
+  background: rgba(140, 140, 140, 0.16);
+  color: var(--color-text-2, #777);
+
+  .cover-card__status-dot { background: #999; }
+}
+
+.cover-card__status--dropped {
+  background: rgba(185, 64, 64, 0.14);
+  color: #b94040;
+
+  .cover-card__status-dot { background: #b94040; }
+}
+
+// ─── Прогресс чтения ──────────────────────────────────────────────────────────
+
+.cover-card__progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-paper-2, #ecf1ea);
+  overflow: hidden;
+}
+
+.cover-card__progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #5aa0c8;
+}
