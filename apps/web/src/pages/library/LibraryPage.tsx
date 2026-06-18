@@ -1,88 +1,19 @@
 import { useState } from 'react'
-import { LayoutGrid, Image } from 'lucide-react'
-import { BookCard, BookCoverCard, type BookEntry } from '@/entities/book'
+import { BookOpen, Image, LayoutGrid } from 'lucide-react'
+import { BookCard, BookCoverCard } from '@/entities/book'
+import { useGetMyEntriesQuery } from '@/features/book'
 import styles from './LibraryPage.module.scss'
 
 /** Стиль отображения карточек книги. */
 type CardStyle = 'compact' | 'cover'
 
-const MOCK_ENTRIES: BookEntry[] = [
-  {
-    id: '1',
-    userId: '1',
-    bookId: '1',
-    status: 'READING',
-    rating: null,
-    progress: 120,
-    startDate: '2026-01-01',
-    finishDate: null,
-    notes: null,
-    createdAt: '',
-    updatedAt: '',
-    book: {
-      id: '1',
-      title: 'Мастер и Маргарита',
-      author: 'Михаил Булгаков',
-      coverUrl: null,
-      description: null,
-      pageCount: 480,
-      genres: ['Роман'],
-      createdAt: '',
-      updatedAt: '',
-    },
-  },
-  {
-    id: '2',
-    userId: '1',
-    bookId: '2',
-    status: 'DONE',
-    rating: 9,
-    progress: null,
-    startDate: '2025-12-01',
-    finishDate: '2026-01-15',
-    notes: null,
-    createdAt: '',
-    updatedAt: '',
-    book: {
-      id: '2',
-      title: 'Преступление и наказание',
-      author: 'Фёдор Достоевский',
-      coverUrl: null,
-      description: null,
-      pageCount: 592,
-      genres: ['Роман'],
-      createdAt: '',
-      updatedAt: '',
-    },
-  },
-  {
-    id: '3',
-    userId: '1',
-    bookId: '3',
-    status: 'WANT',
-    rating: null,
-    progress: null,
-    startDate: null,
-    finishDate: null,
-    notes: null,
-    createdAt: '',
-    updatedAt: '',
-    book: {
-      id: '3',
-      title: 'Война и мир',
-      author: 'Лев Толстой',
-      coverUrl: null,
-      description: null,
-      pageCount: 1225,
-      genres: ['Роман'],
-      createdAt: '',
-      updatedAt: '',
-    },
-  },
-]
-
 export const LibraryPage = () => {
   const [cardStyle, setCardStyle] = useState<CardStyle>('compact')
+  const { data, isLoading, isError } = useGetMyEntriesQuery()
+  const entries = data ?? []
+  const showEmpty = isError || entries.length === 0
+
+  if (isLoading) return null
 
   return (
     <div className={styles.library}>
@@ -91,7 +22,7 @@ export const LibraryPage = () => {
       </div>
 
       <div className={styles['library__label-row']}>
-        <span className={styles['library__label']}>{MOCK_ENTRIES.length} книг</span>
+        <span className={styles['library__label']}>{entries.length} книг</span>
 
         <div className={styles['library__style-toggle']}>
           <button
@@ -111,15 +42,29 @@ export const LibraryPage = () => {
         </div>
       </div>
 
-      <div className={styles['library__grid']}>
-        {MOCK_ENTRIES.map((entry) =>
-          cardStyle === 'compact' ? (
-            <BookCard key={entry.id} entry={entry} />
-          ) : (
-            <BookCoverCard key={entry.id} entry={entry} />
-          ),
-        )}
-      </div>
+      {showEmpty ? (
+        <div className={styles['library__empty']}>
+          <div className={styles['library__empty-icon']}>
+            <BookOpen size={48} />
+          </div>
+          <p className={styles['library__empty-text']}>
+            {isError ? 'Не удалось загрузить библиотеку' : 'Список книг пуст'}
+          </p>
+          <p className={styles['library__empty-sub']}>
+            {isError ? 'Попробуй обновить страницу' : 'Добавь первую книгу в свою библиотеку'}
+          </p>
+        </div>
+      ) : (
+        <div className={styles['library__grid']}>
+          {entries.map((entry) =>
+            cardStyle === 'compact' ? (
+              <BookCard key={entry.id} entry={entry} />
+            ) : (
+              <BookCoverCard key={entry.id} entry={entry} />
+            ),
+          )}
+        </div>
+      )}
     </div>
   )
 }
