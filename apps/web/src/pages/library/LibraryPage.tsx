@@ -1,7 +1,18 @@
 import { useState } from 'react'
 import { BookOpen, Image, LayoutGrid, Plus, Upload } from 'lucide-react'
+import { useNavigate } from 'react-router'
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@mui/material'
 import { BookCard, BookCoverCard } from '@/entities/book'
 import { AddBookDialog, useGetMyEntriesQuery } from '@/features/book'
+import { saveRedirectPath } from '@/shared/lib/redirectPath'
+import { useAppSelector } from '@/shared/lib/store'
 import styles from './LibraryPage.module.scss'
 
 /** Стиль отображения карточек книги. */
@@ -13,9 +24,27 @@ type CardStyle = 'compact' | 'cover'
 export const LibraryPage = () => {
   const [cardStyle, setCardStyle] = useState<CardStyle>('compact')
   const [addOpen, setAddOpen] = useState(false)
+  const [guestPromptOpen, setGuestPromptOpen] = useState(false)
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
+  const navigate = useNavigate()
   const { data, isLoading, isError } = useGetMyEntriesQuery()
   const entries = data ?? []
   const isEmpty = !isError && entries.length === 0
+
+  /** Открывает форму добавления книги, либо для гостя — предлагает войти. */
+  const handleAddClick = () => {
+    if (isGuest) {
+      setGuestPromptOpen(true)
+      return
+    }
+    setAddOpen(true)
+  }
+
+  /** Сохраняет текущий путь и ведёт на страницу входа. */
+  const handleGoToLogin = () => {
+    saveRedirectPath('/library')
+    void navigate('/login')
+  }
 
   if (isLoading) return null
 
@@ -23,7 +52,7 @@ export const LibraryPage = () => {
     <div className={styles.library}>
       <div className={styles['library__header']}>
         <h1 className={styles['library__title']}>Моя библиотека</h1>
-        <button className={styles['library__add-btn']} onClick={() => setAddOpen(true)}>
+        <button className={styles['library__add-btn']} onClick={handleAddClick}>
           <Plus size={16} />
           Добавить книгу
         </button>
@@ -74,7 +103,7 @@ export const LibraryPage = () => {
             Добавь первую книгу — и она появится на твоей полке.
           </p>
           <div className={styles['library__empty-actions']}>
-            <button className={styles['library__cta-primary']} onClick={() => setAddOpen(true)}>
+            <button className={styles['library__cta-primary']} onClick={handleAddClick}>
               <Plus size={17} />
               Добавить книгу
             </button>
@@ -97,6 +126,27 @@ export const LibraryPage = () => {
       )}
 
       <AddBookDialog open={addOpen} onClose={() => setAddOpen(false)} />
+
+      <Dialog open={guestPromptOpen} onClose={() => setGuestPromptOpen(false)}>
+        <DialogTitle sx={{ pt: 3, px: 3 }}>Необходимо войти</DialogTitle>
+        <DialogContent sx={{ px: 3 }}>
+          <DialogContentText>
+            Добавлять книги может только зарегистрированный пользователь.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            variant="outlined"
+            sx={{ minWidth: 100 }}
+            onClick={() => setGuestPromptOpen(false)}
+          >
+            Отмена
+          </Button>
+          <Button variant="contained" sx={{ minWidth: 100 }} onClick={handleGoToLogin}>
+            Войти
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

@@ -22,6 +22,8 @@ export const ThemeProvider = ({ children }: Props) => {
   const { lightVariant, darkVariant, isDark, themeMode } = useAppSelector((s) => s.theme)
   const activeVariant = isDark ? darkVariant : lightVariant
   const theme = useMemo(() => buildTheme(activeVariant), [activeVariant])
+  // Тема для «ghost»-карточек пустой библиотеки — всегда тёмная, независимо от isDark
+  const ghostTheme = useMemo(() => buildTheme(darkVariant), [darkVariant])
 
   // Следим за системной темой когда выбран режим «Как на устройстве»
   useEffect(() => {
@@ -75,7 +77,16 @@ export const ThemeProvider = ({ children }: Props) => {
     root.style.setProperty('--login-hero-bg', lightColors.sidebarBg)
     root.style.setProperty('--login-hero-text', lightColors.sidebarText)
     root.style.setProperty('--login-hero-muted', lightColors.sidebarMuted)
-  }, [theme, activeVariant, isDark, lightVariant])
+
+    // Токены для ghost-карточек пустой библиотеки — все завязаны на primary тёмной темы
+    // (тот же цвет, что и у акцентной карточки), просто с разной степенью прозрачности.
+    const ghostPalette = ghostTheme.palette
+    root.style.setProperty('--ghost-primary', ghostPalette.primary.main)
+    root.style.setProperty('--ghost-chip-bg', ghostPalette.primary.light + '33') // ~20%
+    root.style.setProperty('--ghost-border', ghostPalette.primary.main + '4D') // ~30%
+    root.style.setProperty('--ghost-bg-1', ghostPalette.primary.light + '26') // ~15%
+    root.style.setProperty('--ghost-bg-2', ghostPalette.primary.light + '0D') // ~5%
+  }, [theme, activeVariant, isDark, lightVariant, ghostTheme])
 
   return (
     <StyledEngineProvider injectFirst>
