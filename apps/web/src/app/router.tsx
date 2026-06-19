@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router'
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router'
 import { Box, CircularProgress } from '@mui/material'
 import { AuthCallbackPage } from '@/pages/auth-callback'
 import { HomePage } from '@/pages/home'
@@ -6,6 +6,7 @@ import { LibraryPage } from '@/pages/library'
 import { LoginPage } from '@/pages/login'
 import { ProfilePage } from '@/pages/profile'
 import { SettingsPage } from '@/pages/settings'
+import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
 import { AppLayout } from '@/widgets/layout'
 
@@ -14,6 +15,7 @@ import { AppLayout } from '@/widgets/layout'
  */
 function RequireAuth() {
   const { accessToken, isGuest, isInitialized } = useAppSelector((s) => s.auth)
+  const location = useLocation()
 
   // Ждём завершения проверки сессии в AuthProvider перед редиректом
   if (!isInitialized) {
@@ -27,6 +29,7 @@ function RequireAuth() {
   }
 
   if (!accessToken && !isGuest) {
+    saveRedirectPath(location.pathname)
     return <Navigate to="/login" replace />
   }
 
