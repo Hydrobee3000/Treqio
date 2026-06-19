@@ -14,4 +14,4 @@ export type {
   CreateBookEntryDto,
   UpdateBookEntryDto,
 } from './api/booksApi'
-export { AddBookDialog } from './ui/AddBookDialog/AddBookDialog'
+export { BookFormDialog } from './ui/BookFormDialog/BookFormDialog'

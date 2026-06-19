@@ -10,7 +10,8 @@ import {
   Button,
 } from '@mui/material'
 import { BookCard, BookCoverCard } from '@/entities/book'
-import { AddBookDialog, useGetMyEntriesQuery } from '@/features/book'
+import type { BookEntry } from '@/entities/book'
+import { BookFormDialog, useGetMyEntriesQuery, useUpdateEntryMutation } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
 import styles from './LibraryPage.module.scss'
@@ -18,18 +19,33 @@ import styles from './LibraryPage.module.scss'
 /** Стиль отображения карточек книги. */
 type CardStyle = 'compact' | 'cover'
 
+/** Ключ для сохранения выбранного стиля карточек между визитами. */
+const CARD_STYLE_STORAGE_KEY = 'treqio_library_card_style'
+
 /**
  * Страница библиотеки пользователя.
  */
 export const LibraryPage = () => {
-  const [cardStyle, setCardStyle] = useState<CardStyle>('compact')
+  // Читаем сохранённый стиль синхронно при инициализации — иначе при перезагрузке
+  // страница на миг отрисуется с дефолтным стилем и тут же переключится на сохранённый.
+  const [cardStyle, setCardStyleState] = useState<CardStyle>(
+    () => (localStorage.getItem(CARD_STYLE_STORAGE_KEY) as CardStyle | null) ?? 'cover',
+  )
   const [addOpen, setAddOpen] = useState(false)
+  const [editEntry, setEditEntry] = useState<BookEntry | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
   const { data, isLoading, isError } = useGetMyEntriesQuery()
+  const [updateEntry] = useUpdateEntryMutation()
   const entries = data ?? []
   const isEmpty = !isError && entries.length === 0
+
+  /** Меняет стиль карточек и сохраняет выбор в localStorage. */
+  const setCardStyle = (style: CardStyle) => {
+    setCardStyleState(style)
+    localStorage.setItem(CARD_STYLE_STORAGE_KEY, style)
+  }
 
   /** Открывает форму добавления книги, либо для гостя — предлагает войти. */
   const handleAddClick = () => {
@@ -117,15 +133,29 @@ export const LibraryPage = () => {
         <div className={styles['library__grid']}>
           {entries.map((entry) =>
             cardStyle === 'compact' ? (
-              <BookCard key={entry.id} entry={entry} />
+              <BookCard key={entry.id} entry={entry} onClick={() => setEditEntry(entry)} />
             ) : (
-              <BookCoverCard key={entry.id} entry={entry} />
+              <BookCoverCard
+                key={entry.id}
+                entry={entry}
+                onEdit={() => setEditEntry(entry)}
+                onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
+                onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
+              />
             ),
           )}
         </div>
       )}
 
-      <AddBookDialog open={addOpen} onClose={() => setAddOpen(false)} />
+      <BookFormDialog
+        key={editEntry?.id ?? (addOpen ? 'add' : 'closed')}
+        open={addOpen || !!editEntry}
+        entry={editEntry ?? undefined}
+        onClose={() => {
+          setAddOpen(false)
+          setEditEntry(null)
+        }}
+      />
 
       <Dialog open={guestPromptOpen} onClose={() => setGuestPromptOpen(false)}>
         <DialogTitle sx={{ pt: 3, px: 3 }}>Необходимо войти</DialogTitle>

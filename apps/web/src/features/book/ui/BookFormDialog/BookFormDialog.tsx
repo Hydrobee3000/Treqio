@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import {
   Dialog,
@@ -11,8 +11,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import type { BookStatus } from '@/entities/book'
-import { useCreateBookMutation, useCreateEntryMutation } from '../../api/booksApi'
+import type { BookEntry, BookStatus } from '@/entities/book'
+import {
+  useCreateBookMutation,
+  useCreateEntryMutation,
+  useUpdateBookMutation,
+  useUpdateEntryMutation,
+} from '../../api/booksApi'
 
 /** Варианты статуса книги для выбора в форме. */
 const STATUS_OPTIONS: { value: BookStatus; label: string }[] = [
@@ -23,9 +28,9 @@ const STATUS_OPTIONS: { value: BookStatus; label: string }[] = [
 ]
 
 /**
- * Значения полей формы добавления книги.
+ * Значения полей формы добавления/редактирования книги.
  */
-interface AddBookFormValues {
+interface BookFormValues {
   /** Название книги. */
   title: string
   /** Автор книги. */
@@ -34,39 +39,59 @@ interface AddBookFormValues {
   coverUrl: string
   /** Количество страниц (строка из инпута, переводится в число при отправке). */
   pageCount: string
-  /** Статус, с которым книга добавляется в список. */
+  /** Статус книги в списке пользователя. */
   status: BookStatus
+  /** Оценка от 1 до 10 (строка из инпута, только при редактировании). */
+  rating: string
 }
 
 /** Начальные значения формы добавления книги. */
-const DEFAULT_VALUES: AddBookFormValues = {
+const DEFAULT_VALUES: BookFormValues = {
   title: '',
   author: '',
   coverUrl: '',
   pageCount: '',
   status: 'WANT',
+  rating: '',
 }
 
 /** Значение автора, если поле оставлено пустым. */
 const UNKNOWN_AUTHOR = 'Автор неизвестен'
 
+/** Преобразует существующую запись в значения формы редактирования. */
+function entryToFormValues(entry: BookEntry): BookFormValues {
+  return {
+    title: entry.book.title,
+    author: entry.book.author,
+    coverUrl: entry.book.coverUrl ?? '',
+    pageCount: entry.book.pageCount ? String(entry.book.pageCount) : '',
+    status: entry.status,
+    rating: entry.rating ? String(entry.rating) : '',
+  }
+}
+
 /**
- * Пропсы AddBookDialog.
+ * Пропсы BookFormDialog.
  */
-interface AddBookDialogProps {
+interface BookFormDialogProps {
   /** Открыта ли модалка. */
   open: boolean
   /** Закрытие модалки. */
   onClose: () => void
+  /** Редактируемая запись. Если не передана — модалка работает в режиме добавления. */
+  entry?: BookEntry
 }
 
 /**
- * Модалка добавления книги — создаёт книгу в каталоге и сразу запись пользователя.
+ * Модалка добавления новой книги или редактирования существующей записи пользователя.
  */
-export const AddBookDialog = ({ open, onClose }: AddBookDialogProps) => {
+export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) => {
+  const isEdit = !!entry
   const [error, setError] = useState<string | null>(null)
   const [createBook] = useCreateBookMutation()
   const [createEntry] = useCreateEntryMutation()
+  const [updateBook] = useUpdateBookMutation()
+  const [updateEntry] = useUpdateEntryMutation()
 
   const {
     register,
@@ -74,47 +99,68 @@ export const AddBookDialog = ({ open, onClose }: AddBookDialogProps) => {
     control,
     reset,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<AddBookFormValues>({
+  } = useForm<BookFormValues>({
     defaultValues: DEFAULT_VALUES,
     mode: 'onChange',
   })
 
+  // При каждом открытии модалки заполняем форму данными редактируемой записи
+  // (либо пустыми значениями для добавления) — компонент не размонтируется между открытиями.
+  useEffect(() => {
+    if (open) {
+      reset(entry ? entryToFormValues(entry) : DEFAULT_VALUES)
+    }
+  }, [open, entry, reset])
+
   /**
-   * Функция закрытия модалки с очисткой формы.
+   * Функция закрытия модалки.
    */
   const handleClose = () => {
     if (isSubmitting) return
-    reset(DEFAULT_VALUES)
-    setError(null)
     onClose()
   }
 
   /**
-   * Функция отправки формы — создаёт книгу и сразу запись пользователя.
+   * Функция отправки формы — создаёт книгу и запись, либо сохраняет изменения существующей.
    */
-  const onSubmit = async (values: AddBookFormValues) => {
+  const onSubmit = async (values: BookFormValues) => {
     setError(null)
     try {
-      const book = await createBook({
+      const bookDto = {
         title: values.title.trim(),
         author: values.author.trim() || UNKNOWN_AUTHOR,
         ...(values.coverUrl.trim() && { coverUrl: values.coverUrl.trim() }),
         ...(values.pageCount && { pageCount: Number(values.pageCount) }),
-      }).unwrap()
+      }
 
-      await createEntry({ bookId: book.id, status: values.status }).unwrap()
+      if (entry) {
+        await updateBook({ id: entry.book.id, dto: bookDto }).unwrap()
+        await updateEntry({
+          id: entry.id,
+          dto: {
+            status: values.status,
+            ...(values.rating && { rating: Number(values.rating) }),
+          },
+        }).unwrap()
+      } else {
+        const book = await createBook(bookDto).unwrap()
+        await createEntry({ bookId: book.id, status: values.status }).unwrap()
+      }
 
-      reset(DEFAULT_VALUES)
       onClose()
     } catch {
-      setError('Не удалось добавить книгу. Попробуй ещё раз.')
+      setError(
+        isEdit
+          ? 'Не удалось сохранить изменения. Попробуй ещё раз.'
+          : 'Не удалось добавить книгу. Попробуй ещё раз.',
+      )
     }
   }
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Добавить книгу</DialogTitle>
+        <DialogTitle>{isEdit ? 'Редактировать книгу' : 'Добавить книгу'}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
@@ -151,6 +197,16 @@ export const AddBookDialog = ({ open, onClose }: AddBookDialogProps) => {
               />
             </Stack>
 
+            {isEdit && (
+              <TextField
+                label="Оценка (1–10)"
+                type="number"
+                fullWidth
+                inputProps={{ min: 1, max: 10 }}
+                {...register('rating')}
+              />
+            )}
+
             {error && <Typography color="error">{error}</Typography>}
           </Stack>
         </DialogContent>
@@ -159,7 +215,7 @@ export const AddBookDialog = ({ open, onClose }: AddBookDialogProps) => {
             Отмена
           </Button>
           <Button type="submit" variant="contained" disabled={!isValid || isSubmitting}>
-            Добавить
+            {isEdit ? 'Сохранить' : 'Добавить'}
           </Button>
         </DialogActions>
       </form>
