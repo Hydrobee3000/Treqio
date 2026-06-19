@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { Box, CircularProgress } from '@mui/material'
 import type { User } from '@/entities/user'
 import { setCredentials, setUser } from '@/features/auth'
+import { consumeRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppDispatch } from '@/shared/lib/store'
 
 /**
@@ -36,7 +37,7 @@ export function AuthCallbackPage() {
           dispatch(setUser(user))
         }
       } finally {
-        void navigate('/', { replace: true })
+        void navigate(consumeRedirectPath() ?? '/', { replace: true })
       }
     }
 

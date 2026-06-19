@@ -192,8 +192,8 @@ $bp-sm: 600px;
   width: 70px;
   aspect-ratio: 2 / 3;
   border-radius: 9px;
-  border: 1.5px dashed var(--color-divider, #d5e4d8);
-  background: linear-gradient(160deg, var(--color-paper, #fafcf9), var(--color-paper-2, #ecf1ea));
+  border: 1.5px dashed var(--ghost-border, #6fa68c4d);
+  background: linear-gradient(160deg, var(--ghost-bg-1, #6fa68c26), var(--ghost-bg-2, #6fa68c0d));
   position: relative;
   opacity: 0.9;
   animation: floaty 4.5s ease-in-out infinite;
@@ -206,7 +206,7 @@ $bp-sm: 600px;
     bottom: 10px;
     width: 2px;
     border-radius: 2px;
-    background: var(--color-divider, #d5e4d8);
+    background: var(--ghost-border, #6fa68c4d);
   }
 
   &:first-child { --rot: -6deg; }
@@ -219,8 +219,8 @@ $bp-sm: 600px;
 
   &--accent {
     border-style: solid;
-    border-color: var(--color-primary, #4e7b6a);
-    background: linear-gradient(160deg, var(--color-chip-bg, #dff0e5), transparent);
+    border-color: var(--ghost-primary, #6fa68c);
+    background: linear-gradient(160deg, var(--ghost-chip-bg, #6fa68c33), transparent);
     animation-delay: 0.25s;
     z-index: 1;
 
@@ -232,7 +232,7 @@ $bp-sm: 600px;
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      border: 2px dashed var(--color-primary, #4e7b6a);
+      border: 2px dashed var(--ghost-primary, #6fa68c);
     }
   }
 }
