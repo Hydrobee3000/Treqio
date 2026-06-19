@@ -25,16 +25,19 @@ const STATUS_COLOR: Record<BookStatus, 'default' | 'info' | 'success' | 'error'>
 interface BookCardProps {
   /** Запись пользователя с данными книги. */
   entry: BookEntry
+  /** Клик по карточке — открывает редактирование записи. */
+  onClick?: () => void
 }
 
 /**
  * Карточка книги для отображения в библиотеке.
  */
-export const BookCard = ({ entry }: BookCardProps) => {
+export const BookCard = ({ entry, onClick }: BookCardProps) => {
   const { book, status, rating } = entry
 
   return (
     <Card
+      onClick={onClick}
       sx={(theme) => ({
         width: 160,
         bgcolor: 'background.paper',

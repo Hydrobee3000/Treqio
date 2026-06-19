@@ -8,12 +8,25 @@
 
 // ─── Обложка ──────────────────────────────────────────────────────────────────
 
+// Регистрируем угол как анимируемое CSS-свойство — это позволяет крутить
+// именно угол conic-gradient (саму «комету»), а не сам элемент. Если вращать
+// элемент через transform, его углы (он прямоугольный) выезжают за пределы
+// круглого/скруглённого контура во время поворота — заметно «квадратное» пятно.
+@property --gold-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .cover-card__cover {
   position: relative;
   aspect-ratio: 2 / 3;
   border-radius: 10px;
   overflow: hidden;
-  background: var(--color-primary, #4e7b6a);
+  // Градиент от основного цвета темы к его тёмному оттенку — оба токена
+  // приходят из текущей темы, поэтому обложка остаётся глубже и не «кричащей»
+  // на любой из 12 палитр, а не только при хардкоде конкретного цвета.
+  background: linear-gradient(150deg, var(--color-primary, #4e7b6a), var(--color-primary-dark, #3a5c4f));
   box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -33,12 +46,16 @@
     border-radius: 2px;
   }
 
-  // Лёгкая текстура бумаги
+  // Лёгкая текстура бумаги сверху-справа + затемнение в нижнем правом углу.
+  // Затемнение — полупрозрачный чёрный поверх градиента, а не отдельный цвет,
+  // поэтому соотношение тонов сохраняется на любой теме.
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(120% 80% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 55%);
+    background:
+      radial-gradient(120% 80% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 55%),
+      linear-gradient(150deg, transparent 45%, rgba(0, 0, 0, 0.35) 100%);
     pointer-events: none;
   }
 
@@ -46,6 +63,40 @@
     transform: translateY(-4px);
     box-shadow: 0 18px 32px -14px rgba(0, 0, 0, 0.55);
   }
+}
+
+// Идеальная оценка 10/10 — золотая «комета», бегущая по тонкому ободку вдоль
+// края обложки, как индикатор загрузки. padding + mask-composite:exclude
+// «вырезает» из закрашенного квадрата только полоску по периметру (между
+// border-box и content-box), остальное прозрачно — сама обложка видна сквозь.
+.cover-card__gold-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 4px;
+  background:
+    conic-gradient(
+      from var(--gold-angle),
+      rgba(255, 225, 150, 0) 0deg,
+      rgba(255, 225, 150, 0) 200deg,
+      rgba(255, 232, 170, 0.55) 270deg,
+      #ffe9a8 320deg,
+      #ffd24a 345deg,
+      rgba(255, 225, 150, 0) 360deg
+    ),
+    // тонкий золотой ободок по всему периметру, чтобы «комета» не гасла на пустом участке
+    conic-gradient(rgba(212, 175, 55, 0.22) 0deg 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: cover-card-gold-spin 2.4s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(255, 210, 90, 0.35));
+}
+
+@keyframes cover-card-gold-spin {
+  to { --gold-angle: 360deg; }
 }
 
 .cover-card__title {
