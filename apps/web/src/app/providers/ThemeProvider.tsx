@@ -1,5 +1,10 @@
 import { useEffect, useMemo } from 'react'
-import { CssBaseline, StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material'
+import {
+  CssBaseline,
+  GlobalStyles,
+  StyledEngineProvider,
+  ThemeProvider as MuiThemeProvider,
+} from '@mui/material'
 import type { ReactNode } from 'react'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setDark } from '@/features/theme'
@@ -94,6 +99,30 @@ export const ThemeProvider = ({ children }: Props) => {
       <MuiThemeProvider theme={theme}>
         {/* MuiThemeProvider предоставляет тему всем компонентам MUI внутри приложения. */}
         <CssBaseline />
+        {/* Скроллбар берёт цвета из CSS-переменных темы — иначе на тёмных темах
+            остаётся светлый системный скроллбар, выбивающийся из общего вида. */}
+        <GlobalStyles
+          styles={{
+            '*': {
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'var(--color-divider) transparent',
+            },
+            '*::-webkit-scrollbar': {
+              width: 8,
+              height: 8,
+            },
+            '*::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '*::-webkit-scrollbar-thumb': {
+              background: 'var(--color-divider)',
+              borderRadius: 8,
+            },
+            '*::-webkit-scrollbar-thumb:hover': {
+              background: 'var(--color-text-2)',
+            },
+          }}
+        />
         {children}
       </MuiThemeProvider>
     </StyledEngineProvider>

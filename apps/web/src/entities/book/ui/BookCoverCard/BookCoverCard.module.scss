@@ -17,6 +17,14 @@
   inherits: false;
 }
 
+// Обёртка вокруг обложки без overflow:hidden — нужна чтобы золотое кольцо
+// (соседний элемент, не внутри обложки) могло чуть выходить за её границы
+// и перекрывать стык, а сама обложка при этом продолжала клипать свои
+// псевдоэлементы (корешок, текстура) по скруглённым углам.
+.cover-card__cover-frame {
+  position: relative;
+}
+
 .cover-card__cover {
   position: relative;
   aspect-ratio: 2 / 3;
@@ -66,17 +74,21 @@
 }
 
 // Идеальная оценка 10/10 — золотая «комета», бегущая по тонкому ободку вдоль
-// края обложки, как индикатор загрузки. padding + mask-composite:exclude
-// «вырезает» из закрашенного квадрата только полоску по периметру (между
-// border-box и content-box), остальное прозрачно — сама обложка видна сквозь.
+// края обложки, как индикатор загрузки. Двухслойный background-clip вместо
+// mask-composite: внутренний слой (padding-box) повторяет градиент обложки —
+// на скруглённых углах padding-box корректно уменьшает радиус сам, без щели,
+// в отличие от связки mask content-box/border-box, где она была заметна.
+// Кольцо — сосед обложки (а не её потомок), поэтому inset чуть меньше нуля
+// не обрезается overflow:hidden самой обложки и слегка перекрывает её край.
 .cover-card__gold-ring {
   position: absolute;
-  inset: 0;
+  inset: -1.5px;
   z-index: 3;
-  border-radius: inherit;
+  border: 4px solid transparent;
+  border-radius: 11px;
   pointer-events: none;
-  padding: 4px;
   background:
+    linear-gradient(150deg, var(--color-primary, #4e7b6a), var(--color-primary-dark, #3a5c4f)) padding-box,
     conic-gradient(
       from var(--gold-angle),
       rgba(255, 225, 150, 0) 0deg,
@@ -85,14 +97,13 @@
       #ffe9a8 320deg,
       #ffd24a 345deg,
       rgba(255, 225, 150, 0) 360deg
-    ),
-    // тонкий золотой ободок по всему периметру, чтобы «комета» не гасла на пустом участке
-    conic-gradient(rgba(212, 175, 55, 0.22) 0deg 360deg);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+    ) border-box;
   animation: cover-card-gold-spin 2.4s linear infinite;
   filter: drop-shadow(0 0 4px rgba(255, 210, 90, 0.35));
+
+  .cover-card:hover & {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes cover-card-gold-spin {
