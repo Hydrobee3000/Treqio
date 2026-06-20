@@ -108,7 +108,7 @@ interface BookFormDialogProps {
   /** Закрытие модалки. */
   onClose: () => void
   /** Редактируемая запись. Если не передана — модалка работает в режиме добавления. */
-  entry?: BookEntry
+  entry?: BookEntry | undefined
 }
 
 /**
@@ -346,7 +346,7 @@ export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) =>
                     name="progress"
                     control={control}
                     render={({ field }) => (
-                      <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 0.5 }}>
+                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mt: 0.5 }}>
                         <Slider
                           value={field.value ? Number(field.value) : 0}
                           min={0}
@@ -387,12 +387,11 @@ export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) =>
                   render={({ field }) => {
                     const ratingValue = field.value ? Number(field.value) : 0
                     return (
-                      <Stack direction="row" alignItems="center" spacing={2}>
+                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                         <Stack
                           direction="row"
-                          alignItems="center"
                           spacing={1}
-                          sx={{ flexShrink: 0 }}
+                          sx={{ alignItems: 'center', flexShrink: 0 }}
                         >
                           <Rating
                             value={ratingValue / 2}
