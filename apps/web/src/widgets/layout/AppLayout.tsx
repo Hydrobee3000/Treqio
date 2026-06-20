@@ -53,6 +53,11 @@ export const AppLayout = () => {
         component="main"
         sx={{
           flexGrow: 1,
+          // Высота явно зафиксирована, а не растянута через align-items:stretch —
+          // иначе при resize-наблюдении за этим контейнером (ParticleCanvas) высота
+          // могла на долю кадра "поплыть" вслед за высотой контента и застрять
+          // больше реальной, давая лишние скроллы внутри страницы.
+          height: '100vh',
           overflow: 'auto',
           minWidth: 0,
           position: 'relative',

@@ -3,7 +3,6 @@
   flex-direction: column;
   gap: 10px;
   width: 170px;
-  cursor: pointer;
 }
 
 // ─── Обложка ──────────────────────────────────────────────────────────────────
@@ -23,6 +22,7 @@
   aspect-ratio: 2 / 3;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
   // Градиент от основного цвета темы к его тёмному оттенку — оба токена
   // приходят из текущей темы, поэтому обложка остаётся глубже и не «кричащей»
   // на любой из 12 палитр, а не только при хардкоде конкретного цвета.
@@ -187,6 +187,7 @@
   align-self: flex-start;
   padding: 4px 10px 4px 8px;
   border-radius: 999px;
+  cursor: pointer;
   font-size: 11px;
   font-weight: 600;
 }
