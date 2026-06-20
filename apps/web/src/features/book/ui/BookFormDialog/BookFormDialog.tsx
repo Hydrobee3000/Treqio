@@ -241,6 +241,7 @@ export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) =>
                 sx={{
                   width: 100,
                   flexShrink: 0,
+                  alignSelf: 'flex-start',
                   aspectRatio: '2 / 3',
                   borderRadius: 2,
                   overflow: 'hidden',
@@ -284,7 +285,12 @@ export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) =>
                   label="Страниц"
                   type="number"
                   sx={{ width: 140 }}
-                  {...register('pageCount')}
+                  slotProps={{ htmlInput: { min: 0 } }}
+                  error={!!errors.pageCount}
+                  helperText={errors.pageCount ? 'Не может быть отрицательным' : ''}
+                  {...register('pageCount', {
+                    min: { value: 0, message: 'Не может быть отрицательным' },
+                  })}
                 />
               </Stack>
             </Stack>
