@@ -4,6 +4,16 @@
 export type BookStatus = 'WANT' | 'READING' | 'DONE' | 'DROPPED'
 
 /**
+ * Человекочитаемые названия статусов книги.
+ */
+export const STATUS_LABEL: Record<BookStatus, string> = {
+  WANT: 'Хочу прочитать',
+  READING: 'Читаю',
+  DONE: 'Прочитано',
+  DROPPED: 'Брошено',
+}
+
+/**
  * Книга из общего каталога.
  */
 export interface Book {

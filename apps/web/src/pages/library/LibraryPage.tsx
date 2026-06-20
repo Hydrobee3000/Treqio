@@ -9,8 +9,8 @@ import {
   DialogActions,
   Button,
 } from '@mui/material'
-import { BookCard, BookCoverCard } from '@/entities/book'
-import type { BookEntry } from '@/entities/book'
+import { BookCard, BookCoverCard, STATUS_LABEL } from '@/entities/book'
+import type { BookEntry, BookStatus } from '@/entities/book'
 import { BookFormDialog, useGetMyEntriesQuery, useUpdateEntryMutation } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
@@ -21,6 +21,15 @@ type CardStyle = 'compact' | 'cover'
 
 /** Ключ для сохранения выбранного стиля карточек между визитами. */
 const CARD_STYLE_STORAGE_KEY = 'treqio_library_card_style'
+
+/** Фильтр по статусу записи — добавляет вариант «Все» к статусам книги. */
+type StatusFilter = BookStatus | 'ALL'
+
+/** Табы фильтра по статусу над сеткой карточек. */
+const STATUS_TABS: { value: StatusFilter; label: string }[] = [
+  { value: 'ALL', label: 'Все' },
+  ...Object.entries(STATUS_LABEL).map(([value, label]) => ({ value: value as BookStatus, label })),
+]
 
 /**
  * Страница библиотеки пользователя.
@@ -34,12 +43,16 @@ export const LibraryPage = () => {
   const [addOpen, setAddOpen] = useState(false)
   const [editEntry, setEditEntry] = useState<BookEntry | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
   const { data, isLoading, isError } = useGetMyEntriesQuery()
   const [updateEntry] = useUpdateEntryMutation()
   const entries = data ?? []
   const isEmpty = !isError && entries.length === 0
+  const filteredEntries =
+    statusFilter === 'ALL' ? entries : entries.filter((entry) => entry.status === statusFilter)
+  const isFilteredEmpty = !isEmpty && filteredEntries.length === 0
 
   /** Меняет стиль карточек и сохраняет выбор в localStorage. */
   const setCardStyle = (style: CardStyle) => {
@@ -74,9 +87,30 @@ export const LibraryPage = () => {
         </button>
       </div>
 
+      {!isError && !isEmpty && (
+        <div className={styles['library__tabs']}>
+          {STATUS_TABS.map((tab) => {
+            const count =
+              tab.value === 'ALL'
+                ? entries.length
+                : entries.filter((e) => e.status === tab.value).length
+            return (
+              <button
+                key={tab.value}
+                className={`${styles['library__tab']} ${statusFilter === tab.value ? styles['library__tab--active'] : ''}`}
+                onClick={() => setStatusFilter(tab.value)}
+              >
+                {tab.label}
+                <span className={styles['library__tab-count']}>{count}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {!isError && (
         <div className={styles['library__label-row']}>
-          <span className={styles['library__label']}>{entries.length} книг</span>
+          <span className={styles['library__label']}>{filteredEntries.length} книг</span>
 
           <div className={styles['library__style-toggle']}>
             <button
@@ -129,9 +163,16 @@ export const LibraryPage = () => {
             </button>
           </div>
         </div>
+      ) : isFilteredEmpty ? (
+        <div className={styles['library__empty']}>
+          <div className={styles['library__empty-icon']}>
+            <BookOpen size={48} />
+          </div>
+          <p className={styles['library__empty-text']}>Нет книг с этим статусом</p>
+        </div>
       ) : (
         <div className={styles['library__grid']}>
-          {entries.map((entry) =>
+          {filteredEntries.map((entry) =>
             cardStyle === 'compact' ? (
               <BookCard key={entry.id} entry={entry} onClick={() => setEditEntry(entry)} />
             ) : (

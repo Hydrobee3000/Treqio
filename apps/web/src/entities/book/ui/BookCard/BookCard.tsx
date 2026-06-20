@@ -1,16 +1,10 @@
 import { Card, CardContent, CardMedia, Box, Typography, Chip } from '@mui/material'
 import { lighten, darken } from '@mui/material/styles'
 import { BookOpen, Star } from 'lucide-react'
+import { STATUS_LABEL } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 
 const COVER_HEIGHT = 170
-
-const STATUS_LABEL: Record<BookStatus, string> = {
-  WANT: 'Хочу прочитать',
-  READING: 'Читаю',
-  DONE: 'Прочитал',
-  DROPPED: 'Брошено',
-}
 
 const STATUS_COLOR: Record<BookStatus, 'default' | 'info' | 'success' | 'error'> = {
   WANT: 'default',
