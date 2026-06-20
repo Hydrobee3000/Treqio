@@ -17,6 +17,7 @@ import {
   IconButton,
 } from '@mui/material'
 import { X } from 'lucide-react'
+import { STATUS_LABEL } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import {
   useCreateBookMutation,
@@ -28,12 +29,9 @@ import {
 import type { UpdateBookEntryDto } from '../../api/booksApi'
 
 /** Варианты статуса книги для выбора в форме. */
-const STATUS_OPTIONS: { value: BookStatus; label: string }[] = [
-  { value: 'WANT', label: 'Хочу прочитать' },
-  { value: 'READING', label: 'Читаю' },
-  { value: 'DONE', label: 'Прочитал' },
-  { value: 'DROPPED', label: 'Брошено' },
-]
+const STATUS_OPTIONS: { value: BookStatus; label: string }[] = Object.entries(STATUS_LABEL).map(
+  ([value, label]) => ({ value: value as BookStatus, label }),
+)
 
 /** Цвет точки статуса — совпадает с пилюлей статуса на BookCoverCard. */
 const STATUS_DOT_COLOR: Record<BookStatus, string> = {
@@ -64,7 +62,7 @@ interface BookFormValues {
   pageCount: string
   /** Статус книги в списке пользователя. */
   status: BookStatus
-  /** Оценка от 1 до 10 (строка из инпута, показывается при статусе «Прочитал»). */
+  /** Оценка от 1 до 10 (строка из инпута, показывается при статусе «Прочитано»). */
   rating: string
   /** Текущая/прочитанная страница (строка из инпута). */
   progress: string
@@ -115,7 +113,7 @@ interface BookFormDialogProps {
 
 /**
  * Модалка добавления новой книги или редактирования существующей записи пользователя.
- * Оценка показывается при статусе «Прочитал», прогресс — при «Читаю» (слайдер)
+ * Оценка показывается при статусе «Прочитано», прогресс — при «Читаю» (слайдер)
  * или «Брошено» (необязательный ввод прочитанных страниц).
  */
 export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) => {
