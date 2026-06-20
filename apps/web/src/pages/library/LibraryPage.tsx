@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, Image, LayoutGrid, Plus, Upload } from 'lucide-react'
+import { BookOpen, Image, List, Plus, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogActions,
   Button,
 } from '@mui/material'
-import { BookCard, BookCoverCard, STATUS_LABEL } from '@/entities/book'
+import { BookCoverCard, BookTableRow, STATUS_LABEL } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import { BookFormDialog, useGetMyEntriesQuery, useUpdateEntryMutation } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
@@ -17,7 +17,7 @@ import { useAppSelector } from '@/shared/lib/store'
 import styles from './LibraryPage.module.scss'
 
 /** Стиль отображения карточек книги. */
-type CardStyle = 'compact' | 'cover'
+type CardStyle = 'cover' | 'table'
 
 /** Ключ для сохранения выбранного стиля карточек между визитами. */
 const CARD_STYLE_STORAGE_KEY = 'treqio_library_card_style'
@@ -114,18 +114,18 @@ export const LibraryPage = () => {
 
           <div className={styles['library__style-toggle']}>
             <button
-              className={`${styles['library__style-btn']} ${cardStyle === 'compact' ? styles['library__style-btn--active'] : ''}`}
-              onClick={() => setCardStyle('compact')}
-              title="Компактный вид"
-            >
-              <LayoutGrid size={16} />
-            </button>
-            <button
               className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
               onClick={() => setCardStyle('cover')}
               title="Вид обложками"
             >
-              <Image size={16} />
+              <Image size={22} />
+            </button>
+            <button
+              className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
+              onClick={() => setCardStyle('table')}
+              title="Табличный вид"
+            >
+              <List size={22} />
             </button>
           </div>
         </div>
@@ -170,21 +170,35 @@ export const LibraryPage = () => {
           </div>
           <p className={styles['library__empty-text']}>Нет книг с этим статусом</p>
         </div>
+      ) : cardStyle === 'table' ? (
+        <div className={styles['library__table']}>
+          <div className={styles['library__table-head']}>
+            <span />
+            <span>Название</span>
+            <span>Статус</span>
+            <span>Оценка</span>
+          </div>
+          {filteredEntries.map((entry) => (
+            <BookTableRow
+              key={entry.id}
+              entry={entry}
+              onEdit={() => setEditEntry(entry)}
+              onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
+              onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
+            />
+          ))}
+        </div>
       ) : (
         <div className={styles['library__grid']}>
-          {filteredEntries.map((entry) =>
-            cardStyle === 'compact' ? (
-              <BookCard key={entry.id} entry={entry} onClick={() => setEditEntry(entry)} />
-            ) : (
-              <BookCoverCard
-                key={entry.id}
-                entry={entry}
-                onEdit={() => setEditEntry(entry)}
-                onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
-                onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
-              />
-            ),
-          )}
+          {filteredEntries.map((entry) => (
+            <BookCoverCard
+              key={entry.id}
+              entry={entry}
+              onEdit={() => setEditEntry(entry)}
+              onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
+              onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
+            />
+          ))}
         </div>
       )}
 
