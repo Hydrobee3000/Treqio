@@ -2,15 +2,9 @@ import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Box, Menu, MenuItem, Popover, Rating, Slider, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
+import { STATUS_LABEL } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookCoverCard.module.scss'
-
-const STATUS_LABEL: Record<BookStatus, string> = {
-  WANT: 'Хочу прочитать',
-  READING: 'Читаю',
-  DONE: 'Прочитал',
-  DROPPED: 'Брошено',
-}
 
 const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   WANT: styles['cover-card__status--want'],

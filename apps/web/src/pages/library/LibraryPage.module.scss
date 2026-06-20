@@ -67,6 +67,50 @@ $bp-sm: 600px;
   }
 }
 
+// ─── Табы фильтра по статусу ──────────────────────────────────────────────────
+
+.library__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 36px 12px;
+
+  @media (max-width: $bp-sm) {
+    padding: 0 20px 12px;
+  }
+}
+
+.library__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+  }
+
+  &--active {
+    background: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary, #4e7b6a);
+    color: white;
+  }
+}
+
+.library__tab-count {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
 // ─── Лейбл-строка и переключатель стиля карточек ─────────────────────────────
 
 .library__label-row {

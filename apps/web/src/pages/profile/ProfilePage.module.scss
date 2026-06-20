@@ -234,51 +234,6 @@ $bp-md: 900px;
   }
 }
 
-// ─── Табы категорий ───────────────────────────────────────────────────────────
-
-.category-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  border-radius: 12px;
-  width: fit-content;
-
-  @media (max-width: $bp-sm) {
-    width: 100%;
-  }
-}
-
-.category-tab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--color-text-2, #666);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-  flex: 1;
-  justify-content: center;
-
-  &:hover {
-    color: var(--color-text, inherit);
-  }
-
-  &--active {
-    background: var(--color-paper, white);
-    color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
-}
-
 // ─── Строка статистики ────────────────────────────────────────────────────────
 
 .stats-row {

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { BookOpen, Gamepad2, Filter, Pencil, Check, X, LogIn, LogOut } from 'lucide-react'
+import { BookOpen, Filter, Pencil, Check, X, LogIn, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { STATUS_LABEL } from '@/entities/book'
+import type { BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
 import { setGuestDisplayName } from '@/features/guest'
@@ -10,23 +12,10 @@ import styles from './ProfilePage.module.scss'
 
 const DEFAULT_DISPLAY_NAME = 'Мечтатель'
 
-type Category = 'books' | 'games'
-type BookStatus = 'want' | 'reading' | 'done' | 'dropped'
-type GameStatus = 'want' | 'playing' | 'done' | 'dropped'
-
-const BOOK_STATUSES: { id: BookStatus; label: string }[] = [
-  { id: 'want', label: 'Хочу читать' },
-  { id: 'reading', label: 'Читаю' },
-  { id: 'done', label: 'Прочитал' },
-  { id: 'dropped', label: 'Брошено' },
-]
-
-const GAME_STATUSES: { id: GameStatus; label: string }[] = [
-  { id: 'want', label: 'Хочу пройти' },
-  { id: 'playing', label: 'Играю' },
-  { id: 'done', label: 'Прошёл' },
-  { id: 'dropped', label: 'Брошено' },
-]
+/** Табы статусов в строке статистики. */
+const STATUS_TABS: { value: BookStatus; label: string }[] = Object.entries(STATUS_LABEL).map(
+  ([value, label]) => ({ value: value as BookStatus, label }),
+)
 
 /**
  * Страница профиля пользователя.
@@ -48,9 +37,7 @@ export const ProfilePage = () => {
     dispatch(logout())
     navigate('/login')
   }
-  const [category, setCategory] = useState<Category>('books')
-  const [bookStatus, setBookStatus] = useState<BookStatus>('want')
-  const [gameStatus, setGameStatus] = useState<GameStatus>('want')
+  const [statusFilter, setStatusFilter] = useState<BookStatus>('WANT')
   const [editingName, setEditingName] = useState(false)
   const [nameValue, setNameValue] = useState('')
   const nameInputRef = useRef<HTMLInputElement>(null)
@@ -107,17 +94,6 @@ export const ProfilePage = () => {
    */
   const handleCancelName = () => {
     setEditingName(false)
-  }
-
-  const statuses = category === 'books' ? BOOK_STATUSES : GAME_STATUSES
-  const activeStatus = category === 'books' ? bookStatus : gameStatus
-
-  /**
-   * Функция переключения статуса в текущей категории.
-   */
-  const handleStatusChange = (id: string) => {
-    if (category === 'books') setBookStatus(id as BookStatus)
-    else setGameStatus(id as GameStatus)
   }
 
   const displayName = isGuest
@@ -196,34 +172,16 @@ export const ProfilePage = () => {
           </button>
         </div>
 
-        {/* Табы категорий */}
-        <div className={styles['category-tabs']}>
-          <button
-            className={`${styles['category-tab']} ${category === 'books' ? styles['category-tab--active'] : ''}`}
-            onClick={() => setCategory('books')}
-          >
-            <BookOpen size={15} />
-            Книги
-          </button>
-          <button
-            className={`${styles['category-tab']} ${category === 'games' ? styles['category-tab--active'] : ''}`}
-            onClick={() => setCategory('games')}
-          >
-            <Gamepad2 size={15} />
-            Игры
-          </button>
-        </div>
-
         {/* Строка статистики */}
         <div className={styles['stats-row']}>
-          {statuses.map((s) => (
+          {STATUS_TABS.map((tab) => (
             <button
-              key={s.id}
-              className={`${styles['stat']} ${activeStatus === s.id ? styles['stat--active'] : ''}`}
-              onClick={() => handleStatusChange(s.id)}
+              key={tab.value}
+              className={`${styles['stat']} ${statusFilter === tab.value ? styles['stat--active'] : ''}`}
+              onClick={() => setStatusFilter(tab.value)}
             >
               <span className={styles['stat__value']}>0</span>
-              <span className={styles['stat__label']}>{s.label}</span>
+              <span className={styles['stat__label']}>{tab.label}</span>
             </button>
           ))}
           <div className={styles['stats-row__actions']}>
@@ -238,14 +196,10 @@ export const ProfilePage = () => {
       <div className={styles['grid-section']}>
         <div className={styles['empty-state']}>
           <div className={styles['empty-state__icon']}>
-            {category === 'books' ? <BookOpen size={48} /> : <Gamepad2 size={48} />}
+            <BookOpen size={48} />
           </div>
-          <p className={styles['empty-state__text']}>
-            {category === 'books' ? 'Список книг пуст' : 'Список игр пуст'}
-          </p>
-          <p className={styles['empty-state__sub']}>
-            Добавь первую {category === 'books' ? 'книгу' : 'игру'} в свою библиотеку
-          </p>
+          <p className={styles['empty-state__text']}>Список книг пуст</p>
+          <p className={styles['empty-state__sub']}>Добавь первую книгу в свою библиотеку</p>
         </div>
       </div>
     </div>
