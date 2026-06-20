@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
-import { Box, Menu, MenuItem, Popover, Slider, Typography } from '@mui/material'
+import { Box, Menu, MenuItem, Popover, Rating, Slider, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookCoverCard.module.scss'
@@ -40,38 +40,6 @@ function scoreColor(rating: number): string {
   if (rating >= 8) return '#5e9b84'
   if (rating >= 6) return '#c49a3a'
   return '#b94040'
-}
-
-/** Путь звезды для рядов закрашиваемых звёзд оценки. */
-const STAR_PATH = 'm12 3 2.6 5.6 6.1.6-4.6 4.2 1.3 6L12 16.5 6.6 19.4l1.3-6L3.3 9.2l6.1-.6z'
-
-/**
- * Ряд из 5 звёзд, закрашенных пропорционально оценке по шкале 1–10
- * (10 — все 5 звёзд, 5 — 2.5 звезды и т.д.).
- */
-function StarRow({ value, gradientPrefix }: { value: number; gradientPrefix: string }) {
-  const fiveScale = value / 2
-  const color = scoreColor(value)
-
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-      {[1, 2, 3, 4, 5].map((i) => {
-        const fill = Math.max(0, Math.min(1, fiveScale - (i - 1)))
-        const gradientId = `${gradientPrefix}-${i}`
-        return (
-          <svg key={i} width={32} height={32} viewBox="0 0 24 24">
-            <defs>
-              <linearGradient id={gradientId}>
-                <stop offset={`${fill * 100}%`} stopColor={color} />
-                <stop offset={`${fill * 100}%`} stopColor="rgba(150,150,150,0.3)" />
-              </linearGradient>
-            </defs>
-            <path d={STAR_PATH} fill={`url(#${gradientId})`} />
-          </svg>
-        )
-      })}
-    </Box>
-  )
 }
 
 /**
@@ -184,8 +152,8 @@ export const BookCoverCard = ({
   }
 
   return (
-    <div className={styles['cover-card']} onClick={onEdit}>
-      <div className={styles['cover-card__cover']}>
+    <div className={styles['cover-card']}>
+      <div className={styles['cover-card__cover']} onClick={onEdit}>
         {rating === 10 && <div className={styles['cover-card__gold-ring']} />}
         <ScoreBadge rating={rating} onClick={handleRatingClick} />
         <div className={styles['cover-card__title']}>{book.title}</div>
@@ -250,15 +218,24 @@ export const BookCoverCard = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
-          <Box sx={{ mb: 1 }}>
-            <StarRow value={ratingDraft} gradientPrefix={`rate-${entry.id}`} />
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+            <Rating
+              value={ratingDraft / 2}
+              precision={0.5}
+              max={5}
+              sx={{
+                fontSize: 30,
+                '& .MuiRating-iconFilled': { color: scoreColor(ratingDraft) },
+                '& .MuiRating-iconHover': { color: scoreColor(ratingDraft) },
+              }}
+              onChange={(_, value) => {
+                const next = Math.max(1, Math.round((value ?? 0) * 2))
+                setRatingDraft(next)
+                onRatingChange?.(next)
+                setRatingAnchor(null)
+              }}
+            />
           </Box>
-          <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>
-            {ratingDraft}{' '}
-            <Typography component="span" variant="caption" color="text.secondary">
-              / 10
-            </Typography>
-          </Typography>
           <Slider
             value={ratingDraft}
             min={1}
@@ -270,6 +247,12 @@ export const BookCoverCard = ({
               setRatingAnchor(null)
             }}
           />
+          <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>
+            {ratingDraft}{' '}
+            <Typography component="span" variant="caption" color="text.secondary">
+              / 10
+            </Typography>
+          </Typography>
         </Box>
       </Popover>
     </div>

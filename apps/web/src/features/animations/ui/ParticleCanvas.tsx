@@ -175,13 +175,17 @@ export function ParticleCanvas({ type }: Props) {
 
     const dpr = window.devicePixelRatio || 1
 
-    // Синхронизирует размер canvas с физическими пикселями родителя
+    // Синхронизирует разрешение растра canvas с родителем. CSS-размер канваса
+    // задан декларативно (width/height: 100% в style ниже) и не зависит от этого
+    // расчёта — раньше JS сам выставлял canvas.style.width/height в px по
+    // getBoundingClientRect, и при асинхронном срабатывании ResizeObserver
+    // мог зафиксировать чуть устаревшее значение, которое торчало за пределы
+    // родителя и само увеличивало его scrollHeight — отсюда лишние скроллы.
+    // clientWidth/clientHeight — размер padding-box родителя, не зависит от
+    // содержимого и не включает влияние самого канваса.
     const resize = () => {
-      const rect = parent.getBoundingClientRect()
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      canvas.style.width = rect.width + 'px'
-      canvas.style.height = rect.height + 'px'
+      canvas.width = parent.clientWidth * dpr
+      canvas.height = parent.clientHeight * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
@@ -235,7 +239,14 @@ export function ParticleCanvas({ type }: Props) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
     />
   )
 }
