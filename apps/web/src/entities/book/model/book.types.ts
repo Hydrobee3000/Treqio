@@ -55,6 +55,10 @@ export interface BookEntry {
   startDate: string | null
   /** Дата завершения чтения. */
   finishDate: string | null
+  /** Дата последнего изменения оценки. */
+  ratingUpdatedAt: string | null
+  /** Дата последнего изменения статуса. */
+  statusUpdatedAt: string | null
   /** Заметки пользователя. */
   notes: string | null
   createdAt: string

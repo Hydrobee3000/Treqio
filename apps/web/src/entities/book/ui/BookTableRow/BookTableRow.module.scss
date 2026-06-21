@@ -120,18 +120,22 @@
   .table-row__status-dot { background: #5aa0c8; }
 }
 
+// Зелёный фиксирован (не из токенов темы) — статус «Прочитано» должен
+// читаться как «готово» на любой палитре, а не сливаться с акцентным
+// цветом темы, который может быть синим, фиолетовым и т.д.
 .table-row__status--done {
-  background: color-mix(in oklab, var(--color-primary, #4e7b6a) 16%, transparent);
-  color: var(--color-primary-dark, #3d6a55);
+  background: rgba(76, 175, 110, 0.16);
+  color: #3d8a5c;
 
-  .table-row__status-dot { background: var(--color-primary, #4e7b6a); }
+  .table-row__status-dot { background: #4caf6e; }
 }
 
+// Нейтральный, но отличимый от обычного цвета текста темы.
 .table-row__status--want {
-  background: rgba(140, 140, 140, 0.16);
-  color: var(--color-text-2, #777);
+  background: rgba(123, 134, 148, 0.16);
+  color: #9c8a6a;
 
-  .table-row__status-dot { background: #999; }
+  .table-row__status-dot { background: #9c8a6a; }
 }
 
 .table-row__status--dropped {

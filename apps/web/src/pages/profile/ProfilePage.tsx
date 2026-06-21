@@ -1,21 +1,154 @@
 import { useState, useRef, useEffect } from 'react'
-import { BookOpen, Filter, Pencil, Check, X, LogIn, LogOut } from 'lucide-react'
+import {
+  ArrowRight,
+  BarChart3,
+  Check,
+  History,
+  LogIn,
+  LogOut,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Star,
+  X,
+} from 'lucide-react'
+import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
 import { STATUS_LABEL } from '@/entities/book'
-import type { BookStatus } from '@/entities/book'
+import type { BookEntry, BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
 import { setGuestDisplayName } from '@/features/guest'
 import { logout } from '@/features/auth'
+import { useGetMyEntriesQuery } from '@/features/book'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import styles from './ProfilePage.module.scss'
 
 const DEFAULT_DISPLAY_NAME = 'Мечтатель'
 
-/** Табы статусов в строке статистики. */
-const STATUS_TABS: { value: BookStatus; label: string }[] = Object.entries(STATUS_LABEL).map(
-  ([value, label]) => ({ value: value as BookStatus, label }),
-)
+/** Вкладка страницы профиля. */
+type ProfileTab = 'history' | 'stats'
+
+/** Тип события в истории — выводится из текущих полей записи, без отдельного журнала действий. */
+type HistoryEventType = 'ADDED' | 'READING' | 'DONE' | 'DROPPED' | 'RATED' | 'STATUS'
+
+/**
+ * Событие истории — производное от одной записи BookEntry на конкретную дату.
+ */
+interface HistoryEvent {
+  /** Тип события. */
+  type: HistoryEventType
+  /** Дата события (ISO). */
+  date: string
+  /** Запись, на основе которой построено событие. */
+  entry: BookEntry
+}
+
+/** Группа событий за один день — с готовым лейблом («Сегодня», «Вчера» или дата). */
+interface HistoryDayGroup {
+  /** Лейбл дня. */
+  label: string
+  /** События за этот день, от новых к старым. */
+  events: HistoryEvent[]
+}
+
+/** Глагол действия для текста события. */
+const HISTORY_VERB: Record<HistoryEventType, string> = {
+  ADDED: 'добавил новую книгу',
+  READING: 'начал читать',
+  DONE: 'прочитал',
+  DROPPED: 'забросил',
+  RATED: 'изменил оценку',
+  STATUS: 'изменил статус книги',
+}
+
+/** Иконка узла на таймлайне для каждого типа события. */
+const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: number }>> = {
+  ADDED: Plus,
+  READING: ArrowRight,
+  DONE: Check,
+  DROPPED: X,
+  RATED: Star,
+  STATUS: RefreshCw,
+}
+
+/** Цвет текста статуса — совпадает с цветом пилюли статуса в библиотеке. */
+const STATUS_TEXT_COLOR: Record<BookStatus, string> = {
+  WANT: '#9c8a6a',
+  READING: '#4a92bd',
+  DONE: '#3d8a5c',
+  DROPPED: '#b94040',
+}
+
+/** Цвет оценки — по диапазону, фиксирован, не зависит от темы (как в библиотеке). */
+function scoreColor(rating: number): string {
+  if (rating >= 8) return '#5e9b84'
+  if (rating >= 6) return '#c49a3a'
+  return '#b94040'
+}
+
+/** Цвет звезды идеальной оценки 10/10 — золотой, как в библиотеке. */
+const GOLD_COLOR = '#ffd24a'
+
+/** Оценку изменили не в момент завершения книги — нужно отдельное событие. */
+function hasSeparateRatingEvent(entry: BookEntry): boolean {
+  return !!entry.ratingUpdatedAt && entry.ratingUpdatedAt !== entry.finishDate
+}
+
+/**
+ * Статус менялся в момент, не совпадающий с startDate/finishDate (например
+ * откатили «Прочитано» обратно на «Читаю») — такой переход событиями
+ * READING/DONE/DROPPED не покрывается, нужно отдельное общее событие.
+ */
+function hasSeparateStatusEvent(entry: BookEntry): boolean {
+  if (!entry.statusUpdatedAt) return false
+  if (entry.statusUpdatedAt === entry.startDate) return false
+  if (entry.statusUpdatedAt === entry.finishDate) return false
+  return entry.status !== 'DROPPED'
+}
+
+/** Строит события истории из текущих полей записей — без отдельного журнала действий. */
+function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
+  const events: HistoryEvent[] = []
+  for (const entry of entries) {
+    events.push({ type: 'ADDED', date: entry.createdAt, entry })
+    if (entry.startDate) events.push({ type: 'READING', date: entry.startDate, entry })
+    if (entry.finishDate) events.push({ type: 'DONE', date: entry.finishDate, entry })
+    if (entry.status === 'DROPPED') {
+      events.push({ type: 'DROPPED', date: entry.statusUpdatedAt ?? entry.updatedAt, entry })
+    }
+    if (hasSeparateRatingEvent(entry)) {
+      events.push({ type: 'RATED', date: entry.ratingUpdatedAt as string, entry })
+    }
+    if (hasSeparateStatusEvent(entry)) {
+      events.push({ type: 'STATUS', date: entry.statusUpdatedAt as string, entry })
+    }
+  }
+  return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+}
+
+/** Лейбл дня события — «Сегодня», «Вчера» или дата в формате «12 июня». */
+function formatDayLabel(dateStr: string): string {
+  const date = new Date(dateStr)
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+  if (date.toDateString() === today.toDateString()) return 'Сегодня'
+  if (date.toDateString() === yesterday.toDateString()) return 'Вчера'
+  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+}
+
+/** Группирует отсортированные по дате события по дням. */
+function groupEventsByDay(events: HistoryEvent[]): HistoryDayGroup[] {
+  const groups: HistoryDayGroup[] = []
+  for (const event of events) {
+    const label = formatDayLabel(event.date)
+    const lastGroup = groups[groups.length - 1]
+    if (lastGroup && lastGroup.label === label) lastGroup.events.push(event)
+    else groups.push({ label, events: [event] })
+  }
+  return groups
+}
 
 /**
  * Страница профиля пользователя.
@@ -28,6 +161,7 @@ export const ProfilePage = () => {
   const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [logoutMutation] = useLogoutMutation()
+  const { data: entries } = useGetMyEntriesQuery()
 
   /**
    * Функция выхода из аккаунта.
@@ -37,7 +171,7 @@ export const ProfilePage = () => {
     dispatch(logout())
     navigate('/login')
   }
-  const [statusFilter, setStatusFilter] = useState<BookStatus>('WANT')
+  const [activeTab, setActiveTab] = useState<ProfileTab>('history')
   const [editingName, setEditingName] = useState(false)
   const [nameValue, setNameValue] = useState('')
   const nameInputRef = useRef<HTMLInputElement>(null)
@@ -100,6 +234,7 @@ export const ProfilePage = () => {
     ? guestDisplayName || DEFAULT_DISPLAY_NAME
     : user?.displayName || user?.username || DEFAULT_DISPLAY_NAME
   const avatarLetter = displayName.charAt(0).toUpperCase()
+  const dayGroups = groupEventsByDay(buildHistoryEvents(entries ?? []))
 
   return (
     <div className={styles['profile']}>
@@ -171,37 +306,123 @@ export const ProfilePage = () => {
             {isGuest ? 'Войти' : 'Выйти'}
           </button>
         </div>
-
-        {/* Строка статистики */}
-        <div className={styles['stats-row']}>
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              className={`${styles['stat']} ${statusFilter === tab.value ? styles['stat--active'] : ''}`}
-              onClick={() => setStatusFilter(tab.value)}
-            >
-              <span className={styles['stat__value']}>0</span>
-              <span className={styles['stat__label']}>{tab.label}</span>
-            </button>
-          ))}
-          <div className={styles['stats-row__actions']}>
-            <button className={styles['icon-btn']}>
-              <Filter size={15} />
-            </button>
-          </div>
-        </div>
       </div>
 
-      {/* Сетка — пустое состояние */}
-      <div className={styles['grid-section']}>
+      <div className={styles['tabs']}>
+        <button
+          className={`${styles['tab']} ${activeTab === 'history' ? styles['tab--active'] : ''}`}
+          onClick={() => setActiveTab('history')}
+        >
+          <History size={17} />
+          Активность
+        </button>
+        <button
+          className={`${styles['tab']} ${activeTab === 'stats' ? styles['tab--active'] : ''}`}
+          onClick={() => setActiveTab('stats')}
+        >
+          <BarChart3 size={17} />
+          Статистика
+        </button>
+      </div>
+
+      {activeTab === 'history' ? (
+        dayGroups.length === 0 ? (
+          <div className={styles['empty-state']}>
+            <div className={styles['empty-state__icon']}>
+              <History size={48} />
+            </div>
+            <p className={styles['empty-state__text']}>Активность пока пуста</p>
+            <p className={styles['empty-state__sub']}>
+              Добавляй книги и отмечай прогресс — здесь появятся события
+            </p>
+          </div>
+        ) : (
+          <div className={styles['history']}>
+            {dayGroups.map((group) => (
+              <div key={group.label} className={styles['history__day']}>
+                <div className={styles['history__date']}>{group.label}</div>
+                <div className={styles['history__timeline']}>
+                  {group.events.map((event, i) => {
+                    const Icon = HISTORY_ICON[event.type]
+                    const { rating } = event.entry
+                    const showsRating =
+                      rating !== null &&
+                      ((event.type === 'DONE' && !hasSeparateRatingEvent(event.entry)) ||
+                        event.type === 'RATED')
+                    return (
+                      <div
+                        key={`${event.entry.id}-${event.type}-${i}`}
+                        className={styles['history__event']}
+                      >
+                        <div
+                          className={`${styles['history__node']} ${styles[`history__node--${event.type.toLowerCase()}`]}`}
+                        >
+                          <Icon size={14} />
+                        </div>
+                        <div className={styles['history__cover']}>
+                          {showsRating && (
+                            <span
+                              className={styles['history__cover-rating']}
+                              style={{ color: rating === 10 ? GOLD_COLOR : scoreColor(rating) }}
+                            >
+                              <Star
+                                size={9}
+                                fill={rating === 10 ? GOLD_COLOR : scoreColor(rating)}
+                                stroke="none"
+                              />
+                              {rating}
+                            </span>
+                          )}
+                        </div>
+                        <div className={styles['history__body']}>
+                          <p className={styles['history__text']}>
+                            <span className={styles[`history__verb--${event.type.toLowerCase()}`]}>
+                              {HISTORY_VERB[event.type]}
+                            </span>{' '}
+                            <strong>«{event.entry.book.title}»</strong>
+                            {event.type === 'ADDED' && (
+                              <>
+                                {' '}
+                                <span className={styles['history__verb--added']}>
+                                  со статусом
+                                </span>{' '}
+                                <strong style={{ color: STATUS_TEXT_COLOR[event.entry.status] }}>
+                                  «{STATUS_LABEL[event.entry.status]}»
+                                </strong>
+                              </>
+                            )}
+                            {event.type === 'STATUS' && (
+                              <>
+                                {' → '}
+                                <strong style={{ color: STATUS_TEXT_COLOR[event.entry.status] }}>
+                                  «{STATUS_LABEL[event.entry.status]}»
+                                </strong>
+                              </>
+                            )}
+                          </p>
+                        </div>
+                        <span className={styles['history__time']}>
+                          {new Date(event.date).toLocaleTimeString('ru-RU', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
         <div className={styles['empty-state']}>
           <div className={styles['empty-state__icon']}>
-            <BookOpen size={48} />
+            <BarChart3 size={48} />
           </div>
-          <p className={styles['empty-state__text']}>Список книг пуст</p>
-          <p className={styles['empty-state__sub']}>Добавь первую книгу в свою библиотеку</p>
+          <p className={styles['empty-state__text']}>Статистика появится здесь позже</p>
         </div>
-      </div>
+      )}
     </div>
   )
 }

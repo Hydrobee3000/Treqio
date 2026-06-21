@@ -94,6 +94,10 @@ model BookEntry {
   startDate  DateTime?
   /// Дата завершения чтения.
   finishDate DateTime?
+  /// Дата последнего изменения оценки.
+  ratingUpdatedAt DateTime?
+  /// Дата последнего изменения статуса.
+  statusUpdatedAt DateTime?
   /// Заметки пользователя.
   notes      String?
 

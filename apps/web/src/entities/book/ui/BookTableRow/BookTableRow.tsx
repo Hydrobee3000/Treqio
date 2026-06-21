@@ -13,11 +13,14 @@ const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   DROPPED: styles['table-row__status--dropped'],
 }
 
+/** Цвет статуса «Прочитано» — фиксированный зелёный, не зависит от акцентного цвета темы. */
+const STATUS_DONE_COLOR = '#4caf6e'
+
 /** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли в строке. */
 const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  WANT: '#999',
+  WANT: '#9c8a6a',
   READING: '#5aa0c8',
-  DONE: 'var(--color-primary, #4e7b6a)',
+  DONE: STATUS_DONE_COLOR,
   DROPPED: '#b94040',
 }
 
