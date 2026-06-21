@@ -47,10 +47,10 @@ $bp-md: 900px;
 .home__layout-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: 3px;
+  gap: 6px;
+  padding: 4px;
   background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  border-radius: 10px;
+  border-radius: 11px;
   flex-shrink: 0;
 }
 
@@ -61,7 +61,7 @@ $bp-md: 900px;
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   background: transparent;
   color: var(--color-text-2, #666);
   cursor: pointer;

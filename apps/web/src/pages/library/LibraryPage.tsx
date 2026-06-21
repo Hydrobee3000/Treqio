@@ -110,8 +110,6 @@ export const LibraryPage = () => {
 
       {!isError && (
         <div className={styles['library__label-row']}>
-          <span className={styles['library__label']}>{filteredEntries.length} книг</span>
-
           <div className={styles['library__style-toggle']}>
             <button
               className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}

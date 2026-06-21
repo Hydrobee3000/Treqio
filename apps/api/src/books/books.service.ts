@@ -1,9 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { BookStatus } from '../generated/prisma/client'
 import type { CreateBookDto } from './dto/create-book.dto'
 import type { UpdateBookDto } from './dto/update-book.dto'
 import type { CreateBookEntryDto } from './dto/create-book-entry.dto'
 import type { UpdateBookEntryDto } from './dto/update-book-entry.dto'
+
+/**
+ * Даты, которые проставляются автоматически при переходе записи в указанный
+ * статус — начало чтения при «Читаю», начало и завершение при «Прочитано».
+ */
+function autoStatusDates(
+  status: BookStatus | undefined,
+  now: Date,
+): { startDate?: Date; finishDate?: Date } {
+  if (status === BookStatus.READING) return { startDate: now }
+  if (status === BookStatus.DONE) return { startDate: now, finishDate: now }
+  return {}
+}
 
 /**
  * Сервис управления книгами и записями пользователя.
@@ -66,8 +80,9 @@ export class BooksService {
    * Создание записи о книге для пользователя.
    */
   createEntry(userId: string, dto: CreateBookEntryDto) {
+    const autoDates = autoStatusDates(dto.status, new Date())
     return this.prisma.bookEntry.create({
-      data: { userId, ...dto },
+      data: { userId, ...dto, ...autoDates },
       include: { book: true },
     })
   }
@@ -78,12 +93,35 @@ export class BooksService {
   async updateEntry(userId: string, entryId: string, dto: UpdateBookEntryDto) {
     const entry = await this.prisma.bookEntry.findUnique({ where: { id: entryId } })
     if (!entry || entry.userId !== userId) throw new NotFoundException('Запись не найдена')
+
+    // now общий для autoDates и ratingUpdatedAt: если статус и оценка
+    // меняются в одном запросе (например отметили книгу прочитанной сразу
+    // с оценкой), finishDate и ratingUpdatedAt совпадут до миллисекунды —
+    // на фронте по этому совпадению решают, показывать оценку отдельным
+    // событием истории или как часть события «прочитал».
+    const now = new Date()
+    // Авто-дата проставляется только если статус меняется и дата ещё не задана
+    // вручную — не перезаписывает уже существующие startDate/finishDate.
+    const autoDates = autoStatusDates(dto.status, now)
+    const ratingChanged = dto.rating !== undefined && dto.rating !== entry.rating
+    const statusChanged = dto.status !== undefined && dto.status !== entry.status
+
     return this.prisma.bookEntry.update({
       where: { id: entryId },
       data: {
         ...dto,
-        startDate: dto.startDate ? new Date(dto.startDate) : undefined,
-        finishDate: dto.finishDate ? new Date(dto.finishDate) : undefined,
+        startDate: dto.startDate
+          ? new Date(dto.startDate)
+          : entry.startDate === null
+            ? autoDates.startDate
+            : undefined,
+        finishDate: dto.finishDate
+          ? new Date(dto.finishDate)
+          : entry.finishDate === null
+            ? autoDates.finishDate
+            : undefined,
+        ratingUpdatedAt: ratingChanged ? now : undefined,
+        statusUpdatedAt: statusChanged ? now : undefined,
       },
       include: { book: true },
     })
