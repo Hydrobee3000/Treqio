@@ -1,6 +1,15 @@
 $bp-sm: 600px;
 $bp-md: 900px;
 
+// ─── Цвета событий в истории (node + verb используют одни и те же) ──────────────
+$history-added-color: #7b8694;
+$history-reading-color: #5aa0c8;
+$history-reading-text-color: #4a92bd;
+$history-done-color: #4caf6e;
+$history-dropped-color: #b94040;
+$history-rated-color: #c49a3a;
+$history-status-color: #8a6fc4;
+
 // ─── Страница ─────────────────────────────────────────────────────────────────
 
 .profile {
@@ -51,7 +60,9 @@ $bp-md: 900px;
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
 
   &:hover {
     background: var(--color-chip-bg);
@@ -215,7 +226,6 @@ $bp-md: 900px;
   }
 }
 
-
 .name-counter {
   position: absolute;
   top: 26px;
@@ -234,99 +244,56 @@ $bp-md: 900px;
   }
 }
 
-// ─── Строка статистики ────────────────────────────────────────────────────────
+// ─── Табы (История / Статистика) ─────────────────────────────────────────────
 
-.stats-row {
+.tabs {
   display: flex;
-  align-items: center;
-  gap: 22px;
-  padding: 10px 0;
-  border-top: 1px solid var(--color-divider, #e0e0e0);
+  gap: 4px;
+  margin: 28px 0 0;
+  padding: 0 40px;
   border-bottom: 1px solid var(--color-divider, #e0e0e0);
 
   @media (max-width: $bp-sm) {
-    gap: 14px;
+    padding: 0 18px;
   }
 }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 6px;
-  transition: background 0.15s;
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-2, #666);
+  position: relative;
   border: none;
   background: transparent;
   font-family: inherit;
-  text-align: left;
-
-  &:hover {
-    background: var(--color-paper-2, rgba(0, 0, 0, 0.04));
-  }
-
-  &--active .stat__value {
-    color: var(--color-primary, #4e7b6a);
-  }
-
-  &--active .stat__label {
-    color: var(--color-primary, #4e7b6a);
-  }
-}
-
-.stat__value {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text, inherit);
-  line-height: 1.2;
-}
-
-.stat__label {
-  font-size: 11px;
-  color: var(--color-text-2, #666);
-  white-space: nowrap;
-}
-
-.stats-row__actions {
-  margin-left: auto;
-  display: flex;
-  gap: 6px;
-}
-
-.icon-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--color-divider, #e0e0e0);
-  background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
-  display: grid;
-  place-items: center;
   cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s;
+  transition: color 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
     color: var(--color-text, inherit);
   }
-}
 
-// ─── Сетка (пустое состояние) ─────────────────────────────────────────────────
+  &--active {
+    color: var(--color-text, inherit);
 
-.grid-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 40px 60px;
-
-  @media (max-width: $bp-sm) {
-    padding: 16px 18px 100px;
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--color-primary, #4e7b6a);
+      border-radius: 2px;
+    }
   }
 }
+
+// ─── Пустое состояние (история/статистика) ───────────────────────────────────
 
 .empty-state {
   flex: 1;
@@ -352,4 +319,195 @@ $bp-md: 900px;
 .empty-state__sub {
   font-size: 13px;
   opacity: 0.7;
+}
+
+// ─── История (таймлайн) ──────────────────────────────────────────────────────
+
+.history {
+  display: flex;
+  flex-direction: column;
+  padding: 0 40px 40px;
+
+  @media (max-width: $bp-sm) {
+    padding: 0 18px 32px;
+  }
+}
+
+.history__day {
+  margin-bottom: 4px;
+}
+
+.history__date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-3, #999);
+  padding: 8px 14px;
+  // Отрицательный margin-left — точки таймлайна сидят у самого левого края
+  // .history__day (left: -34px у узла), а скруглённый угол строки даты иначе
+  // оказывается правее их и кружок чуть высовывается из-под строки.
+  margin: 10px 0 6px -6px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 8%, var(--color-paper, white));
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.history__timeline {
+  position: relative;
+  padding-left: 34px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--color-divider, #e0e0e0);
+    border-radius: 2px;
+  }
+}
+
+.history__event {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  // Точка на линии таймлайна (.history__node) — absolute с left:-34px,
+  // её положение считается от padding-box этого элемента и не зависит
+  // от величины padding, поэтому отступ можно увеличивать без сдвига точки.
+  padding: 10px 16px;
+}
+
+.history__node {
+  position: absolute;
+  left: -34px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--color-paper, white);
+  border: 2px solid var(--color-divider, #e0e0e0);
+  z-index: 1;
+
+  &--added {
+    border-color: $history-added-color;
+    color: $history-added-color;
+  }
+
+  &--reading {
+    border-color: $history-reading-color;
+    color: $history-reading-color;
+  }
+
+  // Зелёный фиксирован (не из токенов темы) — см. STATUS_DONE_COLOR
+  // в BookCoverCard/BookTableRow, тот же цвет для согласованности.
+  &--done {
+    border-color: $history-done-color;
+    color: $history-done-color;
+  }
+
+  &--dropped {
+    border-color: $history-dropped-color;
+    color: $history-dropped-color;
+  }
+
+  &--rated {
+    border-color: $history-rated-color;
+    color: $history-rated-color;
+  }
+
+  &--status {
+    border-color: $history-status-color;
+    color: $history-status-color;
+  }
+}
+
+.history__cover {
+  position: relative;
+  width: 34px;
+  height: 48px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    150deg,
+    var(--color-primary, #4e7b6a),
+    var(--color-primary-dark, #3a5c4f)
+  );
+  box-shadow: 0 3px 8px -4px rgba(0, 0, 0, 0.5);
+}
+
+.history__cover-rating {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-paper, white) 88%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.history__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.history__text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text, inherit);
+  overflow-wrap: break-word;
+}
+
+// Фиксированный серый (не --color-text-2, который у части тем имеет
+// цветной оттенок, а не нейтральный серый).
+.history__verb--added {
+  color: #888;
+  font-weight: 600;
+}
+
+.history__verb--reading {
+  color: $history-reading-text-color;
+  font-weight: 600;
+}
+
+.history__verb--done {
+  color: $history-done-color;
+  font-weight: 600;
+}
+
+.history__verb--dropped {
+  color: $history-dropped-color;
+  font-weight: 600;
+}
+
+.history__verb--rated {
+  color: $history-rated-color;
+  font-weight: 600;
+}
+
+.history__verb--status {
+  color: $history-status-color;
+  font-weight: 600;
+}
+
+.history__time {
+  font-size: 12px;
+  color: var(--color-text-3, #999);
+  flex-shrink: 0;
 }

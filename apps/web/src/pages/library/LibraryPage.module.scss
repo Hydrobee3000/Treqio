@@ -116,18 +116,12 @@ $bp-sm: 600px;
 .library__label-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 0 36px 4px;
 
   @media (max-width: $bp-sm) {
     padding: 0 20px 4px;
   }
-}
-
-.library__label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-2, #666);
 }
 
 .library__style-toggle {
