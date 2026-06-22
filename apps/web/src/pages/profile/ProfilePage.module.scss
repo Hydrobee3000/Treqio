@@ -68,6 +68,21 @@ $history-status-color: #8a6fc4;
     background: var(--color-chip-bg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
+
+  // На мобильных текст прячется — кнопка становится круглой с одной иконкой.
+  @media (max-width: $bp-sm) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+}
+
+.header__auth-btn-label {
+  @media (max-width: $bp-sm) {
+    display: none;
+  }
 }
 
 // ─── Аватар ───────────────────────────────────────────────────────────────────
@@ -151,7 +166,8 @@ $history-status-color: #8a6fc4;
   align-items: center;
   gap: 6px;
   height: 36px;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   position: relative;
   padding: 0 6px 0 14px;
   border-radius: 8px;
@@ -167,7 +183,7 @@ $history-status-color: #8a6fc4;
   }
 
   @media (max-width: $bp-sm) {
-    width: 240px;
+    max-width: 180px;
   }
 }
 

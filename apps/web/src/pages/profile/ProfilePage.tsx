@@ -301,9 +301,10 @@ export const ProfilePage = () => {
           <button
             className={styles['header__auth-btn']}
             onClick={isGuest ? () => navigate('/login') : handleLogout}
+            title={isGuest ? 'Войти' : 'Выйти'}
           >
             {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
-            {isGuest ? 'Войти' : 'Выйти'}
+            <span className={styles['header__auth-btn-label']}>{isGuest ? 'Войти' : 'Выйти'}</span>
           </button>
         </div>
       </div>
