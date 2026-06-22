@@ -28,6 +28,8 @@ $bp-sm: 600px;
   padding: 28px 36px 12px;
 
   @media (max-width: $bp-sm) {
+    align-items: center;
+    flex-wrap: nowrap;
     padding: 20px 20px 10px;
   }
 }
@@ -51,6 +53,22 @@ $bp-sm: 600px;
   &:hover {
     filter: brightness(1.08);
     transform: translateY(-1px);
+  }
+
+  // На мобильных текст прячется — кнопка становится круглой, чтобы
+  // помещаться в один ряд с заголовком «Моя библиотека».
+  @media (max-width: $bp-sm) {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+}
+
+.library__add-btn-label {
+  @media (max-width: $bp-sm) {
+    display: none;
   }
 }
 
@@ -116,11 +134,142 @@ $bp-sm: 600px;
 .library__label-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   padding: 0 36px 4px;
 
   @media (max-width: $bp-sm) {
+    flex-direction: column;
+    align-items: stretch;
     padding: 0 20px 4px;
+  }
+}
+
+.library__label-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.library__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
+  }
+
+  &--active {
+    background: var(--color-primary, #4e7b6a);
+    color: white;
+  }
+}
+
+.library__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  flex: 1;
+  max-width: 480px;
+  padding: 0 12px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  background: var(--color-paper, white);
+  color: var(--color-text-2, #666);
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+  }
+
+  @media (max-width: $bp-sm) {
+    // flex:1 со flex-basis:0% игнорирует height при flex-direction:column
+    // (родитель .library__label-row становится column на мобильных) — без
+    // этого переопределения поле схлопывалось почти до нулевой высоты.
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+.library__search-icon--active {
+  color: var(--color-primary, #4e7b6a);
+}
+
+.library__search-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text, inherit);
+  font-size: 13px;
+  font-family: inherit;
+
+  &::placeholder {
+    color: var(--color-text-2, #666);
+  }
+}
+
+.library__search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--color-text, inherit);
+  }
+}
+
+.library__sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  color: var(--color-text-2, #666);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
   }
 }
 
@@ -237,8 +386,11 @@ $bp-sm: 600px;
 
 .library__empty-text {
   margin: 0;
+  min-width: 0;
+  max-width: 100%;
   font-size: 15px;
   font-weight: 500;
+  overflow-wrap: break-word;
 }
 
 .library__empty-sub {

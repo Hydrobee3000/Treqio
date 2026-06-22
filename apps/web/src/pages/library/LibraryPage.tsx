@@ -1,5 +1,16 @@
 import { useState } from 'react'
-import { BookOpen, Image, List, Plus, Upload } from 'lucide-react'
+import {
+  ArrowDownUp,
+  BookOpen,
+  Check,
+  Filter,
+  Image,
+  List,
+  Plus,
+  Search,
+  Upload,
+  X,
+} from 'lucide-react'
 import { useNavigate } from 'react-router'
 import {
   Dialog,
@@ -8,6 +19,11 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Box,
+  Menu,
+  MenuItem,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { BookCoverCard, BookTableRow, STATUS_LABEL } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
@@ -22,6 +38,9 @@ type CardStyle = 'cover' | 'table'
 /** Ключ для сохранения выбранного стиля карточек между визитами. */
 const CARD_STYLE_STORAGE_KEY = 'treqio_library_card_style'
 
+/** Максимальная длина поискового запроса — названия и авторы книг короче. */
+const SEARCH_QUERY_MAX = 60
+
 /** Фильтр по статусу записи — добавляет вариант «Все» к статусам книги. */
 type StatusFilter = BookStatus | 'ALL'
 
@@ -30,6 +49,34 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
   { value: 'ALL', label: 'Все' },
   ...Object.entries(STATUS_LABEL).map(([value, label]) => ({ value: value as BookStatus, label })),
 ]
+
+/** Вариант сортировки списка книг. */
+type SortOption = 'recent' | 'title' | 'author' | 'rating'
+
+/** Варианты сортировки для выпадающего списка. */
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'recent', label: 'Сначала новые' },
+  { value: 'title', label: 'По названию' },
+  { value: 'author', label: 'По автору' },
+  { value: 'rating', label: 'По оценке' },
+]
+
+/** Сортирует записи по выбранному критерию — не мутирует исходный массив. */
+function sortEntries(entries: BookEntry[], sortBy: SortOption): BookEntry[] {
+  const sorted = [...entries]
+  switch (sortBy) {
+    case 'title':
+      return sorted.sort((a, b) => a.book.title.localeCompare(b.book.title, 'ru'))
+    case 'author':
+      return sorted.sort((a, b) => a.book.author.localeCompare(b.book.author, 'ru'))
+    case 'rating':
+      return sorted.sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
+    case 'recent':
+      return sorted.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
+  }
+}
 
 /**
  * Страница библиотеки пользователя.
@@ -44,14 +91,30 @@ export const LibraryPage = () => {
   const [editEntry, setEditEntry] = useState<BookEntry | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState<SortOption>('recent')
+  const [sortAnchor, setSortAnchor] = useState<HTMLElement | null>(null)
+  const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
   const { data, isLoading, isError } = useGetMyEntriesQuery()
   const [updateEntry] = useUpdateEntryMutation()
   const entries = data ?? []
   const isEmpty = !isError && entries.length === 0
-  const filteredEntries =
-    statusFilter === 'ALL' ? entries : entries.filter((entry) => entry.status === statusFilter)
+  const normalizedQuery = searchQuery.trim().toLowerCase()
+  const filteredEntries = sortEntries(
+    entries.filter((entry) => {
+      const matchesStatus = statusFilter === 'ALL' || entry.status === statusFilter
+      const matchesQuery =
+        !normalizedQuery ||
+        entry.book.title.toLowerCase().includes(normalizedQuery) ||
+        entry.book.author.toLowerCase().includes(normalizedQuery)
+      return matchesStatus && matchesQuery
+    }),
+    sortBy,
+  )
   const isFilteredEmpty = !isEmpty && filteredEntries.length === 0
 
   /** Меняет стиль карточек и сохраняет выбор в localStorage. */
@@ -83,11 +146,11 @@ export const LibraryPage = () => {
         <h1 className={styles['library__title']}>Моя библиотека</h1>
         <button className={styles['library__add-btn']} onClick={handleAddClick}>
           <Plus size={16} />
-          Добавить книгу
+          <span className={styles['library__add-btn-label']}>Добавить книгу</span>
         </button>
       </div>
 
-      {!isError && !isEmpty && (
+      {!isError && !isEmpty && !isMobile && (
         <div className={styles['library__tabs']}>
           {STATUS_TABS.map((tab) => {
             const count =
@@ -108,23 +171,127 @@ export const LibraryPage = () => {
         </div>
       )}
 
-      {!isError && (
+      {!isError && !isEmpty && (
         <div className={styles['library__label-row']}>
-          <div className={styles['library__style-toggle']}>
+          <div className={styles['library__search']}>
+            <Search
+              size={16}
+              className={normalizedQuery ? styles['library__search-icon--active'] : undefined}
+            />
+            <input
+              className={styles['library__search-input']}
+              type="text"
+              placeholder="Поиск по названию или автору"
+              value={searchQuery}
+              maxLength={SEARCH_QUERY_MAX}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                className={styles['library__search-clear']}
+                onClick={() => setSearchQuery('')}
+                title="Очистить"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <div className={styles['library__label-row-actions']}>
+            {isMobile && (
+              <>
+                <button
+                  className={`${styles['library__filter-btn']} ${statusFilter !== 'ALL' ? styles['library__filter-btn--active'] : ''}`}
+                  onClick={(e) => setFilterAnchor(e.currentTarget)}
+                  title="Фильтр по статусу"
+                >
+                  <Filter size={15} />
+                </button>
+                <Menu
+                  anchorEl={filterAnchor}
+                  open={!!filterAnchor}
+                  onClose={() => setFilterAnchor(null)}
+                  slotProps={{ list: { dense: true } }}
+                >
+                  {STATUS_TABS.map((tab) => {
+                    const count =
+                      tab.value === 'ALL'
+                        ? entries.length
+                        : entries.filter((e) => e.status === tab.value).length
+                    return (
+                      <MenuItem
+                        key={tab.value}
+                        selected={tab.value === statusFilter}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          minWidth: 170,
+                          fontSize: 13,
+                        }}
+                        onClick={() => {
+                          setStatusFilter(tab.value)
+                          setFilterAnchor(null)
+                        }}
+                      >
+                        <Box sx={{ flex: 1 }}>{tab.label}</Box>
+                        <Box sx={{ fontSize: 11, opacity: 0.6 }}>{count}</Box>
+                        {tab.value === statusFilter && <Check size={14} />}
+                      </MenuItem>
+                    )
+                  })}
+                </Menu>
+              </>
+            )}
             <button
-              className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
-              onClick={() => setCardStyle('cover')}
-              title="Вид обложками"
+              className={styles['library__sort-btn']}
+              onClick={(e) => setSortAnchor(e.currentTarget)}
             >
-              <Image size={22} />
+              <ArrowDownUp size={15} />
+              {!isMobile && SORT_OPTIONS.find((o) => o.value === sortBy)?.label}
             </button>
-            <button
-              className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
-              onClick={() => setCardStyle('table')}
-              title="Табличный вид"
+            <Menu
+              anchorEl={sortAnchor}
+              open={!!sortAnchor}
+              onClose={() => setSortAnchor(null)}
+              slotProps={{ list: { dense: true } }}
             >
-              <List size={22} />
-            </button>
+              {SORT_OPTIONS.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  selected={option.value === sortBy}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    minWidth: 170,
+                    fontSize: 13,
+                  }}
+                  onClick={() => {
+                    setSortBy(option.value)
+                    setSortAnchor(null)
+                  }}
+                >
+                  <Box sx={{ flex: 1 }}>{option.label}</Box>
+                  {option.value === sortBy && <Check size={14} />}
+                </MenuItem>
+              ))}
+            </Menu>
+            <div className={styles['library__style-toggle']}>
+              <button
+                className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
+                onClick={() => setCardStyle('cover')}
+                title="Вид обложками"
+              >
+                <Image size={22} />
+              </button>
+              <button
+                className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
+                onClick={() => setCardStyle('table')}
+                title="Табличный вид"
+              >
+                <List size={22} />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -166,7 +333,11 @@ export const LibraryPage = () => {
           <div className={styles['library__empty-icon']}>
             <BookOpen size={48} />
           </div>
-          <p className={styles['library__empty-text']}>Нет книг с этим статусом</p>
+          <p className={styles['library__empty-text']}>
+            {normalizedQuery
+              ? `Ничего не найдено по запросу «${searchQuery.trim()}»`
+              : 'Нет книг с этим статусом'}
+          </p>
         </div>
       ) : cardStyle === 'table' ? (
         <div className={styles['library__table']}>
