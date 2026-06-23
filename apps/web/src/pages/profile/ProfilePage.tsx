@@ -90,6 +90,19 @@ function scoreColor(rating: number): string {
 /** Цвет звезды идеальной оценки 10/10 — золотой, как в библиотеке. */
 const GOLD_COLOR = '#ffd24a'
 
+/** Пилюля статуса в тексте события — цветной тинт фона, как у статуса на обложке в библиотеке. */
+function StatusChip({ status }: { status: BookStatus }) {
+  const color = STATUS_TEXT_COLOR[status]
+  return (
+    <span
+      className={styles['history__status-chip']}
+      style={{ color, background: `color-mix(in srgb, ${color} 16%, transparent)` }}
+    >
+      {STATUS_LABEL[status]}
+    </span>
+  )
+}
+
 /** Оценку изменили не в момент завершения книги — нужно отдельное событие. */
 function hasSeparateRatingEvent(entry: BookEntry): boolean {
   return !!entry.ratingUpdatedAt && entry.ratingUpdatedAt !== entry.finishDate
@@ -107,6 +120,37 @@ function hasSeparateStatusEvent(entry: BookEntry): boolean {
   return entry.status !== 'DROPPED'
 }
 
+/**
+ * Книга создана сразу со статусом «Читаю»/«Прочитано»/«Брошено» — рядом есть
+ * событие (начал читать/прочитал/забросил) с той же датой, оно уже называет
+ * статус, поэтому «со статусом X» в тексте добавления было бы дублированием.
+ */
+function hasAccompanyingCreationEvent(entry: BookEntry): boolean {
+  if (entry.startDate === entry.createdAt) return true
+  if (entry.finishDate === entry.createdAt) return true
+  if (
+    entry.status === 'DROPPED' &&
+    (entry.statusUpdatedAt ?? entry.createdAt) === entry.createdAt
+  ) {
+    return true
+  }
+  return false
+}
+
+/**
+ * Порядок событий при одинаковой дате (книга создана сразу со статусом
+ * «Читаю»/«Прочитано» — даты совпадают до миллисекунды) — более «продвинутое»
+ * по читательскому пути событие показывается выше, как более актуальное.
+ */
+const HISTORY_TYPE_RANK: Record<HistoryEventType, number> = {
+  ADDED: 0,
+  READING: 1,
+  DONE: 2,
+  DROPPED: 2,
+  RATED: 3,
+  STATUS: 3,
+}
+
 /** Строит события истории из текущих полей записей — без отдельного журнала действий. */
 function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
   const events: HistoryEvent[] = []
@@ -115,7 +159,7 @@ function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
     if (entry.startDate) events.push({ type: 'READING', date: entry.startDate, entry })
     if (entry.finishDate) events.push({ type: 'DONE', date: entry.finishDate, entry })
     if (entry.status === 'DROPPED') {
-      events.push({ type: 'DROPPED', date: entry.statusUpdatedAt ?? entry.updatedAt, entry })
+      events.push({ type: 'DROPPED', date: entry.statusUpdatedAt ?? entry.createdAt, entry })
     }
     if (hasSeparateRatingEvent(entry)) {
       events.push({ type: 'RATED', date: entry.ratingUpdatedAt as string, entry })
@@ -124,7 +168,11 @@ function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
       events.push({ type: 'STATUS', date: entry.statusUpdatedAt as string, entry })
     }
   }
-  return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  return events.sort((a, b) => {
+    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime()
+    if (dateDiff !== 0) return dateDiff
+    return HISTORY_TYPE_RANK[b.type] - HISTORY_TYPE_RANK[a.type]
+  })
 }
 
 /** Лейбл дня события — «Сегодня», «Вчера» или дата в формате «12 июня». */
@@ -381,23 +429,21 @@ export const ProfilePage = () => {
                               {HISTORY_VERB[event.type]}
                             </span>{' '}
                             <strong>«{event.entry.book.title}»</strong>
-                            {event.type === 'ADDED' && (
-                              <>
-                                {' '}
-                                <span className={styles['history__verb--added']}>
-                                  со статусом
-                                </span>{' '}
-                                <strong style={{ color: STATUS_TEXT_COLOR[event.entry.status] }}>
-                                  «{STATUS_LABEL[event.entry.status]}»
-                                </strong>
-                              </>
-                            )}
+                            {event.type === 'ADDED' &&
+                              !hasAccompanyingCreationEvent(event.entry) && (
+                                <>
+                                  {' '}
+                                  <span className={styles['history__verb--added']}>
+                                    со статусом
+                                  </span>{' '}
+                                  <StatusChip status={event.entry.status} />
+                                </>
+                              )}
                             {event.type === 'STATUS' && (
                               <>
-                                {' → '}
-                                <strong style={{ color: STATUS_TEXT_COLOR[event.entry.status] }}>
-                                  «{STATUS_LABEL[event.entry.status]}»
-                                </strong>
+                                {' '}
+                                <span className={styles['history__verb--status']}>на</span>{' '}
+                                <StatusChip status={event.entry.status} />
                               </>
                             )}
                           </p>
