@@ -1,8 +1,14 @@
 $bp-sm: 600px;
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ─── Страница ─────────────────────────────────────────────────────────────────
@@ -10,11 +16,8 @@ $bp-sm: 600px;
 .library {
   display: flex;
   flex-direction: column;
-  // Скроллит только родительский <main> в AppLayout — свой overflow:auto здесь
-  // создавал второй вложенный скролл-контейнер на тот же контент, который при
-  // резкой смене высоты (переключение стилей карточек) на миг давал рассинхрон
-  // размеров и лишние горизонтальный/вертикальный скроллы внутри страницы.
-  height: 100%;
+  // Скроллит только родительский <main> в AppLayout
+  min-height: 100%;
 }
 
 // ─── Шапка ────────────────────────────────────────────────────────────────────
@@ -48,7 +51,9 @@ $bp-sm: 600px;
   font-family: inherit;
   cursor: pointer;
   flex-shrink: 0;
-  transition: filter 0.15s, transform 0.15s;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
 
   &:hover {
     filter: brightness(1.08);
@@ -111,7 +116,10 @@ $bp-sm: 600px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 
   &:hover {
     border-color: var(--color-primary, #4e7b6a);
@@ -165,7 +173,9 @@ $bp-sm: 600px;
   color: var(--color-text-2, #666);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
@@ -191,7 +201,9 @@ $bp-sm: 600px;
   border: 1px solid var(--color-divider, #d5e4d8);
   background: var(--color-paper, white);
   color: var(--color-text-2, #666);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   &:focus-within {
     border-color: var(--color-primary, #4e7b6a);
@@ -241,7 +253,9 @@ $bp-sm: 600px;
   background: transparent;
   color: var(--color-text-2, #666);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.08);
@@ -265,7 +279,9 @@ $bp-sm: 600px;
   white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
@@ -294,7 +310,9 @@ $bp-sm: 600px;
   background: transparent;
   color: var(--color-text-2, #666);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
@@ -317,7 +335,7 @@ $bp-sm: 600px;
   padding: 12px 36px 36px;
 
   @media (max-width: $bp-sm) {
-    padding: 10px 20px 24px;
+    padding: 10px 20px 20px;
   }
 }
 
@@ -413,8 +431,13 @@ $bp-sm: 600px;
 }
 
 @keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-  50%      { transform: translateY(-7px) rotate(var(--rot, 0deg)); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateY(-7px) rotate(var(--rot, 0deg));
+  }
 }
 
 .library__empty-shelf {
@@ -447,8 +470,12 @@ $bp-sm: 600px;
     background: var(--ghost-border, #6fa68c4d);
   }
 
-  &:first-child { --rot: -6deg; }
-  &:last-child { --rot: 6deg; }
+  &:first-child {
+    --rot: -6deg;
+  }
+  &:last-child {
+    --rot: 6deg;
+  }
 
   &--tall {
     height: 122px;
@@ -511,7 +538,9 @@ $bp-sm: 600px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: filter 0.15s, transform 0.15s;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
 
   &:hover {
     filter: brightness(1.08);
