@@ -3,6 +3,7 @@ $bp-md: 900px;
 
 // ─── Цвета событий в истории (node + verb используют одни и те же) ──────────────
 $history-added-color: #7b8694;
+$history-added-text-color: #3f9d91;
 $history-reading-color: #5aa0c8;
 $history-reading-text-color: #4a92bd;
 $history-done-color: #4caf6e;
@@ -365,7 +366,8 @@ $history-status-color: #8a6fc4;
   // оказывается правее их и кружок чуть высовывается из-под строки.
   margin: 10px 0 6px -6px;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 8%, var(--color-paper, white));
+  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, var(--color-paper, white));
+  border: 1px solid color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
   position: sticky;
   top: 0;
   z-index: 2;
@@ -445,37 +447,36 @@ $history-status-color: #8a6fc4;
   }
 }
 
-.history__cover {
+// Кольцо оценки — только просмотр (не как в библиотеке, там оно кликабельно).
+// Донат-форма через ::before с фоном страницы внутри — закрывает середину
+// conic-gradient, оставляя видимым только внешнее кольцо. inline-flex и
+// vertical-align — чтобы вписывалось в строку текста, не выходя за её пределы.
+.history__rating-ring {
   position: relative;
-  width: 34px;
-  height: 48px;
-  border-radius: 5px;
-  flex-shrink: 0;
-  background: linear-gradient(
-    150deg,
-    var(--color-primary, #4e7b6a),
-    var(--color-primary-dark, #3a5c4f)
-  );
-  box-shadow: 0 3px 8px -4px rgba(0, 0, 0, 0.5);
-}
-
-.history__cover-rating {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  height: 15px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-paper, white) 88%, transparent);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  font-size: 9px;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 3px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  vertical-align: middle;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--color-paper, white);
+  }
+}
+
+.history__rating-number {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
 }
 
 .history__body {
@@ -502,10 +503,16 @@ $history-status-color: #8a6fc4;
   white-space: nowrap;
 }
 
-// Фиксированный серый (не --color-text-2, который у части тем имеет
-// цветной оттенок, а не нейтральный серый).
-.history__verb--added {
+// Нейтральные слова-связки («начал», «новую книгу», «со статусом», «книги»,
+// «на») — фиксированный серый, не --color-text-2 (у части тем он с цветным
+// оттенком, не нейтральный).
+.history__filler {
   color: #888;
+  font-weight: 600;
+}
+
+.history__verb--added {
+  color: $history-added-text-color;
   font-weight: 600;
 }
 

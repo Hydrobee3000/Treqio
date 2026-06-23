@@ -52,14 +52,38 @@ interface HistoryDayGroup {
   events: HistoryEvent[]
 }
 
-/** Глагол действия для текста события. */
-const HISTORY_VERB: Record<HistoryEventType, string> = {
-  ADDED: 'добавил новую книгу',
-  READING: 'начал читать',
-  DONE: 'прочитал',
-  DROPPED: 'забросил',
-  RATED: 'изменил оценку',
-  STATUS: 'изменил статус книги',
+/** Части фразы-действия — акцентное слово (цвет события) и нейтральные слова-связки (серые). */
+interface HistoryVerbParts {
+  /** Серая часть перед акцентным словом. */
+  prefix?: string
+  /** Акцентное слово/словосочетание — выделяется цветом события. */
+  highlight: string
+  /** Серая часть после акцентного слова. */
+  suffix?: string
+}
+
+/** Глагол действия для текста события, разбитый на акцент и связки. */
+const HISTORY_VERB: Record<HistoryEventType, HistoryVerbParts> = {
+  ADDED: { highlight: 'добавил', suffix: 'новую книгу' },
+  READING: { prefix: 'начал', highlight: 'читать', suffix: 'книгу' },
+  DONE: { highlight: 'прочитал', suffix: 'книгу' },
+  DROPPED: { highlight: 'забросил', suffix: 'книгу' },
+  RATED: { highlight: 'изменил оценку', suffix: 'книги' },
+  STATUS: { highlight: 'изменил статус', suffix: 'книги' },
+}
+
+/** Фраза-действие события — акцентное слово цветом события, связки серым. */
+function VerbPhrase({ type }: { type: HistoryEventType }) {
+  const { prefix, highlight, suffix } = HISTORY_VERB[type]
+  return (
+    <>
+      {prefix && <span className={styles['history__filler']}>{prefix}</span>}
+      {prefix && ' '}
+      <span className={styles[`history__verb--${type.toLowerCase()}`]}>{highlight}</span>
+      {suffix && ' '}
+      {suffix && <span className={styles['history__filler']}>{suffix}</span>}
+    </>
+  )
 }
 
 /** Иконка узла на таймлайне для каждого типа события. */
@@ -89,6 +113,22 @@ function scoreColor(rating: number): string {
 
 /** Цвет звезды идеальной оценки 10/10 — золотой, как в библиотеке. */
 const GOLD_COLOR = '#ffd24a'
+
+/** Кольцо оценки в событии активности — только просмотр, без возможности изменить. */
+function RatingRing({ rating }: { rating: number }) {
+  const color = rating === 10 ? GOLD_COLOR : scoreColor(rating)
+  const pct = rating * 10
+  return (
+    <div
+      className={styles['history__rating-ring']}
+      style={{ background: `conic-gradient(${color} ${pct}%, var(--color-divider, #e0e0e0) 0)` }}
+    >
+      <span className={styles['history__rating-number']} style={{ color }}>
+        {rating}
+      </span>
+    </div>
+  )
+}
 
 /** Пилюля статуса в тексте события — цветной тинт фона, как у статуса на обложке в библиотеке. */
 function StatusChip({ status }: { status: BookStatus }) {
@@ -408,32 +448,15 @@ export const ProfilePage = () => {
                         >
                           <Icon size={14} />
                         </div>
-                        <div className={styles['history__cover']}>
-                          {showsRating && (
-                            <span
-                              className={styles['history__cover-rating']}
-                              style={{ color: rating === 10 ? GOLD_COLOR : scoreColor(rating) }}
-                            >
-                              <Star
-                                size={9}
-                                fill={rating === 10 ? GOLD_COLOR : scoreColor(rating)}
-                                stroke="none"
-                              />
-                              {rating}
-                            </span>
-                          )}
-                        </div>
                         <div className={styles['history__body']}>
                           <p className={styles['history__text']}>
-                            <span className={styles[`history__verb--${event.type.toLowerCase()}`]}>
-                              {HISTORY_VERB[event.type]}
-                            </span>{' '}
+                            <VerbPhrase type={event.type} />{' '}
                             <strong>«{event.entry.book.title}»</strong>
                             {event.type === 'ADDED' &&
                               !hasAccompanyingCreationEvent(event.entry) && (
                                 <>
                                   {' '}
-                                  <span className={styles['history__verb--added']}>
+                                  <span className={styles['history__filler']}>
                                     со статусом
                                   </span>{' '}
                                   <StatusChip status={event.entry.status} />
@@ -442,8 +465,15 @@ export const ProfilePage = () => {
                             {event.type === 'STATUS' && (
                               <>
                                 {' '}
-                                <span className={styles['history__verb--status']}>на</span>{' '}
+                                <span className={styles['history__filler']}>на</span>{' '}
                                 <StatusChip status={event.entry.status} />
+                              </>
+                            )}
+                            {showsRating && rating !== null && (
+                              <>
+                                {' '}
+                                <span className={styles['history__filler']}>на</span>{' '}
+                                <RatingRing rating={rating} />
                               </>
                             )}
                           </p>
