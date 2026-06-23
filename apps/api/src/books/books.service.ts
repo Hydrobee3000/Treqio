@@ -80,9 +80,14 @@ export class BooksService {
    * Создание записи о книге для пользователя.
    */
   createEntry(userId: string, dto: CreateBookEntryDto) {
-    const autoDates = autoStatusDates(dto.status, new Date())
+    // createdAt и startDate/finishDate должны совпадать до миллисекунды, если
+    // книга создаётся сразу со статусом «Читаю»/«Прочитано» — иначе на фронте
+    // событие "добавил" и "начал читать" сортируются в случайном порядке
+    // (DB-время @default(now()) и App-время new Date() — это две разные засечки).
+    const now = new Date()
+    const autoDates = autoStatusDates(dto.status, now)
     return this.prisma.bookEntry.create({
-      data: { userId, ...dto, ...autoDates },
+      data: { userId, ...dto, createdAt: now, ...autoDates },
       include: { book: true },
     })
   }

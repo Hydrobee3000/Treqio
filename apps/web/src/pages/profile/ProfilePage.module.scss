@@ -490,6 +490,18 @@ $history-status-color: #8a6fc4;
   overflow-wrap: break-word;
 }
 
+// Пилюля статуса в тексте события — цветной тинт фона, как у статуса на
+// обложке в библиотеке, без точки. Цвет приходит через style.
+.history__status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 // Фиксированный серый (не --color-text-2, который у части тем имеет
 // цветной оттенок, а не нейтральный серый).
 .history__verb--added {
