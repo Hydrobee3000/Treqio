@@ -16,7 +16,7 @@ export type ThemeVariant =
   | 'ink'
 
 /** Дефолтная тема приложения. */
-export const DEFAULT_THEME: ThemeVariant = 'sageLibrary'
+export const DEFAULT_THEME: ThemeVariant = 'inkLight'
 
 /**
  * Сырые цветовые токены темы — независимы от MUI.

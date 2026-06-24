@@ -91,6 +91,10 @@ export const ThemeProvider = ({ children }: Props) => {
     root.style.setProperty('--ghost-border', ghostPalette.primary.main + '4D') // ~30%
     root.style.setProperty('--ghost-bg-1', ghostPalette.primary.light + '26') // ~15%
     root.style.setProperty('--ghost-bg-2', ghostPalette.primary.light + '0D') // ~5%
+
+    // Лого в сайдбаре — всегда цвета тёмной темы, независимо от isDark.
+    root.style.setProperty('--logo-primary', ghostPalette.primary.main)
+    root.style.setProperty('--logo-primary-dark', ghostPalette.primary.dark)
   }, [theme, activeVariant, isDark, lightVariant, ghostTheme])
 
   return (
