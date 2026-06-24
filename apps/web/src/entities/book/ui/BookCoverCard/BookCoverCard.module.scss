@@ -2,15 +2,99 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 170px;
+  width: 100%;
+
+  &--medium {
+    .cover-card__cover {
+      padding: 12px 11px;
+    }
+
+    .cover-card__title {
+      margin-top: 29px;
+    }
+
+    .cover-card__title-text {
+      font-size: 14px;
+    }
+
+    .cover-card__score {
+      top: 7px;
+      right: 7px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .cover-card__score-value {
+      font-size: 11px;
+
+      &--empty {
+        font-size: 13px;
+      }
+    }
+
+    .cover-card__footer-title {
+      font-size: 12px;
+    }
+
+    .cover-card__status {
+      font-size: 10px;
+      padding: 3px 9px 3px 7px;
+    }
+  }
+
+  &--compact {
+    gap: 7px;
+
+    .cover-card__cover {
+      padding: 10px 9px;
+    }
+
+    .cover-card__title {
+      margin-top: 24px;
+    }
+
+    .cover-card__title-text {
+      font-size: 12px;
+      -webkit-line-clamp: 12;
+    }
+
+    .cover-card__author {
+      font-size: 10px;
+    }
+
+    .cover-card__score {
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .cover-card__score-value {
+      font-size: 9px;
+
+      &--empty {
+        font-size: 11px;
+      }
+    }
+
+    .cover-card__footer {
+      gap: 5px;
+    }
+
+    .cover-card__footer-title {
+      font-size: 11px;
+    }
+
+    .cover-card__status {
+      gap: 4px;
+      font-size: 9px;
+      padding: 3px 8px 3px 6px;
+    }
+  }
 }
 
 // ─── Обложка ──────────────────────────────────────────────────────────────────
 
-// Регистрируем угол как анимируемое CSS-свойство — это позволяет крутить
-// именно угол conic-gradient (саму «комету»), а не сам элемент. Если вращать
-// элемент через transform, его углы (он прямоугольный) выезжают за пределы
-// круглого/скруглённого контура во время поворота — заметно «квадратное» пятно.
 @property --gold-angle {
   syntax: '<angle>';
   initial-value: 0deg;
@@ -29,32 +113,20 @@
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  // Градиент от основного цвета темы к его тёмному оттенку — оба токена
-  // приходят из текущей темы, поэтому обложка остаётся глубже и не «кричащей»
-  // на любой из 12 палитр, а не только при хардкоде конкретного цвета.
-  background: linear-gradient(150deg, var(--color-primary, #4e7b6a), var(--color-primary-dark, #3a5c4f));
+  background: linear-gradient(
+    150deg,
+    var(--color-primary, #4e7b6a),
+    var(--color-primary-dark, #3a5c4f)
+  );
   box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   padding: 14px 13px;
-  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.22s;
-
-  // Линия корешка
-  &::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 2px;
-  }
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.22s;
 
   // Лёгкая текстура бумаги сверху-справа + затемнение в нижнем правом углу.
-  // Затемнение — полупрозрачный чёрный поверх градиента, а не отдельный цвет,
-  // поэтому соотношение тонов сохраняется на любой теме.
   &::after {
     content: '';
     position: absolute;
@@ -71,10 +143,7 @@
   }
 }
 
-// Идеальная оценка 10/10 — золотая «комета», бегущая по тонкому ободку вдоль
-// края обложки. Маска (content-box + border-box, exclude) оставляет видимым
-// только ободок, середина остаётся прозрачной — обложка под кольцом видна
-// как обычно.
+// Идеальная оценка 10/10
 .cover-card__gold-ring {
   position: absolute;
   inset: 0;
@@ -91,9 +160,13 @@
     #ffd24a 345deg,
     rgba(255, 225, 150, 0) 360deg
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
   animation: cover-card-gold-spin 2.4s linear infinite;
   filter: drop-shadow(0 0 4px rgba(255, 210, 90, 0.35));
@@ -104,21 +177,29 @@
 }
 
 @keyframes cover-card-gold-spin {
-  to { --gold-angle: 360deg; }
+  to {
+    --gold-angle: 360deg;
+  }
 }
 
 .cover-card__title {
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  margin-top: 35px;
+}
+
+.cover-card__title-text {
   font-weight: 600;
   font-size: 16px;
   line-height: 1.2;
   color: #fff;
   letter-spacing: -0.01em;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 12;
   -webkit-box-orient: vertical;
 }
 
@@ -127,7 +208,7 @@
   z-index: 1;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.75);
-  margin-top: 5px;
+  margin-top: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,6 +233,8 @@
 .cover-card__score-ring {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 
@@ -210,17 +293,18 @@
   background: rgba(90, 160, 200, 0.16);
   color: #4a92bd;
 
-  .cover-card__status-dot { background: #5aa0c8; }
+  .cover-card__status-dot {
+    background: #5aa0c8;
+  }
 }
 
-// Зелёный фиксирован (не из токенов темы, как в .cover-card__cover) — статус
-// «Прочитано» должен читаться как «готово» на любой палитре, а не сливаться
-// с акцентным цветом темы, который может быть синим, фиолетовым и т.д.
 .cover-card__status--done {
   background: rgba(76, 175, 110, 0.16);
   color: #3d8a5c;
 
-  .cover-card__status-dot { background: #4caf6e; }
+  .cover-card__status-dot {
+    background: #4caf6e;
+  }
 }
 
 // Нейтральный, но отличимый от обычного цвета текста темы.
@@ -228,14 +312,18 @@
   background: rgba(123, 134, 148, 0.16);
   color: #9c8a6a;
 
-  .cover-card__status-dot { background: #9c8a6a; }
+  .cover-card__status-dot {
+    background: #9c8a6a;
+  }
 }
 
 .cover-card__status--dropped {
   background: rgba(185, 64, 64, 0.14);
   color: #b94040;
 
-  .cover-card__status-dot { background: #b94040; }
+  .cover-card__status-dot {
+    background: #b94040;
+  }
 }
 
 // ─── Прогресс чтения ──────────────────────────────────────────────────────────

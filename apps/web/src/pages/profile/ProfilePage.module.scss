@@ -1,5 +1,5 @@
-$bp-sm: 600px;
-$bp-md: 900px;
+$breakpoint-small: 600px;
+$breakpoint-medium: 900px;
 
 // ─── Цвета событий в истории (node + verb используют одни и те же) ──────────────
 $history-added-color: #7b8694;
@@ -28,7 +28,7 @@ $history-status-color: #8a6fc4;
   flex-direction: column;
   gap: 24px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 20px 18px 0;
     gap: 16px;
   }
@@ -39,7 +39,7 @@ $history-status-color: #8a6fc4;
   align-items: center;
   gap: 22px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     gap: 14px;
   }
 }
@@ -71,7 +71,7 @@ $history-status-color: #8a6fc4;
   }
 
   // На мобильных текст прячется — кнопка становится круглой с одной иконкой.
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     width: 32px;
     height: 32px;
     padding: 0;
@@ -81,7 +81,7 @@ $history-status-color: #8a6fc4;
 }
 
 .header__auth-btn-label {
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: none;
   }
 }
@@ -101,7 +101,7 @@ $history-status-color: #8a6fc4;
   color: var(--color-primary, #4e7b6a);
   letter-spacing: -0.02em;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     width: 56px;
     height: 56px;
     font-size: 20px;
@@ -132,7 +132,7 @@ $history-status-color: #8a6fc4;
   flex: 1;
   min-width: 0;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 18px;
   }
 }
@@ -155,7 +155,7 @@ $history-status-color: #8a6fc4;
   line-height: 1.5;
   max-width: 520px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: none;
   }
 }
@@ -183,7 +183,7 @@ $history-status-color: #8a6fc4;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     max-width: 180px;
   }
 }
@@ -204,7 +204,7 @@ $history-status-color: #8a6fc4;
   outline: none;
   font-family: inherit;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 18px;
   }
 }
@@ -270,7 +270,7 @@ $history-status-color: #8a6fc4;
   padding: 0 40px;
   border-bottom: 1px solid var(--color-divider, #e0e0e0);
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 18px;
   }
 }
@@ -345,7 +345,7 @@ $history-status-color: #8a6fc4;
   flex-direction: column;
   padding: 0 40px 40px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 18px 32px;
   }
 }

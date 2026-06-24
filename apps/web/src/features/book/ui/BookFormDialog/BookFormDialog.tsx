@@ -19,6 +19,7 @@ import {
 import { X } from 'lucide-react'
 import { STATUS_LABEL } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
+import { BOOK_TITLE_MAX } from '../../api/constraints'
 import {
   useCreateBookMutation,
   useCreateEntryMutation,
@@ -277,8 +278,15 @@ export const BookFormDialog = ({ open, onClose, entry }: BookFormDialogProps) =>
                   fullWidth
                   autoFocus
                   error={!!errors.title}
-                  helperText={errors.title ? 'Обязательное поле' : ''}
-                  {...register('title', { required: true })}
+                  helperText={
+                    errors.title?.type === 'maxLength'
+                      ? `Не больше ${BOOK_TITLE_MAX} символов`
+                      : errors.title
+                        ? 'Обязательное поле'
+                        : ''
+                  }
+                  slotProps={{ htmlInput: { maxLength: BOOK_TITLE_MAX } }}
+                  {...register('title', { required: true, maxLength: BOOK_TITLE_MAX })}
                 />
                 <TextField label="Автор" fullWidth {...register('author')} />
                 <TextField

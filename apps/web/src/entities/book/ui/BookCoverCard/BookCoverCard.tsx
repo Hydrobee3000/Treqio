@@ -6,6 +6,7 @@ import { STATUS_LABEL } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookCoverCard.module.scss'
 
+/** Класс цветовой пилюли статуса на карточке. */
 const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   WANT: styles['cover-card__status--want'],
   READING: styles['cover-card__status--reading'],
@@ -18,9 +19,13 @@ const STATUS_DONE_COLOR = '#4caf6e'
 
 /** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли на карточке. */
 const STATUS_DOT_COLOR: Record<BookStatus, string> = {
+  /** Хочу прочитать. */
   WANT: '#9c8a6a',
+  /** Читаю. */
   READING: '#5aa0c8',
+  /** Прочитано. */
   DONE: STATUS_DONE_COLOR,
+  /** Брошено. */
   DROPPED: '#b94040',
 }
 
@@ -71,7 +76,7 @@ function ScoreBadge({
 
   return (
     <div className={styles['cover-card__score']} onClick={onClick} title={`Оценка ${rating}/10`}>
-      <svg className={styles['cover-card__score-ring']} width="34" height="34" viewBox="0 0 34 34">
+      <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
         <circle
           cx="17"
           cy="17"
@@ -101,12 +106,17 @@ function ScoreBadge({
   )
 }
 
+/** Размер карточки — масштабирует шрифты и бейдж оценки внутри обложки. */
+type CardSize = 'compact' | 'medium' | 'large'
+
 /**
  * Пропсы BookCoverCard.
  */
 interface BookCoverCardProps {
   /** Запись пользователя с данными книги. */
   entry: BookEntry
+  /** Размер карточки. По умолчанию «large» — исходный размер обложки. */
+  size?: CardSize
   /** Клик по карточке вне статуса и рейтинга — открывает редактирование всех полей. */
   onEdit?: () => void
   /** Выбор статуса в быстром поп-овере. */
@@ -122,6 +132,7 @@ interface BookCoverCardProps {
  */
 export const BookCoverCard = ({
   entry,
+  size = 'large',
   onEdit,
   onStatusChange,
   onRatingChange,
@@ -152,11 +163,13 @@ export const BookCoverCard = ({
   }
 
   return (
-    <div className={styles['cover-card']}>
+    <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
         <div className={styles['cover-card__cover']} onClick={onEdit}>
           <ScoreBadge rating={rating} onClick={handleRatingClick} />
-          <div className={styles['cover-card__title']}>{book.title}</div>
+          <div className={styles['cover-card__title']}>
+            <span className={styles['cover-card__title-text']}>{book.title}</span>
+          </div>
           <div className={styles['cover-card__author']}>{book.author}</div>
         </div>
         {rating === 10 && <div className={styles['cover-card__gold-ring']} />}
