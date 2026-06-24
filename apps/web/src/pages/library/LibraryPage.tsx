@@ -8,6 +8,7 @@ import {
   List,
   Plus,
   Search,
+  SlidersHorizontal,
   Upload,
   X,
 } from 'lucide-react'
@@ -37,6 +38,19 @@ type CardStyle = 'cover' | 'table'
 
 /** Ключ для сохранения выбранного стиля карточек между визитами. */
 const CARD_STYLE_STORAGE_KEY = 'treqio_library_card_style'
+
+/** Размер карточек книги в виде «Обложка». */
+type CardSize = 'compact' | 'medium' | 'large'
+
+/** Ключ для сохранения выбранного размера карточек между визитами. */
+const CARD_SIZE_STORAGE_KEY = 'treqio_library_card_size'
+
+/** Варианты размера карточек для выпадающего списка. */
+const CARD_SIZE_OPTIONS: { value: CardSize; label: string }[] = [
+  { value: 'compact', label: 'Компактный' },
+  { value: 'medium', label: 'Средний' },
+  { value: 'large', label: 'Крупный' },
+]
 
 /** Максимальная длина поискового запроса — названия и авторы книг короче. */
 const SEARCH_QUERY_MAX = 60
@@ -87,6 +101,9 @@ export const LibraryPage = () => {
   const [cardStyle, setCardStyleState] = useState<CardStyle>(
     () => (localStorage.getItem(CARD_STYLE_STORAGE_KEY) as CardStyle | null) ?? 'cover',
   )
+  const [cardSize, setCardSizeState] = useState<CardSize>(
+    () => (localStorage.getItem(CARD_SIZE_STORAGE_KEY) as CardSize | null) ?? 'medium',
+  )
   const [addOpen, setAddOpen] = useState(false)
   const [editEntry, setEditEntry] = useState<BookEntry | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
@@ -95,8 +112,13 @@ export const LibraryPage = () => {
   const [sortBy, setSortBy] = useState<SortOption>('recent')
   const [sortAnchor, setSortAnchor] = useState<HTMLElement | null>(null)
   const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null)
+  const [sizeAnchor, setSizeAnchor] = useState<HTMLElement | null>(null)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  // На мобильных выбор размера скрыт — всегда крупный (большие шрифты и
+  // бейдж оценки), ровно 2 колонки обеспечивает мобильный minmax в SCSS.
+  const effectiveCardSize: CardSize = isMobile ? 'large' : cardSize
+
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
   const { data, isLoading, isError } = useGetMyEntriesQuery()
@@ -121,6 +143,12 @@ export const LibraryPage = () => {
   const setCardStyle = (style: CardStyle) => {
     setCardStyleState(style)
     localStorage.setItem(CARD_STYLE_STORAGE_KEY, style)
+  }
+
+  /** Меняет размер карточек и сохраняет выбор в localStorage. */
+  const setCardSize = (size: CardSize) => {
+    setCardSizeState(size)
+    localStorage.setItem(CARD_SIZE_STORAGE_KEY, size)
   }
 
   /** Открывает форму добавления книги, либо для гостя — предлагает войти. */
@@ -220,21 +248,15 @@ export const LibraryPage = () => {
                     return (
                       <MenuItem
                         key={tab.value}
+                        className={styles['library__menu-item']}
                         selected={tab.value === statusFilter}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          minWidth: 170,
-                          fontSize: 13,
-                        }}
                         onClick={() => {
                           setStatusFilter(tab.value)
                           setFilterAnchor(null)
                         }}
                       >
-                        <Box sx={{ flex: 1 }}>{tab.label}</Box>
-                        <Box sx={{ fontSize: 11, opacity: 0.6 }}>{count}</Box>
+                        <Box className={styles['library__menu-item-label']}>{tab.label}</Box>
+                        <Box className={styles['library__menu-item-count']}>{count}</Box>
                         {tab.value === statusFilter && <Check size={14} />}
                       </MenuItem>
                     )
@@ -258,24 +280,51 @@ export const LibraryPage = () => {
               {SORT_OPTIONS.map((option) => (
                 <MenuItem
                   key={option.value}
+                  className={styles['library__menu-item']}
                   selected={option.value === sortBy}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    minWidth: 170,
-                    fontSize: 13,
-                  }}
                   onClick={() => {
                     setSortBy(option.value)
                     setSortAnchor(null)
                   }}
                 >
-                  <Box sx={{ flex: 1 }}>{option.label}</Box>
+                  <Box className={styles['library__menu-item-label']}>{option.label}</Box>
                   {option.value === sortBy && <Check size={14} />}
                 </MenuItem>
               ))}
             </Menu>
+            {!isMobile && cardStyle === 'cover' && (
+              <>
+                <button
+                  className={styles['library__sort-btn']}
+                  onClick={(e) => setSizeAnchor(e.currentTarget)}
+                  title="Размер карточек"
+                >
+                  <SlidersHorizontal size={15} />
+                  {CARD_SIZE_OPTIONS.find((o) => o.value === cardSize)?.label}
+                </button>
+                <Menu
+                  anchorEl={sizeAnchor}
+                  open={!!sizeAnchor}
+                  onClose={() => setSizeAnchor(null)}
+                  slotProps={{ list: { dense: true } }}
+                >
+                  {CARD_SIZE_OPTIONS.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      className={styles['library__menu-item']}
+                      selected={option.value === cardSize}
+                      onClick={() => {
+                        setCardSize(option.value)
+                        setSizeAnchor(null)
+                      }}
+                    >
+                      <Box className={styles['library__menu-item-label']}>{option.label}</Box>
+                      {option.value === cardSize && <Check size={14} />}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
+            )}
             <div className={styles['library__style-toggle']}>
               <button
                 className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
@@ -358,11 +407,14 @@ export const LibraryPage = () => {
           ))}
         </div>
       ) : (
-        <div className={styles['library__grid']}>
+        <div
+          className={`${styles['library__grid']} ${styles[`library__grid--${effectiveCardSize}`] ?? ''}`}
+        >
           {filteredEntries.map((entry) => (
             <BookCoverCard
               key={entry.id}
               entry={entry}
+              size={effectiveCardSize}
               onEdit={() => setEditEntry(entry)}
               onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
               onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}

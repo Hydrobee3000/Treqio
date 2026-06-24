@@ -1,5 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, Min } from 'class-validator'
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
+} from 'class-validator'
+
+/** Максимальная длина названия книги — длиннее не вписывается в обложку карточки. */
+export const BOOK_TITLE_MAX = 70
 
 /**
  * Данные для создания книги.
@@ -9,6 +21,7 @@ export class CreateBookDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(BOOK_TITLE_MAX)
   title!: string
 
   /** Автор книги. */

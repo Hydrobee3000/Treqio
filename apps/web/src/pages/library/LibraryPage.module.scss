@@ -1,4 +1,4 @@
-$bp-sm: 600px;
+$breakpoint-small: 600px;
 
 @keyframes rise {
   from {
@@ -30,7 +30,7 @@ $bp-sm: 600px;
   flex-wrap: wrap;
   padding: 28px 36px 12px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     align-items: center;
     flex-wrap: nowrap;
     padding: 20px 20px 10px;
@@ -62,7 +62,7 @@ $bp-sm: 600px;
 
   // На мобильных текст прячется — кнопка становится круглой, чтобы
   // помещаться в один ряд с заголовком «Моя библиотека».
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     width: 36px;
     height: 36px;
     padding: 0;
@@ -72,7 +72,7 @@ $bp-sm: 600px;
 }
 
 .library__add-btn-label {
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: none;
   }
 }
@@ -85,7 +85,7 @@ $bp-sm: 600px;
   color: var(--color-text, inherit);
   animation: rise 0.6s ease both;
 
-  @media (min-width: $bp-sm) {
+  @media (min-width: $breakpoint-small) {
     font-size: 30px;
   }
 }
@@ -98,7 +98,7 @@ $bp-sm: 600px;
   gap: 6px;
   padding: 0 36px 12px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 20px 12px;
   }
 }
@@ -147,7 +147,7 @@ $bp-sm: 600px;
   flex-wrap: wrap;
   padding: 0 36px 4px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     flex-direction: column;
     align-items: stretch;
     padding: 0 20px 4px;
@@ -210,10 +210,7 @@ $bp-sm: 600px;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
   }
 
-  @media (max-width: $bp-sm) {
-    // flex:1 со flex-basis:0% игнорирует height при flex-direction:column
-    // (родитель .library__label-row становится column на мобильных) — без
-    // этого переопределения поле схлопывалось почти до нулевой высоты.
+  @media (max-width: $breakpoint-small) {
     flex: 0 0 auto;
     min-width: 0;
     max-width: none;
@@ -289,6 +286,24 @@ $bp-sm: 600px;
   }
 }
 
+// Общие стили пунктов меню фильтра/сортировки/размера карточек.
+.library__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 170px;
+  font-size: 13px;
+}
+
+.library__menu-item-label {
+  flex: 1;
+}
+
+.library__menu-item-count {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
 .library__style-toggle {
   display: inline-flex;
   align-items: center;
@@ -329,13 +344,25 @@ $bp-sm: 600px;
 // ─── Сетка карточек ───────────────────────────────────────────────────────────
 
 .library__grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 20px;
   padding: 12px 36px 36px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 10px 20px 20px;
+  }
+
+  &--compact {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  &--large {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+    @media (max-width: $breakpoint-small) {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
   }
 }
 
@@ -344,10 +371,7 @@ $bp-sm: 600px;
 .library__table {
   display: flex;
   flex-direction: column;
-  // flex:1 забирает всё оставшееся место в колонке .library, min-height:0
-  // разрешает сжаться меньше суммарной высоты строк (без этого flex-элемент
-  // по умолчанию не сжимается меньше контента) — за счёт этого скроллит
-  // не вся страница, а только сама таблица, своим overflow-y:auto.
+
   flex: 1;
   min-height: 0;
   margin: 0 36px 36px;
@@ -356,7 +380,7 @@ $bp-sm: 600px;
   overflow-y: auto;
   background: var(--color-paper, white);
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     margin: 0 20px 24px;
   }
 }

@@ -1,9 +1,15 @@
-$bp-sm: 600px;
-$bp-md: 900px;
+$breakpoint-small: 600px;
+$breakpoint-medium: 900px;
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ─── Страница ─────────────────────────────────────────────────────────────────
@@ -24,7 +30,7 @@ $bp-md: 900px;
   padding: 28px 36px 12px;
   gap: 16px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 20px 20px 10px;
   }
 }
@@ -37,7 +43,7 @@ $bp-md: 900px;
   color: var(--color-text, inherit);
   animation: rise 0.6s ease both;
 
-  @media (min-width: $bp-md) {
+  @media (min-width: $breakpoint-medium) {
     font-size: 30px;
   }
 }
@@ -65,7 +71,9 @@ $bp-md: 900px;
   background: transparent;
   color: var(--color-text-2, #666);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
@@ -87,7 +95,7 @@ $bp-md: 900px;
   justify-content: space-between;
   padding: 0 36px 8px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 20px 8px;
   }
 }
@@ -106,7 +114,7 @@ $bp-md: 900px;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 16px;
     gap: 10px;
   }
@@ -119,7 +127,7 @@ $bp-md: 900px;
   padding: 22px 22px 20px;
   min-height: 152px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 14px 14px 12px;
     gap: 8px;
     min-height: 120px;
@@ -132,13 +140,24 @@ $bp-md: 900px;
   font-family: inherit;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
   animation: rise 0.6s ease both;
 
-  &:nth-child(1) { animation-delay: 50ms; }
-  &:nth-child(2) { animation-delay: 100ms; }
-  &:nth-child(3) { animation-delay: 150ms; }
-  &:nth-child(4) { animation-delay: 200ms; }
+  &:nth-child(1) {
+    animation-delay: 50ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 100ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 150ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 200ms;
+  }
 
   // Градиентный блик снизу справа
   &::before {
@@ -160,7 +179,9 @@ $bp-md: 900px;
     transform: translateY(-2px);
     box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
 
-    &::before { opacity: 1; }
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -180,7 +201,7 @@ $bp-md: 900px;
     transform: rotate(-6deg) scale(1.05);
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     width: 34px;
     height: 34px;
     border-radius: 9px;
@@ -194,7 +215,7 @@ $bp-md: 900px;
   letter-spacing: -0.01em;
   color: var(--color-text, inherit);
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 14px;
   }
 }
@@ -205,7 +226,7 @@ $bp-md: 900px;
   line-height: 1.5;
   color: var(--color-text-2, #666);
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 11.5px;
     line-height: 1.4;
   }
@@ -216,7 +237,9 @@ $bp-md: 900px;
   top: 22px;
   right: 22px;
   color: var(--color-text-2, #999);
-  transition: transform 0.2s, color 0.15s;
+  transition:
+    transform 0.2s,
+    color 0.15s;
 
   .grid__tile:hover & {
     transform: translate(3px, -2px);
@@ -233,12 +256,12 @@ $bp-md: 900px;
   grid-auto-rows: 190px;
   gap: 14px;
 
-  @media (max-width: $bp-md) {
+  @media (max-width: $breakpoint-medium) {
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: auto;
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 0 16px;
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
@@ -259,13 +282,24 @@ $bp-md: 900px;
   font-family: inherit;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
   animation: rise 0.6s ease both;
 
-  &:nth-child(1) { animation-delay: 40ms; }
-  &:nth-child(2) { animation-delay: 90ms; }
-  &:nth-child(3) { animation-delay: 140ms; }
-  &:nth-child(4) { animation-delay: 190ms; }
+  &:nth-child(1) {
+    animation-delay: 40ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 190ms;
+  }
 
   // Градиентный блик снизу справа
   &::before {
@@ -287,7 +321,9 @@ $bp-md: 900px;
     transform: translateY(-2px);
     box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
 
-    &::before { opacity: 1; }
+    &::before {
+      opacity: 1;
+    }
   }
 
   // Первая карточка — большая, занимает 2 строки только на десктопе
@@ -295,13 +331,13 @@ $bp-md: 900px;
     grid-column: 1;
     grid-row: 1 / 3;
 
-    @media (max-width: $bp-md) {
+    @media (max-width: $breakpoint-medium) {
       grid-column: auto;
       grid-row: auto;
     }
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
@@ -330,7 +366,7 @@ $bp-md: 900px;
 }
 
 .bento__cell-content {
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     flex: 1;
     min-width: 0;
   }
@@ -357,7 +393,7 @@ $bp-md: 900px;
     font-size: 26px;
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 14px;
     margin-top: 6px;
 
@@ -373,7 +409,7 @@ $bp-md: 900px;
   line-height: 1.5;
   color: var(--color-text-2, #666);
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     font-size: 11.5px;
     margin-top: 4px;
   }
@@ -393,7 +429,7 @@ $bp-md: 900px;
   flex: 1;
   min-height: 14px;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     min-height: 10px;
   }
 }
@@ -409,7 +445,9 @@ $bp-md: 900px;
     box-shadow: none;
     border-color: var(--color-divider, #e0e0e0);
 
-    &::before { opacity: 0; }
+    &::before {
+      opacity: 0;
+    }
 
     .bento__cell-icon {
       transform: none;
@@ -431,7 +469,7 @@ $bp-md: 900px;
   pointer-events: none;
   flex-shrink: 0;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     align-self: center;
     margin-left: auto;
     padding: 6px;
@@ -442,7 +480,7 @@ $bp-md: 900px;
 }
 
 .bento__cell-cta-text {
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: none;
   }
 }
@@ -450,7 +488,7 @@ $bp-md: 900px;
 .bento__cell-cta-arrow {
   display: none;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: flex;
   }
 }
@@ -491,7 +529,7 @@ $bp-md: 900px;
     transform: translateX(100%);
   }
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     margin: 0 16px 24px;
   }
 }
@@ -543,7 +581,7 @@ $bp-md: 900px;
   opacity: 0.6;
   flex-shrink: 0;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     padding: 8px;
     border-radius: 8px;
     background: transparent;
@@ -553,7 +591,7 @@ $bp-md: 900px;
 }
 
 .import-strip__btn-text {
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: none;
   }
 }
@@ -561,7 +599,7 @@ $bp-md: 900px;
 .import-strip__btn-arrow {
   display: none;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $breakpoint-small) {
     display: flex;
   }
 }
