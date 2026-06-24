@@ -25,18 +25,23 @@
 }
 
 .sidebar__logo-icon {
+  position: relative;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--color-primary, #4e7b6a), var(--color-primary-dark, #3d6a59));
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  font-family: monospace;
-  color: white;
+  border-radius: 50%;
   flex-shrink: 0;
   user-select: none;
+  background: linear-gradient(150deg, var(--logo-primary, #c97b5c), var(--logo-primary-dark, #b36a4d));
+
+  // Глиф наложен через mask — цвет тайла берётся из переменных темы, а не из файла.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    mask: url('./logo.svg') center / contain no-repeat;
+    -webkit-mask: url('./logo.svg') center / contain no-repeat;
+  }
 }
 
 

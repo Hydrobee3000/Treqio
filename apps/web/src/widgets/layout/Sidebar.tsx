@@ -77,7 +77,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
       >
         {!collapsed && (
           <div className={styles['sidebar__brand']}>
-            <span className={styles['sidebar__logo-icon']}>tq</span>
+            <span className={styles['sidebar__logo-icon']} />
             <span className={styles['sidebar__logo']}>Treqio</span>
           </div>
         )}
