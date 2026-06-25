@@ -1,0 +1,30 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-paper-2, #f2f5f1);
+}
+
+.app-layout__drawer {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  transition: width 0.2s ease;
+
+  :global(.MuiDrawer-paper) {
+    width: var(--sidebar-width);
+    border: none;
+    overflow-x: hidden;
+    transition: width 0.2s ease;
+  }
+}
+
+.app-layout__main {
+  flex-grow: 1;
+  height: 100vh;
+  overflow: auto;
+  min-width: 0;
+  position: relative;
+
+  &--mobile {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom));
+  }
+}

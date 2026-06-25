@@ -118,6 +118,8 @@ export const LibraryPage = () => {
   // На мобильных выбор размера скрыт — всегда крупный (большие шрифты и
   // бейдж оценки), ровно 2 колонки обеспечивает мобильный minmax в SCSS.
   const effectiveCardSize: CardSize = isMobile ? 'large' : cardSize
+  // На мобильных табличный вид недоступен — переключатель скрыт, всегда обложки.
+  const effectiveCardStyle: CardStyle = isMobile ? 'cover' : cardStyle
 
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
@@ -292,7 +294,7 @@ export const LibraryPage = () => {
                 </MenuItem>
               ))}
             </Menu>
-            {!isMobile && cardStyle === 'cover' && (
+            {!isMobile && effectiveCardStyle === 'cover' && (
               <>
                 <button
                   className={styles['library__sort-btn']}
@@ -325,22 +327,24 @@ export const LibraryPage = () => {
                 </Menu>
               </>
             )}
-            <div className={styles['library__style-toggle']}>
-              <button
-                className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
-                onClick={() => setCardStyle('cover')}
-                title="Вид обложками"
-              >
-                <Image size={22} />
-              </button>
-              <button
-                className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
-                onClick={() => setCardStyle('table')}
-                title="Табличный вид"
-              >
-                <List size={22} />
-              </button>
-            </div>
+            {!isMobile && (
+              <div className={styles['library__style-toggle']}>
+                <button
+                  className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
+                  onClick={() => setCardStyle('cover')}
+                  title="Вид обложками"
+                >
+                  <Image size={22} />
+                </button>
+                <button
+                  className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
+                  onClick={() => setCardStyle('table')}
+                  title="Табличный вид"
+                >
+                  <List size={22} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -388,7 +392,7 @@ export const LibraryPage = () => {
               : 'Нет книг с этим статусом'}
           </p>
         </div>
-      ) : cardStyle === 'table' ? (
+      ) : effectiveCardStyle === 'table' ? (
         <div className={styles['library__table']}>
           <div className={styles['library__table-head']}>
             <span />
