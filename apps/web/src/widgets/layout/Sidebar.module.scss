@@ -122,6 +122,16 @@
   &--collapsed {
     justify-content: center;
   }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+
+    &:hover {
+      background: transparent;
+      color: var(--sidebar-muted);
+    }
+  }
 }
 
 .nav-item__label {

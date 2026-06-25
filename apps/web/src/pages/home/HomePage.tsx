@@ -11,15 +11,16 @@ import styles from './HomePage.module.scss'
 const TILES = [
   {
     icon: <BookOpen size={22} />,
-    title: 'Найти книгу',
-    desc: 'Добавить в список, отметить прочитанной, поставить оценку.',
+    title: 'Добавить книгу',
+    desc: 'Изменить статус, поставить оценку.',
     href: '/library',
   },
   {
     icon: <Gamepad2 size={22} />,
-    title: 'Найти игру',
-    desc: 'Добавить в список, отметить пройденной, поставить оценку.',
+    title: 'Добавить игру',
+    desc: 'Изменить статус, поставить оценку.',
     href: '/library',
+    disabled: true,
   },
   {
     icon: <User size={22} />,
@@ -30,7 +31,7 @@ const TILES = [
   {
     icon: <Palette size={22} />,
     title: 'Настроить тему',
-    desc: 'Цветовая палитра и шрифт интерфейса.',
+    desc: 'Цветовая палитра и анимации.',
     href: '/settings/appearance',
   },
 ]
@@ -118,7 +119,8 @@ function GridLayout() {
       {TILES.map((tile) => (
         <button
           key={tile.title}
-          className={styles['grid__tile']}
+          className={`${styles['grid__tile']} ${tile.disabled ? styles['grid__tile--disabled'] : ''}`}
+          disabled={tile.disabled}
           onClick={() => navigate(tile.href)}
         >
           <div className={styles['grid__tile-icon']}>{tile.icon}</div>
@@ -126,9 +128,11 @@ function GridLayout() {
             <p className={styles['grid__tile-title']}>{tile.title}</p>
             <p className={styles['grid__tile-desc']}>{tile.desc}</p>
           </div>
-          <span className={styles['grid__tile-arrow']}>
-            <ArrowIcon />
-          </span>
+          {!tile.disabled && (
+            <span className={styles['grid__tile-arrow']}>
+              <ArrowIcon />
+            </span>
+          )}
         </button>
       ))}
     </div>
@@ -159,8 +163,8 @@ function BentoLayout() {
       </button>
 
       <button
-        className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
-        onClick={() => navigate(games.href)}
+        className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
+        disabled
       >
         <div className={styles['bento__cell-icon']}>{games.icon}</div>
         <div className={styles['bento__cell-content']}>

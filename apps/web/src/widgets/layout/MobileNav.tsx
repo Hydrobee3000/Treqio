@@ -8,12 +8,13 @@ import { useNavigate, useLocation } from 'react-router'
 import type { SvgIconComponent } from '@mui/icons-material'
 import styles from './MobileNav.module.scss'
 
-const NAV_ITEMS: { to: string; icon: SvgIconComponent; label: string }[] = [
+/** Раздел еще не реализован — пункт виден, но недоступен для перехода. */
+const NAV_ITEMS: { to: string; icon: SvgIconComponent; label: string; disabled?: boolean }[] = [
   { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
   { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
   { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
-  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента' },
-  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
+  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента', disabled: true },
+  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск', disabled: true },
 ]
 
 /**
@@ -31,18 +32,19 @@ export const MobileNav = () => {
       sx={{ zIndex: (theme) => theme.zIndex.appBar }}
     >
       <Box className={styles['mobile-nav__items']}>
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => {
+        {NAV_ITEMS.map(({ to, icon: Icon, label, disabled }) => {
           // Для "/" нужно точное совпадение, иначе будет активен на всех страницах
-          const isActive = to === '/' ? pathname === '/' : pathname.startsWith(to)
+          const isActive = !disabled && (to === '/' ? pathname === '/' : pathname.startsWith(to))
           return (
             <Box
               key={to}
-              onClick={() => navigate(to)}
+              onClick={() => !disabled && navigate(to)}
               aria-label={label}
-              className={styles['mobile-nav__item']}
+              aria-disabled={disabled}
+              className={`${styles['mobile-nav__item']} ${disabled ? styles['mobile-nav__item--disabled'] : ''}`}
             >
               <Icon
-                className={`${styles['mobile-nav__icon']} ${isActive ? styles['mobile-nav__icon--active'] : ''}`}
+                className={`${styles['mobile-nav__icon']} ${isActive ? styles['mobile-nav__icon--active'] : ''} ${disabled ? styles['mobile-nav__icon--disabled'] : ''}`}
               />
             </Box>
           )
