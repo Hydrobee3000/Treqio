@@ -19,7 +19,7 @@ const STATUS_DONE_COLOR = '#4caf6e'
 
 /** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли на карточке. */
 const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  /** Хочу прочитать. */
+  /** Прочитаю. */
   WANT: '#9c8a6a',
   /** Читаю. */
   READING: '#5aa0c8',
@@ -43,9 +43,6 @@ function scoreColor(rating: number): string {
   if (rating >= 6) return '#c49a3a'
   return '#b94040'
 }
-
-/** Цвет звезды идеальной оценки 10/10 — золотой, чтобы не слиться с зелёной шкалой оценок. */
-const GOLD_COLOR = '#ffd24a'
 
 /**
  * Круглый бейдж с оценкой (или плейсхолдер если книга не оценена).
@@ -98,7 +95,7 @@ function ScoreBadge({
         />
       </svg>
       {rating === 10 ? (
-        <Star size={14} fill={GOLD_COLOR} stroke="none" />
+        <Star size={14} fill="#fff" stroke="none" />
       ) : (
         <span className={styles['cover-card__score-value']}>{rating}</span>
       )}
@@ -117,6 +114,8 @@ interface BookCoverCardProps {
   entry: BookEntry
   /** Размер карточки. По умолчанию «large» — исходный размер обложки. */
   size?: CardSize
+  /** Флаг отображения пилюли статуса под обложкой. По умолчанию true. */
+  showStatus?: boolean
   /** Клик по карточке вне статуса и рейтинга — открывает редактирование всех полей. */
   onEdit?: () => void
   /** Выбор статуса в быстром поп-овере. */
@@ -133,6 +132,7 @@ interface BookCoverCardProps {
 export const BookCoverCard = ({
   entry,
   size = 'large',
+  showStatus = true,
   onEdit,
   onStatusChange,
   onRatingChange,
@@ -175,24 +175,27 @@ export const BookCoverCard = ({
         {rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>
 
-      <div className={styles['cover-card__footer']}>
-        <p className={styles['cover-card__footer-title']}>{book.title}</p>
-        <span
-          className={`${styles['cover-card__status']} ${STATUS_CLASS[status]}`}
-          onClick={handleStatusClick}
-        >
-          <span className={styles['cover-card__status-dot']} />
-          {STATUS_LABEL[status]}
-        </span>
-        {progressPct !== null && (
-          <div className={styles['cover-card__progress']}>
+      {(showStatus || progressPct !== null) && (
+        <div className={styles['cover-card__footer']}>
+          {showStatus && (
             <span
-              className={styles['cover-card__progress-bar']}
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-        )}
-      </div>
+              className={`${styles['cover-card__status']} ${STATUS_CLASS[status]}`}
+              onClick={handleStatusClick}
+            >
+              <span className={styles['cover-card__status-dot']} />
+              {STATUS_LABEL[status]}
+            </span>
+          )}
+          {progressPct !== null && (
+            <div className={styles['cover-card__progress']}>
+              <span
+                className={styles['cover-card__progress-bar']}
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       <Menu
         anchorEl={statusAnchor}

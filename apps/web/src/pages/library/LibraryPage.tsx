@@ -415,6 +415,7 @@ export const LibraryPage = () => {
               key={entry.id}
               entry={entry}
               size={effectiveCardSize}
+              showStatus={statusFilter === 'ALL'}
               onEdit={() => setEditEntry(entry)}
               onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
               onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
