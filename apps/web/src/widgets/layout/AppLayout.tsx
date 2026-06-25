@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material'
 import { Outlet } from 'react-router'
 import { useAppSelector } from '@/shared/lib/store'
@@ -7,6 +8,7 @@ import { ParticleCanvas } from '@/features/animations'
 import { GuestBanner } from '@/features/guest'
 import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
+import styles from './AppLayout.module.scss'
 
 export const SIDEBAR_WIDTH = 220
 export const SIDEBAR_COLLAPSED_WIDTH = 64
@@ -29,21 +31,12 @@ export const AppLayout = () => {
   const showParticles = particlesEnabled && !!particleType
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box className={styles['app-layout']}>
       {!isMobile && (
         <Drawer
           variant="permanent"
-          sx={{
-            width: sidebarWidth,
-            flexShrink: 0,
-            transition: 'width 0.2s ease',
-            '& .MuiDrawer-paper': {
-              width: sidebarWidth,
-              border: 'none',
-              overflowX: 'hidden',
-              transition: 'width 0.2s ease',
-            },
-          }}
+          className={styles['app-layout__drawer']}
+          style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}
         >
           <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
         </Drawer>
@@ -51,18 +44,7 @@ export const AppLayout = () => {
 
       <Box
         component="main"
-        sx={{
-          flexGrow: 1,
-          // Высота явно зафиксирована, а не растянута через align-items:stretch —
-          // иначе при resize-наблюдении за этим контейнером (ParticleCanvas) высота
-          // могла на долю кадра "поплыть" вслед за высотой контента и застрять
-          // больше реальной, давая лишние скроллы внутри страницы.
-          height: '100vh',
-          overflow: 'auto',
-          minWidth: 0,
-          position: 'relative',
-          pb: isMobile ? '56px' : 0,
-        }}
+        className={`${styles['app-layout__main']} ${isMobile ? styles['app-layout__main--mobile'] : ''}`}
       >
         {showParticles && <ParticleCanvas type={particleType!} />}
         <GuestBanner />
