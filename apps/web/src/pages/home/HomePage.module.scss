@@ -183,6 +183,25 @@ $breakpoint-medium: 900px;
       opacity: 1;
     }
   }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--color-divider, #e0e0e0);
+
+      &::before {
+        opacity: 0;
+      }
+
+      .grid__tile-icon {
+        transform: none;
+      }
+    }
+  }
 }
 
 .grid__tile-icon {
@@ -435,6 +454,25 @@ $breakpoint-medium: 900px;
 }
 
 // ─── Bento — ячейка импорта и CTA ────────────────────────────────────────────
+
+.bento__cell--disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+
+  &:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-divider, #e0e0e0);
+
+    &::before {
+      opacity: 0;
+    }
+
+    .bento__cell-icon {
+      transform: none;
+    }
+  }
+}
 
 .bento__cell--import {
   cursor: not-allowed;

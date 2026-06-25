@@ -22,15 +22,17 @@ interface NavItemConfig {
   to: string
   icon: SvgIconComponent
   label: string
+  /** Раздел еще не реализован — пункт виден, но недоступен для перехода. */
+  disabled?: boolean
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
   { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
   { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
   { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
-  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента' },
-  { to: '/friends', icon: PeopleOutlinedIcon, label: 'Друзья' },
-  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск' },
+  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента', disabled: true },
+  { to: '/friends', icon: PeopleOutlinedIcon, label: 'Друзья', disabled: true },
+  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск', disabled: true },
 ]
 
 const FOOTER_ITEMS: NavItemConfig[] = [
@@ -41,8 +43,21 @@ interface NavItemProps extends NavItemConfig {
   collapsed: boolean
 }
 
-const NavItem = ({ to, icon: Icon, label, collapsed }: NavItemProps) => {
+const NavItem = ({ to, icon: Icon, label, collapsed, disabled }: NavItemProps) => {
   const isActive = !!useMatch({ path: to, end: to === '/' })
+
+  if (disabled) {
+    return (
+      <Tooltip title="Скоро" placement="right">
+        <span
+          className={`${styles['nav-item']} ${styles['nav-item--disabled']} ${collapsed ? styles['nav-item--collapsed'] : ''}`}
+        >
+          <Icon style={{ fontSize: 22, flexShrink: 0 }} />
+          {!collapsed && <span className={styles['nav-item__label']}>{label}</span>}
+        </span>
+      </Tooltip>
+    )
+  }
 
   return (
     <Link
