@@ -1,7 +1,9 @@
+import { Fragment } from 'react'
 import { BookOpen, Gamepad2, LayoutGrid, Palette, PanelTop, User } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/features/layout'
+import { UnderConstruction } from '@/shared/ui'
 import type { LayoutVariant } from '@/shared/config/layout'
 import styles from './HomePage.module.scss'
 
@@ -116,25 +118,32 @@ function GridLayout() {
 
   return (
     <div className={styles['grid']}>
-      {TILES.map((tile) => (
-        <button
-          key={tile.title}
-          className={`${styles['grid__tile']} ${tile.disabled ? styles['grid__tile--disabled'] : ''}`}
-          disabled={tile.disabled}
-          onClick={() => navigate(tile.href)}
-        >
-          <div className={styles['grid__tile-icon']}>{tile.icon}</div>
-          <div>
-            <p className={styles['grid__tile-title']}>{tile.title}</p>
-            <p className={styles['grid__tile-desc']}>{tile.desc}</p>
-          </div>
-          {!tile.disabled && (
-            <span className={styles['grid__tile-arrow']}>
-              <ArrowIcon />
-            </span>
-          )}
-        </button>
-      ))}
+      {TILES.map((tile) => {
+        const button = (
+          <button
+            className={`${styles['grid__tile']} ${tile.disabled ? styles['grid__tile--disabled'] : ''}`}
+            disabled={tile.disabled}
+            onClick={() => navigate(tile.href)}
+          >
+            <div className={styles['grid__tile-icon']}>{tile.icon}</div>
+            <div>
+              <p className={styles['grid__tile-title']}>{tile.title}</p>
+              <p className={styles['grid__tile-desc']}>{tile.desc}</p>
+            </div>
+            {!tile.disabled && (
+              <span className={styles['grid__tile-arrow']}>
+                <ArrowIcon />
+              </span>
+            )}
+          </button>
+        )
+
+        return tile.disabled ? (
+          <UnderConstruction key={tile.title}>{button}</UnderConstruction>
+        ) : (
+          <Fragment key={tile.title}>{button}</Fragment>
+        )
+      })}
     </div>
   )
 }
@@ -162,16 +171,18 @@ function BentoLayout() {
         </div>
       </button>
 
-      <button
-        className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
-        disabled
-      >
-        <div className={styles['bento__cell-icon']}>{games.icon}</div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{games.title}</p>
-          <p className={styles['bento__cell-desc']}>{games.desc}</p>
-        </div>
-      </button>
+      <UnderConstruction>
+        <button
+          className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
+          disabled
+        >
+          <div className={styles['bento__cell-icon']}>{games.icon}</div>
+          <div className={styles['bento__cell-content']}>
+            <p className={styles['bento__cell-title']}>{games.title}</p>
+            <p className={styles['bento__cell-desc']}>{games.desc}</p>
+          </div>
+        </button>
+      </UnderConstruction>
 
       <button className={styles['bento__cell']} onClick={() => navigate(profile.href)}>
         <div className={styles['bento__cell-icon']}>{profile.icon}</div>
@@ -190,21 +201,23 @@ function BentoLayout() {
       </button>
 
       {/* Импорт как пятая ячейка bento */}
-      <button className={`${styles['bento__cell']} ${styles['bento__cell--import']}`} disabled>
-        <div className={styles['bento__cell-icon']}>
-          <BookOpen size={22} />
-        </div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>Импорт</p>
-          <p className={styles['bento__cell-desc']}>Goodreads, HLTB — скоро</p>
-        </div>
-        <span className={styles['bento__cell-cta']}>
-          <span className={styles['bento__cell-cta-text']}>Подключить</span>
-          <span className={styles['bento__cell-cta-arrow']}>
-            <ArrowIcon />
+      <UnderConstruction>
+        <button className={`${styles['bento__cell']} ${styles['bento__cell--import']}`} disabled>
+          <div className={styles['bento__cell-icon']}>
+            <BookOpen size={22} />
+          </div>
+          <div className={styles['bento__cell-content']}>
+            <p className={styles['bento__cell-title']}>Импорт</p>
+            <p className={styles['bento__cell-desc']}>Goodreads, HLTB — скоро</p>
+          </div>
+          <span className={styles['bento__cell-cta']}>
+            <span className={styles['bento__cell-cta-text']}>Подключить</span>
+            <span className={styles['bento__cell-cta-arrow']}>
+              <ArrowIcon />
+            </span>
           </span>
-        </span>
-      </button>
+        </button>
+      </UnderConstruction>
     </div>
   )
 }
@@ -214,22 +227,24 @@ function BentoLayout() {
  */
 function ImportStrip() {
   return (
-    <div className={styles['import-strip']}>
-      <div className={styles['import-strip__left']}>
-        <div className={styles['import-strip__icon']}>
-          <BookOpen size={18} />
+    <UnderConstruction>
+      <div className={styles['import-strip']}>
+        <div className={styles['import-strip__left']}>
+          <div className={styles['import-strip__icon']}>
+            <BookOpen size={18} />
+          </div>
+          <div>
+            <p className={styles['import-strip__title']}>Импортировать списки</p>
+            <p className={styles['import-strip__sub']}>Goodreads, HLTB — скоро</p>
+          </div>
         </div>
-        <div>
-          <p className={styles['import-strip__title']}>Импортировать списки</p>
-          <p className={styles['import-strip__sub']}>Goodreads, HLTB — скоро</p>
-        </div>
+        <button className={styles['import-strip__btn']} disabled>
+          <span className={styles['import-strip__btn-text']}>Подключить</span>
+          <span className={styles['import-strip__btn-arrow']}>
+            <ArrowIcon />
+          </span>
+        </button>
       </div>
-      <button className={styles['import-strip__btn']} disabled>
-        <span className={styles['import-strip__btn-text']}>Подключить</span>
-        <span className={styles['import-strip__btn-arrow']}>
-          <ArrowIcon />
-        </span>
-      </button>
-    </div>
+    </UnderConstruction>
   )
 }
