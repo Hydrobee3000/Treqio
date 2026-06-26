@@ -23,6 +23,7 @@ import {
   Box,
   Menu,
   MenuItem,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -217,25 +218,27 @@ export const LibraryPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
-              <button
-                className={styles['library__search-clear']}
-                onClick={() => setSearchQuery('')}
-                title="Очистить"
-              >
-                <X size={14} />
-              </button>
+              <Tooltip title="Очистить">
+                <button
+                  className={styles['library__search-clear']}
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X size={14} />
+                </button>
+              </Tooltip>
             )}
           </div>
           <div className={styles['library__label-row-actions']}>
             {isMobile && (
               <>
-                <button
-                  className={`${styles['library__filter-btn']} ${statusFilter !== 'ALL' ? styles['library__filter-btn--active'] : ''}`}
-                  onClick={(e) => setFilterAnchor(e.currentTarget)}
-                  title="Фильтр по статусу"
-                >
-                  <Filter size={15} />
-                </button>
+                <Tooltip title="Фильтр по статусу">
+                  <button
+                    className={`${styles['library__filter-btn']} ${statusFilter !== 'ALL' ? styles['library__filter-btn--active'] : ''}`}
+                    onClick={(e) => setFilterAnchor(e.currentTarget)}
+                  >
+                    <Filter size={15} />
+                  </button>
+                </Tooltip>
                 <Menu
                   anchorEl={filterAnchor}
                   open={!!filterAnchor}
@@ -296,14 +299,15 @@ export const LibraryPage = () => {
             </Menu>
             {!isMobile && effectiveCardStyle === 'cover' && (
               <>
-                <button
-                  className={styles['library__sort-btn']}
-                  onClick={(e) => setSizeAnchor(e.currentTarget)}
-                  title="Размер карточек"
-                >
-                  <SlidersHorizontal size={15} />
-                  {CARD_SIZE_OPTIONS.find((o) => o.value === cardSize)?.label}
-                </button>
+                <Tooltip title="Размер карточек">
+                  <button
+                    className={styles['library__sort-btn']}
+                    onClick={(e) => setSizeAnchor(e.currentTarget)}
+                  >
+                    <SlidersHorizontal size={15} />
+                    {CARD_SIZE_OPTIONS.find((o) => o.value === cardSize)?.label}
+                  </button>
+                </Tooltip>
                 <Menu
                   anchorEl={sizeAnchor}
                   open={!!sizeAnchor}
@@ -329,20 +333,22 @@ export const LibraryPage = () => {
             )}
             {!isMobile && (
               <div className={styles['library__style-toggle']}>
-                <button
-                  className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
-                  onClick={() => setCardStyle('cover')}
-                  title="Вид обложками"
-                >
-                  <Image size={22} />
-                </button>
-                <button
-                  className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
-                  onClick={() => setCardStyle('table')}
-                  title="Табличный вид"
-                >
-                  <List size={22} />
-                </button>
+                <Tooltip title="Вид обложками">
+                  <button
+                    className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
+                    onClick={() => setCardStyle('cover')}
+                  >
+                    <Image size={22} />
+                  </button>
+                </Tooltip>
+                <Tooltip title="Табличный вид">
+                  <button
+                    className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
+                    onClick={() => setCardStyle('table')}
+                  >
+                    <List size={22} />
+                  </button>
+                </Tooltip>
               </div>
             )}
           </div>
@@ -375,10 +381,14 @@ export const LibraryPage = () => {
               <Plus size={17} />
               Добавить книгу
             </button>
-            <button className={styles['library__cta-ghost']} disabled title="Скоро">
-              <Upload size={16} />
-              Импортировать список
-            </button>
+            <Tooltip title="Скоро">
+              <span>
+                <button className={styles['library__cta-ghost']} disabled>
+                  <Upload size={16} />
+                  Импортировать список
+                </button>
+              </span>
+            </Tooltip>
           </div>
         </div>
       ) : isFilteredEmpty ? (

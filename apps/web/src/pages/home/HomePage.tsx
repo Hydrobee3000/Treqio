@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { Tooltip } from '@mui/material'
 import { BookOpen, Gamepad2, LayoutGrid, Palette, PanelTop, User } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
@@ -80,20 +81,22 @@ export function HomePage() {
 
         {/* Переключатель вида */}
         <div className={styles['home__layout-toggle']}>
-          <button
-            className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
-            onClick={() => handleLayoutChange('grid')}
-            title="Сетка"
-          >
-            <LayoutGrid size={16} />
-          </button>
-          <button
-            className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
-            onClick={() => handleLayoutChange('bento')}
-            title="Bento"
-          >
-            <PanelTop size={16} />
-          </button>
+          <Tooltip title="Сетка">
+            <button
+              className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
+              onClick={() => handleLayoutChange('grid')}
+            >
+              <LayoutGrid size={16} />
+            </button>
+          </Tooltip>
+          <Tooltip title="Bento">
+            <button
+              className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
+              onClick={() => handleLayoutChange('bento')}
+            >
+              <PanelTop size={16} />
+            </button>
+          </Tooltip>
         </div>
       </div>
 

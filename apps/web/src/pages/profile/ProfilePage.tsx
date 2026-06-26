@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Tooltip } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
@@ -386,14 +387,17 @@ export const ProfilePage = () => {
             </div>
             {user?.bio && <p className={styles['header__bio']}>{user.bio}</p>}
           </div>
-          <button
-            className={styles['header__auth-btn']}
-            onClick={isGuest ? () => navigate('/login') : handleLogout}
-            title={isGuest ? 'Войти' : 'Выйти'}
-          >
-            {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
-            <span className={styles['header__auth-btn-label']}>{isGuest ? 'Войти' : 'Выйти'}</span>
-          </button>
+          <Tooltip title={isGuest ? 'Войти' : 'Выйти'}>
+            <button
+              className={styles['header__auth-btn']}
+              onClick={isGuest ? () => navigate('/login') : handleLogout}
+            >
+              {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
+              <span className={styles['header__auth-btn-label']}>
+                {isGuest ? 'Войти' : 'Выйти'}
+              </span>
+            </button>
+          </Tooltip>
         </div>
       </div>
 
