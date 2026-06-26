@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
-import { Box, Menu, MenuItem, Popover, Rating, Slider, Typography } from '@mui/material'
+import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
 import { STATUS_LABEL } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
@@ -72,34 +72,36 @@ function ScoreBadge({
   const color = scoreColor(rating)
 
   return (
-    <div className={styles['cover-card__score']} onClick={onClick} title={`Оценка ${rating}/10`}>
-      <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
-        <circle
-          cx="17"
-          cy="17"
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.18)"
-          strokeWidth="3"
-        />
-        <circle
-          cx="17"
-          cy="17"
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-        />
-      </svg>
-      {rating === 10 ? (
-        <Star size={14} fill="#fff" stroke="none" />
-      ) : (
-        <span className={styles['cover-card__score-value']}>{rating}</span>
-      )}
-    </div>
+    <Tooltip title={`Оценка ${rating}/10`}>
+      <div className={styles['cover-card__score']} onClick={onClick}>
+        <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
+          <circle
+            cx="17"
+            cy="17"
+            r={radius}
+            fill="none"
+            stroke="rgba(255,255,255,0.18)"
+            strokeWidth="3"
+          />
+          <circle
+            cx="17"
+            cy="17"
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        {rating === 10 ? (
+          <Star size={14} fill="#fff" stroke="none" />
+        ) : (
+          <span className={styles['cover-card__score-value']}>{rating}</span>
+        )}
+      </div>
+    </Tooltip>
   )
 }
 
