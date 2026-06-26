@@ -193,10 +193,6 @@ $breakpoint-medium: 900px;
       box-shadow: none;
       border-color: var(--color-divider, #e0e0e0);
 
-      &::before {
-        opacity: 0;
-      }
-
       .grid__tile-icon {
         transform: none;
       }
@@ -463,10 +459,6 @@ $breakpoint-medium: 900px;
     transform: none;
     box-shadow: none;
     border-color: var(--color-divider, #e0e0e0);
-
-    &::before {
-      opacity: 0;
-    }
 
     .bento__cell-icon {
       transform: none;
