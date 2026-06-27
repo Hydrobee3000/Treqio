@@ -8,12 +8,12 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     // Обязательны для NestJS: позволяют декораторам (@Injectable, @Controller)
     // сохранять информацию о типах в runtime — именно так работает DI
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "incremental": true,
     "types": ["jest", "node"],
     "resolveJsonModule": true
   },

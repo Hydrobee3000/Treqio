@@ -13,6 +13,13 @@ import pkg from '../package.json'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // Web и api в продакшне живут на разных доменах — без CORS браузер
+  // заблокирует запросы. credentials: true — для cookie с refresh_token.
+  app.enableCors({
+    origin: process.env['FRONTEND_URL'] ?? 'http://localhost:3000',
+    credentials: true,
+  })
+
   // Парсинг cookie — нужен для чтения refresh_token в /auth/refresh
   app.use(cookieParser())
 
