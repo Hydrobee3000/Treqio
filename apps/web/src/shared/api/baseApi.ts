@@ -3,9 +3,14 @@ import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolk
 import { logout, setCredentials } from '@/features/auth'
 import type { RootState } from '@/app/store'
 
+// В проде web и api на разных доменах — адрес api приходит из переменной
+// окружения, инлайнится в бандл на этапе сборки. Локально переменная не
+// задана, и запросы идут через прокси Vite на относительный путь /api.
+const API_URL = (import.meta.env['VITE_API_URL'] as string | undefined) ?? '/api'
+
 /** Базовый fetch с токеном из store и автоматической отправкой cookie. */
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: API_URL,
   credentials: 'include', // отправляет httpOnly cookie с refresh token автоматически
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken
