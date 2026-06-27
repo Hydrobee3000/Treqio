@@ -1,0 +1,32 @@
+// Конфиг TypeScript для браузерного кода (папка src/).
+// Наследует общие строгие настройки из корневого tsconfig монорепо
+// и добавляет браузерную специфику: DOM-типы, JSX, алиас @.
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // Добавляем DOM-типы: window, document, HTMLElement и т.д.
+    // Без них TypeScript не знает о браузерных API.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    // Режим JSX: позволяет писать <Component /> в .tsx файлах.
+    // "react-jsx" — современный режим (React 17+), не требует
+    // импортировать React в каждом файле вручную.
+    "jsx": "react-jsx",
+
+    // Алиас @ → папка src.
+    // Позволяет писать import { X } from '@/components/X'
+    // вместо '../../components/X' — независимо от вложенности файла.
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    // Не генерировать JS-файлы — этим занимается Vite.
+    // TypeScript здесь используется только для проверки типов.
+    "noEmit": true,
+
+    // Отключаем генерацию .d.ts файлов — они нужны только публикуемым пакетам.
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src"]
+}

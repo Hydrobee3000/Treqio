@@ -1,0 +1,587 @@
+$breakpoint-small: 600px;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Страница ─────────────────────────────────────────────────────────────────
+
+.library {
+  display: flex;
+  flex-direction: column;
+  // Скроллит только родительский <main> в AppLayout
+  min-height: 100%;
+}
+
+// ─── Шапка ────────────────────────────────────────────────────────────────────
+
+.library__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 28px 36px 12px;
+
+  @media (max-width: $breakpoint-small) {
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 20px 20px 10px;
+  }
+}
+
+.library__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary, #4e7b6a);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  // На мобильных текст прячется — кнопка становится круглой, чтобы
+  // помещаться в один ряд с заголовком «Моя библиотека».
+  @media (max-width: $breakpoint-small) {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+}
+
+.library__add-btn-label {
+  @media (max-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.library__title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+  animation: rise 0.6s ease both;
+
+  @media (min-width: $breakpoint-small) {
+    font-size: 30px;
+  }
+}
+
+// ─── Табы фильтра по статусу ──────────────────────────────────────────────────
+
+.library__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 36px 12px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 20px 12px;
+  }
+}
+
+.library__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+  }
+
+  &--active {
+    background: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary, #4e7b6a);
+    color: white;
+  }
+}
+
+.library__tab-count {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+// ─── Лейбл-строка и переключатель стиля карточек ─────────────────────────────
+
+.library__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 36px 4px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 20px 4px;
+  }
+}
+
+.library__label-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.library__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
+  }
+
+  &--active {
+    background: var(--color-primary, #4e7b6a);
+    color: white;
+  }
+}
+
+.library__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  flex: 1;
+  max-width: 480px;
+  padding: 0 12px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  background: var(--color-paper, white);
+  color: var(--color-text-2, #666);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+.library__search-icon--active {
+  color: var(--color-primary, #4e7b6a);
+}
+
+.library__search-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text, inherit);
+  font-size: 13px;
+  font-family: inherit;
+
+  &::placeholder {
+    color: var(--color-text-2, #666);
+  }
+}
+
+.library__search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--color-text, inherit);
+  }
+}
+
+.library__sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  color: var(--color-text-2, #666);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
+  }
+}
+
+// Общие стили пунктов меню фильтра/сортировки/размера карточек.
+.library__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 170px;
+  font-size: 13px;
+}
+
+.library__menu-item-label {
+  flex: 1;
+}
+
+.library__menu-item-count {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.library__style-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.library__style-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
+  }
+
+  &--active {
+    background: var(--color-paper, white);
+    color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ─── Сетка карточек ───────────────────────────────────────────────────────────
+
+.library__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 20px;
+  padding: 12px 36px 36px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 10px 20px 20px;
+  }
+
+  &--compact {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  &--large {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+    @media (max-width: $breakpoint-small) {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+  }
+}
+
+// ─── Табличный вид ────────────────────────────────────────────────────────────
+
+.library__table {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-height: 0;
+  margin: 0 36px 36px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  border-radius: 14px;
+  overflow-y: auto;
+  background: var(--color-paper, white);
+
+  @media (max-width: $breakpoint-small) {
+    margin: 0 20px 24px;
+  }
+}
+
+.library__table-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 36px 1fr 150px 130px;
+  gap: 16px;
+  align-items: center;
+  padding: 11px 16px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-2, #666);
+  background: var(--color-paper, white);
+}
+
+// Строки таблицы (BookTableRow) разделены границей — задаём её здесь,
+// чтобы не дублировать в каждой строке внутри сущности.
+.library__table > :not(:last-child) {
+  border-bottom: 1px solid var(--color-divider, #d5e4d8);
+}
+
+// ─── Пустое состояние / ошибка ────────────────────────────────────────────────
+
+.library__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--color-text-2, #666);
+  text-align: center;
+}
+
+.library__empty-icon {
+  opacity: 0.3;
+}
+
+.library__empty-text {
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 15px;
+  font-weight: 500;
+  overflow-wrap: break-word;
+}
+
+.library__empty-sub {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+// ─── Пустая библиотека (нет книг) ─────────────────────────────────────────────
+
+.library__empty-lib {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  animation: rise 0.5s ease both;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateY(-7px) rotate(var(--rot, 0deg));
+  }
+}
+
+.library__empty-shelf {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  height: 140px;
+  margin-bottom: 28px;
+}
+
+.library__ghost {
+  width: 70px;
+  aspect-ratio: 2 / 3;
+  border-radius: 9px;
+  border: 1.5px dashed var(--ghost-border, #6fa68c4d);
+  background: linear-gradient(160deg, var(--ghost-bg-1, #6fa68c26), var(--ghost-bg-2, #6fa68c0d));
+  position: relative;
+  opacity: 0.9;
+  animation: floaty 4.5s ease-in-out infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--ghost-border, #6fa68c4d);
+  }
+
+  &:first-child {
+    --rot: -6deg;
+  }
+  &:last-child {
+    --rot: 6deg;
+  }
+
+  &--tall {
+    height: 122px;
+    animation-delay: 0.5s;
+  }
+
+  &--accent {
+    border-style: solid;
+    border-color: var(--ghost-primary, #6fa68c);
+    background: linear-gradient(160deg, var(--ghost-chip-bg, #6fa68c33), transparent);
+    animation-delay: 0.25s;
+    z-index: 1;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px dashed var(--ghost-primary, #6fa68c);
+    }
+  }
+}
+
+.library__empty-title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+}
+
+.library__empty-desc {
+  margin: 0 0 26px;
+  max-width: 36ch;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-2, #666);
+}
+
+.library__empty-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.library__cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 11px;
+  background: var(--color-primary, #4e7b6a);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+
+.library__cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: 1px solid var(--color-divider, #d5e4d8);
+  border-radius: 11px;
+  background: var(--color-paper, white);
+  color: var(--color-text-2, #666);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

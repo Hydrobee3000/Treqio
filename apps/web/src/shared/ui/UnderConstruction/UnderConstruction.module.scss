@@ -1,0 +1,27 @@
+.under-construction {
+  // Затемняет карточку целиком, включая её собственный фон (а не только
+  // дочерние элементы) - плоская полупрозрачная серая плёнка
+  &__veil {
+    position: absolute;
+    inset: 0;
+    background: rgba(128, 128, 128, 0.45);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // Лента ограждения в верхнем правом углу. Размеры в % (от ширины
+  // элемента) и em (от его font-size) - масштабируются вместе с размером
+  // самого элемента без дополнительных пропсов.
+  &__ribbon {
+    position: absolute;
+    top: 0.5em;
+    right: -18%;
+    width: 70%;
+    height: 1.4em;
+    background: repeating-linear-gradient(45deg, #f0b429 0 0.5em, #2b2b2b 0.5em 1em);
+    transform: rotate(45deg);
+    box-shadow: 0 0.07em 0.3em rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 2;
+  }
+}

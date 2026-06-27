@@ -1,0 +1,112 @@
+generator client {
+  provider     = "prisma-client"
+  // Генерируем CJS-совместимый клиент — NestJS использует CommonJS
+  moduleFormat = "cjs"
+  // Выводим в src/ чтобы TypeScript включал файлы в компиляцию
+  output       = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL подключения берётся из prisma.config.ts → process.env["DATABASE_URL"]
+}
+
+/// Пользователь приложения.
+model User {
+  /// Уникальный идентификатор.
+  id          String  @id @default(cuid())
+  /// Email адрес — используется для идентификации через OAuth.
+  email       String  @unique
+  /// Публичное имя пользователя в URL профиля.
+  username    String? @unique
+  /// Отображаемое имя — может содержать пробелы и спецсимволы.
+  displayName String?
+  /// Ссылка на аватар — берётся от OAuth-провайдера при регистрации.
+  avatarUrl   String?
+  /// Краткое описание профиля.
+  bio         String?
+  /// Флаг публичности профиля.
+  isPublic    Boolean @default(true)
+
+  /// OAuth-провайдер: 'google' | 'github'.
+  provider   String
+  /// Идентификатор пользователя на стороне провайдера.
+  providerId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookEntries BookEntry[]
+
+  @@unique([provider, providerId])
+}
+
+/// Статус книги в списке пользователя.
+enum BookStatus {
+  /// Прочитаю.
+  WANT
+  /// Читаю.
+  READING
+  /// Прочитал.
+  DONE
+  /// Брошено.
+  DROPPED
+}
+
+/// Книга в общей библиотеке приложения.
+model Book {
+  /// Уникальный идентификатор.
+  id          String   @id @default(cuid())
+  /// Название книги.
+  title       String
+  /// Автор книги.
+  author      String
+  /// URL обложки.
+  coverUrl    String?
+  /// Описание книги.
+  description String?
+  /// Количество страниц.
+  pageCount   Int?
+  /// Жанры книги.
+  genres      String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entries BookEntry[]
+}
+
+/// Запись пользователя по конкретной книге.
+model BookEntry {
+  /// Уникальный идентификатор.
+  id         String     @id @default(cuid())
+  /// Идентификатор пользователя.
+  userId     String
+  /// Идентификатор книги.
+  bookId     String
+  /// Статус книги в списке пользователя.
+  status     BookStatus
+  /// Оценка от 1 до 10.
+  rating     Int?
+  /// Текущая страница.
+  progress   Int?
+  /// Дата начала чтения.
+  startDate  DateTime?
+  /// Дата завершения чтения.
+  finishDate DateTime?
+  /// Дата последнего изменения оценки.
+  ratingUpdatedAt DateTime?
+  /// Дата последнего изменения статуса.
+  statusUpdatedAt DateTime?
+  /// Заметки пользователя.
+  notes      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  /// Одна запись на пользователя на книгу.
+  @@unique([userId, bookId])
+}

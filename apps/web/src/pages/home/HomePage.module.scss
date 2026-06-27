@@ -1,0 +1,635 @@
+$breakpoint-small: 600px;
+$breakpoint-medium: 900px;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Страница ─────────────────────────────────────────────────────────────────
+
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// ─── Шапка ────────────────────────────────────────────────────────────────────
+
+.home__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 36px 12px;
+  gap: 16px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 20px 20px 10px;
+  }
+}
+
+.home__title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+  animation: rise 0.6s ease both;
+
+  @media (min-width: $breakpoint-medium) {
+    font-size: 30px;
+  }
+}
+
+// ─── Переключатель layout ─────────────────────────────────────────────────────
+
+.home__layout-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.home__layout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-2, #666);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text, inherit);
+  }
+
+  &--active {
+    background: var(--color-paper, white);
+    color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ─── Лейбл секции ─────────────────────────────────────────────────────────────
+
+.home__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px 8px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 20px 8px;
+  }
+}
+
+.home__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-2, #666);
+}
+
+// ─── Сетка (grid layout) ──────────────────────────────────────────────────────
+
+.grid {
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 16px;
+    gap: 10px;
+  }
+}
+
+.grid__tile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 22px 20px;
+  min-height: 152px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 14px 14px 12px;
+    gap: 8px;
+    min-height: 120px;
+  }
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider, #e0e0e0);
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  animation: rise 0.6s ease both;
+
+  &:nth-child(1) {
+    animation-delay: 50ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 100ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 150ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 200ms;
+  }
+
+  // Градиентный блик снизу справа
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 80% at 100% 100%,
+      color-mix(in oklab, var(--color-primary, #4e7b6a) 14%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--color-divider, #e0e0e0);
+
+      .grid__tile-icon {
+        transform: none;
+      }
+    }
+  }
+}
+
+.grid__tile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--color-chip-bg, #dff0e5);
+  color: var(--color-chip-text, #3d6a55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .grid__tile:hover & {
+    transform: rotate(-6deg) scale(1.05);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+  }
+}
+
+.grid__tile-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text, inherit);
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 14px;
+  }
+}
+
+.grid__tile-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-2, #666);
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+}
+
+.grid__tile-arrow {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  color: var(--color-text-2, #999);
+  transition:
+    transform 0.2s,
+    color 0.15s;
+
+  .grid__tile:hover & {
+    transform: translate(3px, -2px);
+    color: var(--color-primary, #4e7b6a);
+  }
+}
+
+// ─── Bento layout ─────────────────────────────────────────────────────────────
+
+.bento {
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-auto-rows: 190px;
+  gap: 14px;
+
+  @media (max-width: $breakpoint-medium) {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 16px;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 8px;
+  }
+}
+
+.bento__cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px;
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider, #e0e0e0);
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  animation: rise 0.6s ease both;
+
+  &:nth-child(1) {
+    animation-delay: 40ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 190ms;
+  }
+
+  // Градиентный блик снизу справа
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 80% at 100% 100%,
+      color-mix(in oklab, var(--color-primary, #4e7b6a) 14%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  // Первая карточка — большая, занимает 2 строки только на десктопе
+  &--hero {
+    grid-column: 1;
+    grid-row: 1 / 3;
+
+    @media (max-width: $breakpoint-medium) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: $breakpoint-small) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  // Тёмная карточка
+  &--dark {
+    background: var(--color-surface-variant, #243d35);
+    border-color: transparent;
+    color: var(--sidebar-text, #d8ebe4);
+
+    .bento__cell-title {
+      color: var(--sidebar-text, #d8ebe4);
+    }
+
+    .bento__cell-desc {
+      color: var(--sidebar-muted, rgba(216, 235, 228, 0.6));
+    }
+
+    .bento__cell-icon {
+      color: var(--sidebar-text, #d8ebe4);
+    }
+  }
+}
+
+.bento__cell-content {
+  @media (max-width: $breakpoint-small) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.bento__cell-icon {
+  color: var(--color-primary, #4e7b6a);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .bento__cell:hover & {
+    transform: rotate(-6deg) scale(1.05);
+  }
+}
+
+.bento__cell-title {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+
+  .bento__cell--hero & {
+    font-size: 26px;
+  }
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 14px;
+    margin-top: 6px;
+
+    .bento__cell--hero & {
+      font-size: 14px;
+    }
+  }
+}
+
+.bento__cell-desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-2, #666);
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 11.5px;
+    margin-top: 4px;
+  }
+}
+
+// ─── Обёртка grid + spacer + полоска ─────────────────────────────────────────
+
+.home__grid-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+// Растягивается чтобы занять свободное место, но всегда оставляет минимальный зазор
+.home__spacer {
+  flex: 1;
+  min-height: 14px;
+
+  @media (max-width: $breakpoint-small) {
+    min-height: 10px;
+  }
+}
+
+// ─── Bento — ячейка импорта и CTA ────────────────────────────────────────────
+
+.bento__cell--disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+
+  &:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-divider, #e0e0e0);
+
+    .bento__cell-icon {
+      transform: none;
+    }
+  }
+}
+
+.bento__cell--import {
+  cursor: not-allowed;
+  opacity: 0.7;
+
+  &:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-divider, #e0e0e0);
+
+    &::before {
+      opacity: 0;
+    }
+
+    .bento__cell-icon {
+      transform: none;
+    }
+  }
+}
+
+.bento__cell-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--color-primary, #4e7b6a);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  align-self: flex-start;
+  pointer-events: none;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-small) {
+    align-self: center;
+    margin-left: auto;
+    padding: 6px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-2, #666);
+  }
+}
+
+.bento__cell-cta-text {
+  @media (max-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.bento__cell-cta-arrow {
+  display: none;
+
+  @media (max-width: $breakpoint-small) {
+    display: flex;
+  }
+}
+
+// ─── Полоска импорта ──────────────────────────────────────────────────────────
+
+.import-strip {
+  margin: 0 36px 32px;
+  padding: 10px 20px;
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider, #e0e0e0);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  animation: rise 0.6s ease 0.25s both;
+
+  // Шиммер в цвет основного акцента темы
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--color-primary, #4e7b6a) 20%, transparent),
+      transparent
+    );
+    transform: translateX(-100%);
+    transition: transform 1s ease;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    transform: translateX(100%);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    margin: 0 16px 24px;
+  }
+}
+
+.import-strip__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.import-strip__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-chip-bg, #dff0e5);
+  color: var(--color-chip-text, #3d6a55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.import-strip__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.import-strip__sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--color-text-2, #666);
+}
+
+.import-strip__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary, #4e7b6a);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: not-allowed;
+  opacity: 0.6;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 8px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-2, #666);
+    opacity: 1;
+  }
+}
+
+.import-strip__btn-text {
+  @media (max-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.import-strip__btn-arrow {
+  display: none;
+
+  @media (max-width: $breakpoint-small) {
+    display: flex;
+  }
+}

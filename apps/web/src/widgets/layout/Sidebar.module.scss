@@ -1,0 +1,177 @@
+.sidebar {
+  height: 100%;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// ─── Шапка ────────────────────────────────────────────────────────────────────
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid var(--sidebar-divider);
+  flex-shrink: 0;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar__logo-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  user-select: none;
+  background: linear-gradient(150deg, var(--logo-primary, #c97b5c), var(--logo-primary-dark, #b36a4d));
+
+  // Глиф наложен через mask — цвет тайла берётся из переменных темы, а не из файла.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    mask: url('./logo.svg') center / contain no-repeat;
+    -webkit-mask: url('./logo.svg') center / contain no-repeat;
+  }
+}
+
+
+.sidebar__logo {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--sidebar-text);
+  user-select: none;
+}
+
+.sidebar__collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: var(--sidebar-btn-border);
+    color: var(--sidebar-text);
+  }
+}
+
+// ─── Навигация ────────────────────────────────────────────────────────────────
+
+.sidebar__nav {
+  flex: 1;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+// ─── Футер ────────────────────────────────────────────────────────────────────
+
+.sidebar__footer {
+  padding: 12px 8px;
+  border-top: 1px solid var(--sidebar-divider);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+// ─── Пункт навигации ──────────────────────────────────────────────────────────
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: var(--sidebar-btn-border);
+    color: var(--sidebar-text);
+  }
+
+  &--active {
+    background: var(--sidebar-btn-border);
+    color: var(--sidebar-text);
+  }
+
+  &--collapsed {
+    justify-content: center;
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+
+    &:hover {
+      background: transparent;
+      color: var(--sidebar-muted);
+    }
+  }
+}
+
+.nav-item__label {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: inherit;
+}
+
+// ─── Переключатель темы ───────────────────────────────────────────────────────
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: var(--sidebar-btn-border);
+    color: var(--sidebar-text);
+  }
+
+  &--collapsed {
+    justify-content: center;
+    padding: 8px;
+  }
+}
+
+.theme-toggle__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+  white-space: nowrap;
+}

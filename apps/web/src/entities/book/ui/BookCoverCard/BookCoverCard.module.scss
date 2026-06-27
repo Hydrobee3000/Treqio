@@ -1,0 +1,322 @@
+.cover-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  &--medium {
+    .cover-card__cover {
+      padding: 12px 11px;
+    }
+
+    .cover-card__title {
+      margin-top: 29px;
+    }
+
+    .cover-card__title-text {
+      font-size: 14px;
+    }
+
+    .cover-card__score {
+      top: 7px;
+      right: 7px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .cover-card__score-value {
+      font-size: 11px;
+
+      &--empty {
+        font-size: 13px;
+      }
+    }
+
+    .cover-card__status {
+      font-size: 10px;
+      padding: 3px 9px 3px 7px;
+    }
+  }
+
+  &--compact {
+    gap: 7px;
+
+    .cover-card__cover {
+      padding: 10px 9px;
+    }
+
+    .cover-card__title {
+      margin-top: 24px;
+    }
+
+    .cover-card__title-text {
+      font-size: 12px;
+      -webkit-line-clamp: 12;
+    }
+
+    .cover-card__author {
+      font-size: 10px;
+    }
+
+    .cover-card__score {
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .cover-card__score-value {
+      font-size: 9px;
+
+      &--empty {
+        font-size: 11px;
+      }
+    }
+
+    .cover-card__footer {
+      gap: 5px;
+    }
+
+    .cover-card__status {
+      gap: 4px;
+      font-size: 9px;
+      padding: 3px 8px 3px 6px;
+    }
+  }
+}
+
+// ─── Обложка ──────────────────────────────────────────────────────────────────
+
+@property --gold-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+// Обёртка вокруг обложки — золотое кольцо рендерится здесь как сосед
+// обложки, а не её потомок, чтобы не клипаться её overflow:hidden.
+.cover-card__cover-frame {
+  position: relative;
+}
+
+.cover-card__cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background: linear-gradient(
+    150deg,
+    var(--color-primary, #4e7b6a),
+    var(--color-primary-dark, #3a5c4f)
+  );
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 13px;
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.22s;
+
+  // Лёгкая текстура бумаги сверху-справа + затемнение в нижнем правом углу.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 55%),
+      linear-gradient(150deg, transparent 45%, rgba(0, 0, 0, 0.35) 100%);
+    pointer-events: none;
+  }
+
+  .cover-card:hover & {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px -14px rgba(0, 0, 0, 0.55);
+  }
+}
+
+// Идеальная оценка 10/10
+.cover-card__gold-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 10px;
+  padding: 4px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--gold-angle),
+    rgba(255, 225, 150, 0) 0deg,
+    rgba(255, 225, 150, 0) 200deg,
+    rgba(255, 232, 170, 0.55) 270deg,
+    #ffe9a8 320deg,
+    #ffd24a 345deg,
+    rgba(255, 225, 150, 0) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: cover-card-gold-spin 2.4s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(255, 210, 90, 0.35));
+
+  .cover-card:hover & {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes cover-card-gold-spin {
+  to {
+    --gold-angle: 360deg;
+  }
+}
+
+.cover-card__title {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  margin-top: 35px;
+}
+
+.cover-card__title-text {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #fff;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+  -webkit-box-orient: vertical;
+}
+
+.cover-card__author {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Круглый бейдж оценки ─────────────────────────────────────────────────────
+
+.cover-card__score {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 20, 18, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.cover-card__score-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.cover-card__score-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+
+  &--empty {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+  }
+}
+
+// ─── Подпись под обложкой ─────────────────────────────────────────────────────
+
+.cover-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cover-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cover-card__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.cover-card__status--reading {
+  background: rgba(90, 160, 200, 0.16);
+  color: #4a92bd;
+
+  .cover-card__status-dot {
+    background: #5aa0c8;
+  }
+}
+
+.cover-card__status--done {
+  background: rgba(76, 175, 110, 0.16);
+  color: #3d8a5c;
+
+  .cover-card__status-dot {
+    background: #4caf6e;
+  }
+}
+
+// Нейтральный, но отличимый от обычного цвета текста темы.
+.cover-card__status--want {
+  background: rgba(123, 134, 148, 0.16);
+  color: #9c8a6a;
+
+  .cover-card__status-dot {
+    background: #9c8a6a;
+  }
+}
+
+.cover-card__status--dropped {
+  background: rgba(185, 64, 64, 0.14);
+  color: #b94040;
+
+  .cover-card__status-dot {
+    background: #b94040;
+  }
+}
+
+// ─── Прогресс чтения ──────────────────────────────────────────────────────────
+
+.cover-card__progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-paper-2, #ecf1ea);
+  overflow: hidden;
+}
+
+.cover-card__progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #5aa0c8;
+}
