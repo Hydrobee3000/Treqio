@@ -5,6 +5,12 @@
 FROM node:24-alpine AS builder
 WORKDIR /app
 
+# Некоторые пакеты при установке стучатся на сервера телеметрии без таймаута
+# (проверка обновлений Prisma, аналитика @scarf/scarf) — в облачной среде
+# сборки Railway такие соединения зависают, а не падают с ошибкой.
+ENV CHECKPOINT_DISABLE=1
+ENV DO_NOT_TRACK=1
+
 COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/
 RUN npm install
@@ -23,6 +29,8 @@ RUN npm run build --workspace=@treqio/api
 FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV CHECKPOINT_DISABLE=1
+ENV DO_NOT_TRACK=1
 
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/package.json ./package.json
