@@ -2,6 +2,11 @@ import { useEffect } from 'react'
 import { useAppDispatch } from '@/shared/lib/store'
 import { setCredentials, setInitialized } from '@/features/auth'
 
+// В проде web и api на разных доменах — адрес api приходит из переменной
+// окружения, инлайнится в бандл на этапе сборки. Локально переменная не
+// задана, и запрос идёт через прокси Vite на относительный путь /api.
+const API_URL = (import.meta.env['VITE_API_URL'] as string | undefined) ?? '/api'
+
 /**
  * Пропсы провайдера авторизации.
  */
@@ -21,7 +26,7 @@ export function AuthProvider({ children }: Props) {
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        const res = await fetch('/api/auth/refresh', {
+        const res = await fetch(`${API_URL}/auth/refresh`, {
           method: 'POST',
           credentials: 'include',
         })

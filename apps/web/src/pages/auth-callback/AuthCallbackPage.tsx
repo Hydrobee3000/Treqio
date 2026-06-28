@@ -6,6 +6,11 @@ import { setCredentials, setUser } from '@/features/auth'
 import { consumeRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppDispatch } from '@/shared/lib/store'
 
+// В проде web и api на разных доменах — адрес api приходит из переменной
+// окружения, инлайнится в бандл на этапе сборки. Локально переменная не
+// задана, и запрос идёт через прокси Vite на относительный путь /api.
+const API_URL = (import.meta.env['VITE_API_URL'] as string | undefined) ?? '/api'
+
 /**
  * Обработчик редиректа после OAuth авторизации.
  */
@@ -27,7 +32,7 @@ export function AuthCallbackPage() {
       try {
         dispatch(setCredentials({ accessToken }))
 
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch(`${API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           credentials: 'include',
         })
