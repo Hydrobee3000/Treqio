@@ -1,0 +1,51 @@
+name: CI
+
+# Запускаем на каждый PR в develop (защита перед мерджем) и на каждый push
+# в main (чтобы у Railway было что ждать через переключатель "Wait for CI").
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [main]
+
+# Отключаем сетевую телеметрию npm на уровне всего workflow.
+env:
+  CHECKPOINT_DISABLE: 1
+  DO_NOT_TRACK: 1
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate --workspace=@treqio/api
+      - run: npm run lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate --workspace=@treqio/api
+      - run: npm run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate --workspace=@treqio/api
+      - run: npm run test
