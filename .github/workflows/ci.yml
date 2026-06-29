@@ -1,10 +1,11 @@
 name: CI
 
-# Запускаем на каждый PR в develop (защита перед мерджем) и на каждый push
-# в main (чтобы у Railway было что ждать через переключатель "Wait for CI").
+# Запускаем на каждый PR в main (защита перед мерджем) и на каждый push
+# в main (чтобы у Railway было что ждать через переключатель "Wait for CI" —
+# squash-коммит мерджа получает новый SHA, отдельный от проверок самого PR).
 on:
   pull_request:
-    branches: [develop]
+    branches: [main]
   push:
     branches: [main]
 
