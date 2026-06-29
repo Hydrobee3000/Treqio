@@ -1,4 +1,4 @@
-# Treqio
+# [**<img width="32" height="32" alt="favicon" src="https://github.com/user-attachments/assets/b01c3249-f80f-4065-9f3b-94ff36a369ca" /> Treqio**](https://treqio.online)
 
 A personal media tracker — books, games, movies and more. Track what you've read, played or watched, rate and review them, share progress with friends via a real-time activity feed.
 
