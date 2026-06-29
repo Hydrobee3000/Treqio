@@ -2,6 +2,10 @@
 
 A personal media tracker — books, games, movies and more. Track what you've read, played or watched, rate and review them, share progress with friends via a real-time activity feed.
 
+> #  [**🚀 Open site**](https://treqio.online)
+> <img width="1534" height="726" alt="home-desktop" src="https://github.com/user-attachments/assets/50aaef86-107c-4a41-9bcb-ef338fdeda92" />
+> <img width="361" height="642" alt="home-mobile" src="https://github.com/user-attachments/assets/590b19d6-5115-4c27-92cb-857cc7f9ecaa" />
+
 > **Status:** In active development. Core features are being built iteratively.
 
 ---
