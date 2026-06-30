@@ -66,8 +66,16 @@ export const BookTableRow = ({
   onRatingChange,
 }: BookTableRowProps) => {
   const { book, status, rating } = entry
-  const [statusAnchor, setStatusAnchor] = useState<HTMLElement | null>(null)
-  const [ratingAnchor, setRatingAnchor] = useState<HTMLElement | null>(null)
+  // anchorEl держим в state, обновляемом через callback ref, а не как
+  // ссылку, замороженную в момент клика: если фоновая перезагрузка списка
+  // (после мутации статуса/оценки) пересоздаст DOM-узел строки, пока
+  // поп-овер ещё открыт, React сам вызовет callback ref на новом узле —
+  // и anchorEl останется верным. Замороженная на клике ссылка вместо этого
+  // указывала бы в никуда, и MUI Popover схлопывал позицию в (0,0).
+  const [statusEl, setStatusEl] = useState<HTMLSpanElement | null>(null)
+  const [ratingEl, setRatingEl] = useState<HTMLDivElement | null>(null)
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [ratingOpen, setRatingOpen] = useState(false)
   // Черновое значение слайдера — обновляется при перетаскивании,
   // а мутация отправляется только когда пользователь отпускает слайдер.
   const [ratingDraft, setRatingDraft] = useState(rating ?? 5)
@@ -75,21 +83,21 @@ export const BookTableRow = ({
   /** Открывает поп-овер выбора статуса, не давая клику дойти до редактирования строки. */
   const handleStatusClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
-    setStatusAnchor(e.currentTarget)
+    setStatusOpen(true)
   }
 
   /** Открывает поп-овер выбора оценки, не давая клику дойти до редактирования строки. */
   const handleRatingClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setRatingDraft(rating ?? 5)
-    setRatingAnchor(e.currentTarget)
+    setRatingOpen(true)
   }
 
   return (
     <div className={styles['table-row']}>
       <div className={styles['table-row__cover-wrap']} onClick={onEdit}>
         <div className={styles['table-row__cover']} />
-        {rating === 10 && <div className={styles['table-row__gold-ring']} />}
+        {status === 'DONE' && rating === 10 && <div className={styles['table-row__gold-ring']} />}
       </div>
 
       <div className={styles['table-row__info']} onClick={onEdit}>
@@ -98,6 +106,7 @@ export const BookTableRow = ({
       </div>
 
       <span
+        ref={setStatusEl}
         className={`${styles['table-row__status']} ${STATUS_CLASS[status]}`}
         onClick={handleStatusClick}
       >
@@ -105,10 +114,12 @@ export const BookTableRow = ({
         {STATUS_LABEL[status]}
       </span>
 
-      <div className={styles['table-row__rating']} onClick={handleRatingClick}>
-        {rating === null ? (
-          <span className={styles['table-row__rating-empty']}>—</span>
-        ) : (
+      <div
+        ref={setRatingEl}
+        className={`${styles['table-row__rating']} ${status !== 'DONE' ? styles['table-row__rating--disabled'] : ''}`}
+        onClick={status === 'DONE' ? handleRatingClick : undefined}
+      >
+        {status === 'DONE' && rating !== null ? (
           <>
             <Rating
               readOnly
@@ -127,13 +138,15 @@ export const BookTableRow = ({
               {rating === 10 ? <Star size={13} fill={GOLD_COLOR} stroke="none" /> : rating}
             </span>
           </>
+        ) : (
+          <span className={styles['table-row__rating-empty']}>—</span>
         )}
       </div>
 
       <Menu
-        anchorEl={statusAnchor}
-        open={!!statusAnchor}
-        onClose={() => setStatusAnchor(null)}
+        anchorEl={statusEl}
+        open={statusOpen}
+        onClose={() => setStatusOpen(false)}
         slotProps={{ list: { dense: true } }}
       >
         {STATUS_OPTIONS.map((option) => (
@@ -144,7 +157,7 @@ export const BookTableRow = ({
             onClick={(e) => {
               e.stopPropagation()
               onStatusChange?.(option.value)
-              setStatusAnchor(null)
+              setStatusOpen(false)
             }}
           >
             <Box
@@ -163,9 +176,9 @@ export const BookTableRow = ({
       </Menu>
 
       <Popover
-        anchorEl={ratingAnchor}
-        open={!!ratingAnchor}
-        onClose={() => setRatingAnchor(null)}
+        anchorEl={ratingEl}
+        open={ratingOpen}
+        onClose={() => setRatingOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
@@ -183,7 +196,7 @@ export const BookTableRow = ({
                 const next = Math.max(1, Math.round((value ?? 0) * 2))
                 setRatingDraft(next)
                 onRatingChange?.(next)
-                setRatingAnchor(null)
+                setRatingOpen(false)
               }}
             />
           </Box>
@@ -195,7 +208,7 @@ export const BookTableRow = ({
             onChange={(_, value) => setRatingDraft(value as number)}
             onChangeCommitted={(_, value) => {
               onRatingChange?.(value as number)
-              setRatingAnchor(null)
+              setRatingOpen(false)
             }}
           />
           <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
@@ -47,16 +47,16 @@ function scoreColor(rating: number): string {
 /**
  * Круглый бейдж с оценкой (или плейсхолдер если книга не оценена).
  */
-function ScoreBadge({
-  rating,
-  onClick,
-}: {
-  rating: number | null
-  onClick: (e: MouseEvent<HTMLElement>) => void
-}) {
+const ScoreBadge = forwardRef<
+  HTMLDivElement,
+  {
+    rating: number | null
+    onClick: (e: MouseEvent<HTMLElement>) => void
+  }
+>(function ScoreBadge({ rating, onClick }, ref) {
   if (rating === null) {
     return (
-      <div className={styles['cover-card__score']} onClick={onClick}>
+      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
         <span
           className={`${styles['cover-card__score-value']} ${styles['cover-card__score-value--empty']}`}
         >
@@ -73,7 +73,7 @@ function ScoreBadge({
 
   return (
     <Tooltip title={`Оценка ${rating}/10`}>
-      <div className={styles['cover-card__score']} onClick={onClick}>
+      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
         <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
           <circle
             cx="17"
@@ -103,7 +103,7 @@ function ScoreBadge({
       </div>
     </Tooltip>
   )
-}
+})
 
 /** Размер карточки — масштабирует шрифты и бейдж оценки внутри обложки. */
 type CardSize = 'compact' | 'medium' | 'large'
@@ -140,8 +140,16 @@ export const BookCoverCard = ({
   onRatingChange,
 }: BookCoverCardProps) => {
   const { book, status, rating, progress } = entry
-  const [statusAnchor, setStatusAnchor] = useState<HTMLElement | null>(null)
-  const [ratingAnchor, setRatingAnchor] = useState<HTMLElement | null>(null)
+  // anchorEl держим в state, обновляемом через callback ref, а не как
+  // ссылку, замороженную в момент клика: если фоновая перезагрузка списка
+  // (после мутации статуса/оценки) пересоздаст DOM-узел карточки, пока
+  // поп-овер ещё открыт, React сам вызовет callback ref на новом узле —
+  // и anchorEl останется верным. Замороженная на клике ссылка вместо этого
+  // указывала бы в никуда, и MUI Popover схлопывал позицию в (0,0).
+  const [statusEl, setStatusEl] = useState<HTMLSpanElement | null>(null)
+  const [scoreEl, setScoreEl] = useState<HTMLDivElement | null>(null)
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [ratingOpen, setRatingOpen] = useState(false)
   // Черновое значение слайдера — обновляется при перетаскивании,
   // а мутация отправляется только когда пользователь отпускает слайдер.
   const [ratingDraft, setRatingDraft] = useState(rating ?? 5)
@@ -154,33 +162,36 @@ export const BookCoverCard = ({
   /** Открывает поп-овер выбора статуса, не давая клику дойти до редактирования всей карточки. */
   const handleStatusClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
-    setStatusAnchor(e.currentTarget)
+    setStatusOpen(true)
   }
 
   /** Открывает поп-овер выбора оценки, не давая клику дойти до редактирования всей карточки. */
   const handleRatingClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setRatingDraft(rating ?? 5)
-    setRatingAnchor(e.currentTarget)
+    setRatingOpen(true)
   }
 
   return (
     <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
         <div className={styles['cover-card__cover']} onClick={onEdit}>
-          <ScoreBadge rating={rating} onClick={handleRatingClick} />
+          {status === 'DONE' && (
+            <ScoreBadge ref={setScoreEl} rating={rating} onClick={handleRatingClick} />
+          )}
           <div className={styles['cover-card__title']}>
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
           <div className={styles['cover-card__author']}>{book.author}</div>
         </div>
-        {rating === 10 && <div className={styles['cover-card__gold-ring']} />}
+        {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>
 
       {(showStatus || progressPct !== null) && (
         <div className={styles['cover-card__footer']}>
           {showStatus && (
             <span
+              ref={setStatusEl}
               className={`${styles['cover-card__status']} ${STATUS_CLASS[status]}`}
               onClick={handleStatusClick}
             >
@@ -200,9 +211,9 @@ export const BookCoverCard = ({
       )}
 
       <Menu
-        anchorEl={statusAnchor}
-        open={!!statusAnchor}
-        onClose={() => setStatusAnchor(null)}
+        anchorEl={statusEl}
+        open={statusOpen}
+        onClose={() => setStatusOpen(false)}
         slotProps={{ list: { dense: true } }}
       >
         {STATUS_OPTIONS.map((option) => (
@@ -213,7 +224,7 @@ export const BookCoverCard = ({
             onClick={(e) => {
               e.stopPropagation()
               onStatusChange?.(option.value)
-              setStatusAnchor(null)
+              setStatusOpen(false)
             }}
           >
             <Box
@@ -232,9 +243,9 @@ export const BookCoverCard = ({
       </Menu>
 
       <Popover
-        anchorEl={ratingAnchor}
-        open={!!ratingAnchor}
-        onClose={() => setRatingAnchor(null)}
+        anchorEl={scoreEl}
+        open={ratingOpen}
+        onClose={() => setRatingOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
@@ -252,7 +263,7 @@ export const BookCoverCard = ({
                 const next = Math.max(1, Math.round((value ?? 0) * 2))
                 setRatingDraft(next)
                 onRatingChange?.(next)
-                setRatingAnchor(null)
+                setRatingOpen(false)
               }}
             />
           </Box>
@@ -264,7 +275,7 @@ export const BookCoverCard = ({
             onChange={(_, value) => setRatingDraft(value as number)}
             onChangeCommitted={(_, value) => {
               onRatingChange?.(value as number)
-              setRatingAnchor(null)
+              setRatingOpen(false)
             }}
           />
           <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>

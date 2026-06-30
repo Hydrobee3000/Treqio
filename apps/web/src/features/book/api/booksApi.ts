@@ -111,6 +111,23 @@ export const booksApi = baseApi.injectEndpoints({
     updateEntry: build.mutation<BookEntry, { id: string; dto: UpdateBookEntryDto }>({
       query: ({ id, dto }) => ({ url: `/books/entries/${id}`, method: 'PATCH', body: dto }),
       invalidatesTags: ['Book'],
+      // Меняем запись в кэше сразу, не дожидаясь ответа сервера — иначе при
+      // медленном ответе элементы интерфейса (например поп-овер оценки на
+      // карточке) остаются в состоянии ожидания и могут вести себя не так,
+      // как ожидается. Если запрос всё же завершится ошибкой — откатываем.
+      async onQueryStarted({ id, dto }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          booksApi.util.updateQueryData('getMyEntries', undefined, (draft) => {
+            const entry = draft.find((e) => e.id === id)
+            if (entry) Object.assign(entry, dto)
+          }),
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
     }),
 
     /**
