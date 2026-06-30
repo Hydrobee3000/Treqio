@@ -154,6 +154,10 @@
   cursor: pointer;
 }
 
+.table-row__rating--disabled {
+  cursor: default;
+}
+
 .table-row__rating-value {
   font-size: 13px;
   font-weight: 600;
