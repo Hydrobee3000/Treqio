@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { Tooltip } from '@mui/material'
+import { Collapse, Tooltip } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
   Check,
+  ChevronDown,
   History,
   LogIn,
   LogOut,
@@ -263,6 +264,7 @@ export const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<ProfileTab>('history')
   const [editingName, setEditingName] = useState(false)
   const [nameValue, setNameValue] = useState('')
+  const [collapsedDays, setCollapsedDays] = useState<Set<string>>(new Set())
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   /**
@@ -318,6 +320,17 @@ export const ProfilePage = () => {
   const handleCancelName = () => {
     setEditingName(false)
   }
+
+  /**
+   * Функция переключения состояния блока событий за указанный день.
+   */
+  const toggleDay = (label: string) =>
+    setCollapsedDays((prev) => {
+      const next = new Set(prev)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
 
   const displayName = isGuest
     ? guestDisplayName || DEFAULT_DISPLAY_NAME
@@ -431,69 +444,80 @@ export const ProfilePage = () => {
           </div>
         ) : (
           <div className={styles['history']}>
-            {dayGroups.map((group) => (
-              <div key={group.label} className={styles['history__day']}>
-                <div className={styles['history__date']}>{group.label}</div>
-                <div className={styles['history__timeline']}>
-                  {group.events.map((event, i) => {
-                    const Icon = HISTORY_ICON[event.type]
-                    const { rating } = event.entry
-                    const showsRating =
-                      rating !== null &&
-                      ((event.type === 'DONE' && !hasSeparateRatingEvent(event.entry)) ||
-                        event.type === 'RATED')
-                    return (
-                      <div
-                        key={`${event.entry.id}-${event.type}-${i}`}
-                        className={styles['history__event']}
-                      >
-                        <div
-                          className={`${styles['history__node']} ${styles[`history__node--${event.type.toLowerCase()}`]}`}
-                        >
-                          <Icon size={14} />
-                        </div>
-                        <div className={styles['history__body']}>
-                          <p className={styles['history__text']}>
-                            <VerbPhrase type={event.type} />{' '}
-                            <strong>«{event.entry.book.title}»</strong>
-                            {event.type === 'ADDED' &&
-                              !hasAccompanyingCreationEvent(event.entry) && (
-                                <>
-                                  {' '}
-                                  <span className={styles['history__filler']}>
-                                    со статусом
-                                  </span>{' '}
-                                  <StatusChip status={event.entry.status} />
-                                </>
-                              )}
-                            {event.type === 'STATUS' && (
-                              <>
-                                {' '}
-                                <span className={styles['history__filler']}>на</span>{' '}
-                                <StatusChip status={event.entry.status} />
-                              </>
-                            )}
-                            {showsRating && rating !== null && (
-                              <>
-                                {' '}
-                                <span className={styles['history__filler']}>на</span>{' '}
-                                <RatingRing rating={rating} />
-                              </>
-                            )}
-                          </p>
-                        </div>
-                        <span className={styles['history__time']}>
-                          {new Date(event.date).toLocaleTimeString('ru-RU', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-                    )
-                  })}
+            {dayGroups.map((group) => {
+              const collapsed = collapsedDays.has(group.label)
+              return (
+                <div key={group.label} className={styles['history__day']}>
+                  <div className={styles['history__date']} onClick={() => toggleDay(group.label)}>
+                    {group.label}
+                    <ChevronDown
+                      size={14}
+                      className={`${styles['history__date-chevron']} ${collapsed ? styles['history__date-chevron--collapsed'] : ''}`}
+                    />
+                  </div>
+                  <Collapse in={!collapsed}>
+                    <div className={styles['history__timeline']}>
+                      {group.events.map((event, i) => {
+                        const Icon = HISTORY_ICON[event.type]
+                        const { rating } = event.entry
+                        const showsRating =
+                          rating !== null &&
+                          ((event.type === 'DONE' && !hasSeparateRatingEvent(event.entry)) ||
+                            event.type === 'RATED')
+                        return (
+                          <div
+                            key={`${event.entry.id}-${event.type}-${i}`}
+                            className={styles['history__event']}
+                          >
+                            <div
+                              className={`${styles['history__node']} ${styles[`history__node--${event.type.toLowerCase()}`]}`}
+                            >
+                              <Icon size={14} />
+                            </div>
+                            <div className={styles['history__body']}>
+                              <p className={styles['history__text']}>
+                                <VerbPhrase type={event.type} />{' '}
+                                <strong>«{event.entry.book.title}»</strong>
+                                {event.type === 'ADDED' &&
+                                  !hasAccompanyingCreationEvent(event.entry) && (
+                                    <>
+                                      {' '}
+                                      <span className={styles['history__filler']}>
+                                        со статусом
+                                      </span>{' '}
+                                      <StatusChip status={event.entry.status} />
+                                    </>
+                                  )}
+                                {event.type === 'STATUS' && (
+                                  <>
+                                    {' '}
+                                    <span className={styles['history__filler']}>на</span>{' '}
+                                    <StatusChip status={event.entry.status} />
+                                  </>
+                                )}
+                                {showsRating && rating !== null && (
+                                  <>
+                                    {' '}
+                                    <span className={styles['history__filler']}>на</span>{' '}
+                                    <RatingRing rating={rating} />
+                                  </>
+                                )}
+                              </p>
+                            </div>
+                            <span className={styles['history__time']}>
+                              {new Date(event.date).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Collapse>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )
       ) : (
