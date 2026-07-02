@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react'
-import type { MouseEvent } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import { motion } from 'framer-motion'
-import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
+import { Menu, MenuItem, Popover, Rating, Slider, Tooltip } from '@mui/material'
 import { Check, Star } from 'lucide-react'
 import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
@@ -98,9 +98,7 @@ interface BookCoverCardProps {
 }
 
 /**
- * Карточка книги в стиле «обложка» — один из стилей отображения библиотеки.
- * Клик по статусу или оценке открывает быстрый выбор этого поля,
- * клик по остальной области карточки — открывает полное редактирование.
+ * Карточка книги в стиле «обложка».
  */
 export const BookCoverCard = ({
   entry,
@@ -180,7 +178,7 @@ export const BookCoverCard = ({
             <div className={styles['cover-card__progress']}>
               <span
                 className={styles['cover-card__progress-bar']}
-                style={{ width: `${progressPct}%` }}
+                style={{ '--progress-pct': `${progressPct}%` } as CSSProperties}
               />
             </div>
           )}
@@ -197,23 +195,18 @@ export const BookCoverCard = ({
           <MenuItem
             key={option.value}
             selected={option.value === status}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 160 }}
+            className={styles['cover-card__menu-item']}
             onClick={(e) => {
               e.stopPropagation()
               onStatusChange?.(option.value)
               setStatusOpen(false)
             }}
           >
-            <Box
-              sx={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                flexShrink: 0,
-                bgcolor: STATUS_DOT_COLOR[option.value],
-              }}
+            <span
+              className={styles['cover-card__menu-dot']}
+              style={{ background: STATUS_DOT_COLOR[option.value] }}
             />
-            <Box sx={{ flex: 1, fontSize: 13 }}>{option.label}</Box>
+            <span className={styles['cover-card__menu-label']}>{option.label}</span>
             {option.value === status && <Check size={14} />}
           </MenuItem>
         ))}
@@ -225,8 +218,8 @@ export const BookCoverCard = ({
         onClose={() => setRatingOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+        <div className={styles['cover-card__rating-picker']} onClick={(e) => e.stopPropagation()}>
+          <div className={styles['cover-card__rating-stars']}>
             <Rating
               value={ratingDraft / 2}
               precision={0.5}
@@ -243,7 +236,7 @@ export const BookCoverCard = ({
                 setRatingOpen(false)
               }}
             />
-          </Box>
+          </div>
           <Slider
             value={ratingDraft}
             min={1}
@@ -255,13 +248,10 @@ export const BookCoverCard = ({
               setRatingOpen(false)
             }}
           />
-          <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>
-            {ratingDraft}{' '}
-            <Typography component="span" variant="caption" color="text.secondary">
-              / 10
-            </Typography>
-          </Typography>
-        </Box>
+          <p className={styles['cover-card__rating-value']}>
+            {ratingDraft} <span className={styles['cover-card__rating-value-denom']}>/ 10</span>
+          </p>
+        </div>
       </Popover>
     </div>
   )
