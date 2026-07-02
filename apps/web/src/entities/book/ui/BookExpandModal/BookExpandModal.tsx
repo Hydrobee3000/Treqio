@@ -98,6 +98,9 @@ interface BookExpandModalProps {
   onStatusChange?: (status: BookStatus) => void
 }
 
+/**
+ * Модальное окно книги — просмотр, инлайн-редактирование полей и создание новой записи.
+ */
 export const BookExpandModal = ({
   entry,
   creating = false,
@@ -123,25 +126,30 @@ export const BookExpandModal = ({
   const [error, setError] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [createDraft, setCreateDraft] = useState<CreateDraft>(DEFAULT_CREATE)
+  const [prevEntryId, setPrevEntryId] = useState(entry?.id)
+  const [prevCreating, setPrevCreating] = useState(creating)
 
-  useEffect(() => {
-    closingRef.current = false
-    if (entry) {
-      setRatingDraft(entry.rating ?? 5)
-      setProgressDraft(entry.progress ?? 0)
-      setLocalStatus(null)
-    }
+  // Сброс полей при открытии новой записи.
+  if (entry?.id !== prevEntryId) {
+    setPrevEntryId(entry?.id)
+    setLocalStatus(null)
     setEditingField(null)
     setFieldDraft('')
     setError(null)
     setDeleteConfirm(false)
     setStatusOpen(false)
-  }, [entry?.id])
+  }
 
-  useEffect(() => {
+  // Сброс черновика формы создания при закрытии.
+  if (creating !== prevCreating) {
+    setPrevCreating(creating)
     if (!creating) setCreateDraft(DEFAULT_CREATE)
     setError(null)
-  }, [creating])
+  }
+
+  useEffect(() => {
+    closingRef.current = false
+  }, [entry?.id])
 
   const displayStatus = localStatus ?? entry?.status ?? 'WANT'
   const progressPct =
