@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react'
 import type { MouseEvent } from 'react'
+import { motion } from 'framer-motion'
 import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
 import { STATUS_LABEL } from '../../model/book.types'
@@ -118,8 +119,8 @@ interface BookCoverCardProps {
   size?: CardSize
   /** Флаг отображения пилюли статуса под обложкой. По умолчанию true. */
   showStatus?: boolean
-  /** Клик по карточке вне статуса и рейтинга — открывает редактирование всех полей. */
-  onEdit?: () => void
+  /** Клик по обложке — открывает просмотр/редактирование карточки. */
+  onExpand?: () => void
   /** Выбор статуса в быстром поп-овере. */
   onStatusChange?: (status: BookStatus) => void
   /** Выбор оценки в быстром поп-овере. */
@@ -135,7 +136,7 @@ export const BookCoverCard = ({
   entry,
   size = 'large',
   showStatus = true,
-  onEdit,
+  onExpand,
   onStatusChange,
   onRatingChange,
 }: BookCoverCardProps) => {
@@ -175,7 +176,13 @@ export const BookCoverCard = ({
   return (
     <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
-        <div className={styles['cover-card__cover']} onClick={onEdit}>
+        <motion.div
+          layoutId={`book-cover-${entry.id}`}
+          data-card-id={entry.id}
+          className={styles['cover-card__cover']}
+          onClick={onExpand}
+          transition={{ layout: { duration: 0 } }}
+        >
           {status === 'DONE' && (
             <ScoreBadge ref={setScoreEl} rating={rating} onClick={handleRatingClick} />
           )}
@@ -183,7 +190,7 @@ export const BookCoverCard = ({
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
           <div className={styles['cover-card__author']}>{book.author}</div>
-        </div>
+        </motion.div>
         {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>
 
