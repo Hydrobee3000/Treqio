@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
-import { STATUS_LABEL } from '../../model/book.types'
+import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookCoverCard.module.scss'
 
@@ -13,36 +13,6 @@ const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   READING: styles['cover-card__status--reading'],
   DONE: styles['cover-card__status--done'],
   DROPPED: styles['cover-card__status--dropped'],
-}
-
-/** Цвет статуса «Прочитано» — фиксированный зелёный, не зависит от акцентного цвета темы. */
-const STATUS_DONE_COLOR = '#4caf6e'
-
-/** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли на карточке. */
-const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  /** Прочитаю. */
-  WANT: '#9c8a6a',
-  /** Читаю. */
-  READING: '#5aa0c8',
-  /** Прочитано. */
-  DONE: STATUS_DONE_COLOR,
-  /** Брошено. */
-  DROPPED: '#b94040',
-}
-
-/** Варианты статуса для быстрого выбора в поп-овере. */
-const STATUS_OPTIONS = Object.entries(STATUS_LABEL).map(([value, label]) => ({
-  value: value as BookStatus,
-  label,
-}))
-
-/** Цвет кольца и числа в бейдже оценки — по диапазону. */
-function scoreColor(rating: number): string {
-  // Цвета фиксированы (не из токенов темы) — это семантическая «светофорная»
-  // шкала оценки, а не акцентный цвет, поэтому она не должна зависеть от темы.
-  if (rating >= 8) return '#5e9b84'
-  if (rating >= 6) return '#c49a3a'
-  return '#b94040'
 }
 
 /**

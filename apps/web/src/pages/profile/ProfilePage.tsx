@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
-import { STATUS_LABEL } from '@/entities/book'
+import { STATUS_LABEL, STATUS_TEXT_COLOR, GOLD_COLOR, scoreColor } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
@@ -97,24 +97,6 @@ const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: number }>> =
   RATED: Star,
   STATUS: RefreshCw,
 }
-
-/** Цвет текста статуса — совпадает с цветом пилюли статуса в библиотеке. */
-const STATUS_TEXT_COLOR: Record<BookStatus, string> = {
-  WANT: '#9c8a6a',
-  READING: '#4a92bd',
-  DONE: '#3d8a5c',
-  DROPPED: '#b94040',
-}
-
-/** Цвет оценки — по диапазону, фиксирован, не зависит от темы (как в библиотеке). */
-function scoreColor(rating: number): string {
-  if (rating >= 8) return '#5e9b84'
-  if (rating >= 6) return '#c49a3a'
-  return '#b94040'
-}
-
-/** Цвет звезды идеальной оценки 10/10 — золотой, как в библиотеке. */
-const GOLD_COLOR = '#ffd24a'
 
 /** Кольцо оценки в событии активности — только просмотр, без возможности изменить. */
 function RatingRing({ rating }: { rating: number }) {

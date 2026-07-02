@@ -2,7 +2,13 @@ import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Box, Menu, MenuItem, Popover, Rating, Slider, Typography } from '@mui/material'
 import { Check, Star } from 'lucide-react'
-import { STATUS_LABEL } from '../../model/book.types'
+import {
+  STATUS_DOT_COLOR,
+  STATUS_LABEL,
+  STATUS_OPTIONS,
+  GOLD_COLOR,
+  scoreColor,
+} from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookTableRow.module.scss'
 
@@ -12,33 +18,6 @@ const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   DONE: styles['table-row__status--done'],
   DROPPED: styles['table-row__status--dropped'],
 }
-
-/** Цвет статуса «Прочитано» — фиксированный зелёный, не зависит от акцентного цвета темы. */
-const STATUS_DONE_COLOR = '#4caf6e'
-
-/** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли в строке. */
-const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  WANT: '#9c8a6a',
-  READING: '#5aa0c8',
-  DONE: STATUS_DONE_COLOR,
-  DROPPED: '#b94040',
-}
-
-/** Варианты статуса для быстрого выбора в поп-овере. */
-const STATUS_OPTIONS = Object.entries(STATUS_LABEL).map(([value, label]) => ({
-  value: value as BookStatus,
-  label,
-}))
-
-/** Цвет звёзд и числа оценки — по диапазону, фиксирован, не зависит от темы. */
-function scoreColor(rating: number): string {
-  if (rating >= 8) return '#5e9b84'
-  if (rating >= 6) return '#c49a3a'
-  return '#b94040'
-}
-
-/** Цвет звезды идеальной оценки 10/10 — золотой, чтобы не слиться с зелёной шкалой оценок. */
-const GOLD_COLOR = '#ffd24a'
 
 /**
  * Свойства BookTableRow.

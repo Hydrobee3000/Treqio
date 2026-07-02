@@ -2,28 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Star, Trash2, X } from 'lucide-react'
 import { useMediaQuery, useTheme } from '@mui/material'
-import { STATUS_LABEL } from '../../model/book.types'
+import {
+  STATUS_LABEL,
+  STATUS_TEXT_COLOR,
+  STATUS_OPTIONS,
+  GOLD_COLOR,
+  scoreColor,
+} from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import styles from './BookExpandModal.module.scss'
-
-const STATUS_TEXT_COLOR: Record<BookStatus, string> = {
-  WANT: '#9c8a6a',
-  READING: '#4a92bd',
-  DONE: '#3d8a5c',
-  DROPPED: '#b94040',
-}
-
-function scoreColor(rating: number): string {
-  if (rating >= 8) return '#5e9b84'
-  if (rating >= 6) return '#c49a3a'
-  return '#b94040'
-}
-
-const GOLD_COLOR = '#ffd24a'
-
-const STATUS_OPTIONS: { value: BookStatus; label: string }[] = Object.entries(STATUS_LABEL).map(
-  ([value, label]) => ({ value: value as BookStatus, label }),
-)
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('ru-RU', {
