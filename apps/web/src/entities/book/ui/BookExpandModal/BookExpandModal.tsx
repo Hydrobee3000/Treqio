@@ -115,6 +115,19 @@ export const BookExpandModal = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const closingRef = useRef(false)
+  // Предотвращает закрытие до завершения открывающей layout-анимации (shared element).
+  // Если пользователь закрывает раньше — вызов откладывается до onLayoutAnimationComplete.
+  const openAnimationCompleteRef = useRef(false)
+  const pendingCloseRef = useRef(false)
+
+  const triggerClose = () => {
+    if (openAnimationCompleteRef.current) {
+      onClose()
+    } else {
+      pendingCloseRef.current = true
+    }
+  }
+
   const [editingField, setEditingField] = useState<string | null>(null)
   const [fieldDraft, setFieldDraft] = useState('')
   const [ratingDraft, setRatingDraft] = useState(0)
@@ -149,6 +162,8 @@ export const BookExpandModal = ({
 
   useEffect(() => {
     closingRef.current = false
+    openAnimationCompleteRef.current = false
+    pendingCloseRef.current = false
   }, [entry?.id])
 
   const displayStatus = localStatus ?? entry?.status ?? 'WANT'
@@ -324,7 +339,7 @@ export const BookExpandModal = ({
           }}
           onClick={() => {
             closingRef.current = false
-            onClose()
+            triggerClose()
           }}
         >
           <div
@@ -343,6 +358,13 @@ export const BookExpandModal = ({
                   onMouseDown={(e) => e.stopPropagation()}
                   exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: 'easeIn' } }}
                   transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+                  onLayoutAnimationComplete={() => {
+                    openAnimationCompleteRef.current = true
+                    if (pendingCloseRef.current) {
+                      pendingCloseRef.current = false
+                      onClose()
+                    }
+                  }}
                 >
                   <div className={styles['em__hero']}>
                     <button
@@ -352,7 +374,7 @@ export const BookExpandModal = ({
                       }}
                       onClick={() => {
                         closingRef.current = false
-                        onClose()
+                        triggerClose()
                       }}
                     >
                       <X size={15} />
