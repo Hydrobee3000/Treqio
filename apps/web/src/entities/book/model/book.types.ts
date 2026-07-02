@@ -26,13 +26,11 @@ export const STATUS_TEXT_COLOR: Record<BookStatus, string> = {
 
 /**
  * Цвет точки и пилюли статуса в карточках и таблице.
+ * Осветлённый вариант STATUS_TEXT_COLOR на 15%.
  */
-export const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  WANT: '#9c8a6a',
-  READING: '#5aa0c8',
-  DONE: '#4caf6e',
-  DROPPED: '#b94040',
-}
+export const STATUS_DOT_COLOR = Object.fromEntries(
+  Object.entries(STATUS_TEXT_COLOR).map(([k, v]) => [k, `color-mix(in srgb, white 15%, ${v})`]),
+) as Record<BookStatus, string>
 
 /**
  * Варианты статуса для быстрого выбора (пикеры, чипы).
