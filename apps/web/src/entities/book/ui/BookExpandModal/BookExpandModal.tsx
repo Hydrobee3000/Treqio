@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Star, Trash2, X } from 'lucide-react'
 import { useMediaQuery, useTheme } from '@mui/material'
@@ -33,9 +33,25 @@ function formatDate(iso: string): string {
   })
 }
 
+export interface BookFieldUpdate {
+  title?: string
+  author?: string
+  pageCount?: number
+  description?: string
+}
+
+export interface EntryFieldUpdate {
+  status?: BookStatus
+  rating?: number
+  progress?: number
+  notes?: string
+}
+
 interface BookExpandModalProps {
   entry: BookEntry | null
   onClose: () => void
+  onSaveBook?: (dto: BookFieldUpdate) => Promise<void>
+  onSaveEntry?: (dto: EntryFieldUpdate) => Promise<void>
   onDelete?: () => Promise<void>
   onStatusChange?: (status: BookStatus) => void
 }
@@ -43,12 +59,19 @@ interface BookExpandModalProps {
 export const BookExpandModal = ({
   entry,
   onClose,
+  onSaveBook,
+  onSaveEntry,
   onDelete,
   onStatusChange,
 }: BookExpandModalProps) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const closingRef = useRef(false)
+  const [editingField, setEditingField] = useState<string | null>(null)
+  const [fieldDraft, setFieldDraft] = useState('')
+  const [ratingDraft, setRatingDraft] = useState(0)
+  const [progressDraft, setProgressDraft] = useState(0)
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -56,7 +79,14 @@ export const BookExpandModal = ({
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   useEffect(() => {
-    if (entry) setLocalStatus(null)
+    closingRef.current = false
+    if (entry) {
+      setRatingDraft(entry.rating ?? 5)
+      setProgressDraft(entry.progress ?? 0)
+      setLocalStatus(null)
+    }
+    setEditingField(null)
+    setFieldDraft('')
     setError(null)
     setDeleteConfirm(false)
     setStatusOpen(false)
@@ -68,11 +98,102 @@ export const BookExpandModal = ({
       ? Math.min(100, Math.round((entry.progress / entry.book.pageCount) * 100))
       : null
 
+  // ── Инлайн-редактирование ───────────────────────────────────────────────────
+
+  const startEdit = (field: string, value: string) => {
+    setEditingField(field)
+    setFieldDraft(value)
+    setStatusOpen(false)
+    setError(null)
+  }
+
+  const handleInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    onEnter: () => void,
+    originalValue: string,
+  ) => {
+    if (e.key === 'Enter') onEnter()
+    else if (e.key === 'Escape') {
+      setFieldDraft(originalValue)
+      setEditingField(null)
+    }
+  }
+
+  const handleTextareaKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+    originalValue: string,
+  ) => {
+    if (e.key === 'Escape') {
+      setFieldDraft(originalValue)
+      setEditingField(null)
+    }
+  }
+
+  const commitBookField = async (
+    field: 'title' | 'author' | 'pageCount' | 'description',
+    originalValue: string,
+  ) => {
+    if (closingRef.current) return
+    setEditingField(null)
+    const trimmed = fieldDraft.trim()
+    if (trimmed === originalValue) return
+    if (!trimmed) return
+    try {
+      if (field === 'pageCount') {
+        await onSaveBook?.({ pageCount: Number(trimmed) })
+      } else {
+        await onSaveBook?.({ [field]: trimmed })
+      }
+    } catch {
+      setError('Не удалось сохранить')
+    }
+  }
+
+  const commitNotes = async (originalValue: string) => {
+    if (closingRef.current) return
+    setEditingField(null)
+    const trimmed = fieldDraft.trim()
+    if (trimmed === originalValue) return
+    if (!trimmed) return
+    try {
+      await onSaveEntry?.({ notes: trimmed })
+    } catch {
+      setError('Не удалось сохранить')
+    }
+  }
+
+  const commitRating = async () => {
+    if (closingRef.current) return
+    setEditingField(null)
+    if (ratingDraft === (entry?.rating ?? 0)) return
+    if (!ratingDraft) return
+    try {
+      await onSaveEntry?.({ rating: ratingDraft })
+    } catch {
+      setError('Не удалось сохранить')
+    }
+  }
+
+  const commitProgress = async () => {
+    if (closingRef.current) return
+    setEditingField(null)
+    if (progressDraft === (entry?.progress ?? 0)) return
+    try {
+      await onSaveEntry?.({ progress: progressDraft })
+    } catch {
+      setError('Не удалось сохранить')
+    }
+  }
+
+  // ── Статус ──────────────────────────────────────────────────────────────────
+
   const handleStatusSelect = (status: BookStatus) => {
     setStatusOpen(false)
     setLocalStatus(status)
     onStatusChange?.(status)
   }
+
+  // ── Удаление ────────────────────────────────────────────────────────────────
 
   const handleDeleteClick = () => {
     if (!deleteConfirm) {
@@ -104,7 +225,13 @@ export const BookExpandModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          onClick={onClose}
+          onMouseDown={() => {
+            closingRef.current = true
+          }}
+          onClick={() => {
+            closingRef.current = false
+            onClose()
+          }}
         >
           <div
             className={`${styles['em__centering']} ${isMobile ? styles['em__centering--mobile'] : ''}`}
@@ -116,11 +243,21 @@ export const BookExpandModal = ({
               className={`${styles['em__modal']} ${isMobile ? styles['em__modal--mobile'] : ''}`}
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
               exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: 'easeIn' } }}
               transition={{ type: 'spring', damping: 30, stiffness: 200 }}
             >
               <div className={styles['em__hero']}>
-                <button className={styles['em__close']} onClick={onClose}>
+                <button
+                  className={styles['em__close']}
+                  onMouseDown={() => {
+                    closingRef.current = true
+                  }}
+                  onClick={() => {
+                    closingRef.current = false
+                    onClose()
+                  }}
+                >
                   <X size={15} />
                 </button>
                 {entry.status === 'DONE' && entry.rating !== null && (
@@ -165,8 +302,54 @@ export const BookExpandModal = ({
                 <div className={styles['em__scroll']}>
                   <div className={styles['em__body']}>
                     <div className={styles['em__head']}>
-                      <h2 className={styles['em__book-title']}>{entry.book.title}</h2>
-                      <p className={styles['em__book-author']}>{entry.book.author}</p>
+                      {editingField === 'title' ? (
+                        <input
+                          className={styles['em__input']}
+                          style={{ fontSize: 18, fontWeight: 700 }}
+                          value={fieldDraft}
+                          autoFocus
+                          onChange={(e) => setFieldDraft(e.target.value)}
+                          onBlur={() => void commitBookField('title', entry.book.title)}
+                          onKeyDown={(e) =>
+                            handleInputKeyDown(
+                              e,
+                              () => void commitBookField('title', entry.book.title),
+                              entry.book.title,
+                            )
+                          }
+                        />
+                      ) : (
+                        <h2
+                          className={`${styles['em__book-title']} ${styles['em__editable']}`}
+                          onClick={() => startEdit('title', entry.book.title)}
+                        >
+                          {entry.book.title}
+                        </h2>
+                      )}
+
+                      {editingField === 'author' ? (
+                        <input
+                          className={styles['em__input']}
+                          value={fieldDraft}
+                          autoFocus
+                          onChange={(e) => setFieldDraft(e.target.value)}
+                          onBlur={() => void commitBookField('author', entry.book.author)}
+                          onKeyDown={(e) =>
+                            handleInputKeyDown(
+                              e,
+                              () => void commitBookField('author', entry.book.author),
+                              entry.book.author,
+                            )
+                          }
+                        />
+                      ) : (
+                        <p
+                          className={`${styles['em__book-author']} ${styles['em__editable']}`}
+                          onClick={() => startEdit('author', entry.book.author)}
+                        >
+                          {entry.book.author}
+                        </p>
+                      )}
                     </div>
 
                     <div className={styles['em__status-wrap']}>
@@ -210,49 +393,124 @@ export const BookExpandModal = ({
                       )}
                     </div>
 
-                    {entry.status === 'DONE' && entry.rating !== null && (
-                      <div className={styles['em__meta']}>
-                        <span className={styles['em__meta-label']}>Оценка</span>
-                        <span
-                          className={styles['em__meta-value']}
-                          style={{ color: scoreColor(entry.rating) }}
-                        >
-                          {entry.rating === 10 ? (
-                            <Star
-                              size={14}
-                              fill={GOLD_COLOR}
-                              stroke="none"
-                              style={{ verticalAlign: 'middle' }}
-                            />
-                          ) : (
-                            `${entry.rating} / 10`
+                    {entry.status === 'DONE' && (
+                      <div className={styles['em__field']}>
+                        <label className={styles['em__field-label']}>
+                          Оценка
+                          {editingField === 'rating' && (
+                            <span className={styles['em__field-label-val']}>
+                              {ratingDraft || '—'} / 10
+                            </span>
                           )}
-                        </span>
+                        </label>
+                        {editingField === 'rating' ? (
+                          <input
+                            type="range"
+                            className={styles['em__range']}
+                            min={1}
+                            max={10}
+                            step={1}
+                            value={ratingDraft || 5}
+                            autoFocus
+                            onChange={(e) => setRatingDraft(Number(e.target.value))}
+                            onBlur={() => void commitRating()}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Escape') {
+                                setRatingDraft(entry.rating ?? 0)
+                                setEditingField(null)
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className={`${styles['em__editable']} ${styles['em__editable--pointer']}`}
+                            onClick={() => {
+                              setRatingDraft(entry.rating ?? 5)
+                              startEdit('rating', String(entry.rating ?? ''))
+                            }}
+                          >
+                            <span
+                              className={styles['em__meta-value']}
+                              style={entry.rating ? { color: scoreColor(entry.rating) } : undefined}
+                            >
+                              {entry.rating !== null ? (
+                                entry.rating === 10 ? (
+                                  <Star
+                                    size={14}
+                                    fill={GOLD_COLOR}
+                                    stroke="none"
+                                    style={{ verticalAlign: 'middle' }}
+                                  />
+                                ) : (
+                                  `${entry.rating} / 10`
+                                )
+                              ) : (
+                                '—'
+                              )}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
 
                     {(entry.status === 'READING' || entry.status === 'DROPPED') &&
                       entry.book.pageCount && (
                         <div className={styles['em__field']}>
-                          <div className={styles['em__progress']}>
-                            {progressPct !== null && (
-                              <>
-                                <div className={styles['em__progress-row']}>
-                                  <span>Прогресс</span>
-                                  <span className={styles['em__progress-pct']}>{progressPct}%</span>
-                                </div>
-                                <div className={styles['em__progress-track']}>
-                                  <span
-                                    className={styles['em__progress-fill']}
-                                    style={{ width: `${progressPct}%` }}
-                                  />
-                                </div>
-                              </>
+                          <label className={styles['em__field-label']}>
+                            Прочитано страниц
+                            {editingField === 'progress' && (
+                              <span className={styles['em__field-label-val']}>
+                                {progressDraft} / {entry.book.pageCount}
+                              </span>
                             )}
-                            <span className={styles['em__progress-pages']}>
-                              {entry.progress ?? 0} / {entry.book.pageCount} стр.
-                            </span>
-                          </div>
+                          </label>
+                          {editingField === 'progress' ? (
+                            <input
+                              type="range"
+                              className={styles['em__range']}
+                              min={0}
+                              max={entry.book.pageCount}
+                              step={1}
+                              value={progressDraft}
+                              autoFocus
+                              onChange={(e) => setProgressDraft(Number(e.target.value))}
+                              onBlur={() => void commitProgress()}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Escape') {
+                                  setProgressDraft(entry.progress ?? 0)
+                                  setEditingField(null)
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div
+                              className={`${styles['em__progress']} ${styles['em__editable']} ${styles['em__editable--pointer']}`}
+                              onClick={() => {
+                                setProgressDraft(entry.progress ?? 0)
+                                startEdit('progress', String(entry.progress ?? ''))
+                              }}
+                            >
+                              {progressPct !== null && (
+                                <>
+                                  <div className={styles['em__progress-row']}>
+                                    <span>Прогресс</span>
+                                    <span className={styles['em__progress-pct']}>
+                                      {progressPct}%
+                                    </span>
+                                  </div>
+                                  <div className={styles['em__progress-track']}>
+                                    <span
+                                      className={styles['em__progress-fill']}
+                                      style={{ width: `${progressPct}%` }}
+                                    />
+                                  </div>
+                                </>
+                              )}
+                              <span className={styles['em__progress-pages']}>
+                                {entry.progress ?? 0} / {entry.book.pageCount} стр.
+                              </span>
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -269,19 +527,67 @@ export const BookExpandModal = ({
 
                     <div className={styles['em__meta']}>
                       <span className={styles['em__meta-label']}>Страниц</span>
-                      <span className={styles['em__meta-value']}>
-                        {entry.book.pageCount ?? '—'}
-                      </span>
+                      {editingField === 'pageCount' ? (
+                        <input
+                          className={styles['em__input']}
+                          style={{ width: 100 }}
+                          type="number"
+                          min={0}
+                          value={fieldDraft}
+                          autoFocus
+                          onChange={(e) => setFieldDraft(e.target.value)}
+                          onBlur={() =>
+                            void commitBookField('pageCount', String(entry.book.pageCount ?? ''))
+                          }
+                          onKeyDown={(e) =>
+                            handleInputKeyDown(
+                              e,
+                              () =>
+                                void commitBookField(
+                                  'pageCount',
+                                  String(entry.book.pageCount ?? ''),
+                                ),
+                              String(entry.book.pageCount ?? ''),
+                            )
+                          }
+                        />
+                      ) : (
+                        <span
+                          className={`${styles['em__meta-value']} ${styles['em__editable']}`}
+                          onClick={() => startEdit('pageCount', String(entry.book.pageCount ?? ''))}
+                        >
+                          {entry.book.pageCount ?? '—'}
+                        </span>
+                      )}
                     </div>
 
                     <div className={styles['em__divider']} />
 
                     <div>
                       <span className={styles['em__section-label']}>Описание</span>
-                      {entry.book.description ? (
-                        <p className={styles['em__description']}>{entry.book.description}</p>
+                      {editingField === 'description' ? (
+                        <textarea
+                          className={styles['em__textarea']}
+                          value={fieldDraft}
+                          rows={3}
+                          autoFocus
+                          onChange={(e) => setFieldDraft(e.target.value)}
+                          onBlur={() =>
+                            void commitBookField('description', entry.book.description ?? '')
+                          }
+                          onKeyDown={(e) => handleTextareaKeyDown(e, entry.book.description ?? '')}
+                        />
                       ) : (
-                        <p className={styles['em__placeholder']}>Нет описания</p>
+                        <div
+                          className={styles['em__editable']}
+                          onClick={() => startEdit('description', entry.book.description ?? '')}
+                        >
+                          {entry.book.description ? (
+                            <p className={styles['em__description']}>{entry.book.description}</p>
+                          ) : (
+                            <p className={styles['em__placeholder']}>Нет описания</p>
+                          )}
+                        </div>
                       )}
                     </div>
 
@@ -289,10 +595,27 @@ export const BookExpandModal = ({
 
                     <div>
                       <span className={styles['em__section-label']}>Заметки</span>
-                      {entry.notes ? (
-                        <p className={styles['em__notes-text']}>{entry.notes}</p>
+                      {editingField === 'notes' ? (
+                        <textarea
+                          className={styles['em__textarea']}
+                          value={fieldDraft}
+                          rows={3}
+                          autoFocus
+                          onChange={(e) => setFieldDraft(e.target.value)}
+                          onBlur={() => void commitNotes(entry.notes ?? '')}
+                          onKeyDown={(e) => handleTextareaKeyDown(e, entry.notes ?? '')}
+                        />
                       ) : (
-                        <p className={styles['em__placeholder']}>Нет заметок</p>
+                        <div
+                          className={styles['em__editable']}
+                          onClick={() => startEdit('notes', entry.notes ?? '')}
+                        >
+                          {entry.notes ? (
+                            <p className={styles['em__notes-text']}>{entry.notes}</p>
+                          ) : (
+                            <p className={styles['em__placeholder']}>Нет заметок</p>
+                          )}
+                        </div>
                       )}
                     </div>
 
