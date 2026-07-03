@@ -112,6 +112,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
         <button className={styles['em__close']} onClick={onClose}>
           <X size={15} />
         </button>
+        <span className={styles['em__mode-label']}>Создание</span>
       </div>
 
       <div className={styles['em__content']}>

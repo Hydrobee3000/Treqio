@@ -199,8 +199,13 @@ export const BookEntryView = ({
         <button className={styles['em__close']} onClick={handleClose}>
           <X size={15} />
         </button>
-        {entry.status === 'DONE' && entry.rating !== null && (
-          <ScoreBadge rating={entry.rating} size="md" className={styles['em__score']} />
+        {isEditing ? (
+          <span className={styles['em__mode-label']}>Редактирование</span>
+        ) : (
+          entry.status === 'DONE' &&
+          entry.rating !== null && (
+            <ScoreBadge rating={entry.rating} size="md" className={styles['em__score']} />
+          )
         )}
       </div>
 
