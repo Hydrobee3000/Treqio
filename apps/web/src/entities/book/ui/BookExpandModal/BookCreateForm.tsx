@@ -46,6 +46,7 @@ interface BookCreateFormProps {
  */
 export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormProps) => {
   const [error, setError] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
 
   const {
     register,
@@ -90,6 +91,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     setError(null)
     try {
       await onCreate(payload)
+      setSubmitted(true)
     } catch {
       setError('Не удалось добавить книгу. Попробуй ещё раз.')
     }
@@ -228,14 +230,14 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
           <button
             className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitted}
           >
             Отмена
           </button>
           <button
             className={`${styles['em__btn']} ${styles['em__btn--save']}`}
             onClick={() => void onSubmit()}
-            disabled={isSubmitting || !titleVal.trim()}
+            disabled={isSubmitting || submitted || !titleVal.trim()}
           >
             {isSubmitting ? 'Создание…' : 'Создать'}
           </button>
