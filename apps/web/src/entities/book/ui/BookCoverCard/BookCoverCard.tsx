@@ -1,10 +1,11 @@
-import { forwardRef, useState } from 'react'
-import type { CSSProperties, MouseEvent } from 'react'
+import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, MenuItem, Popover, Rating, Slider, Tooltip } from '@mui/material'
-import { Check, Star } from 'lucide-react'
+import { Menu, MenuItem, Popover, Rating, Slider } from '@mui/material'
+import { Check } from 'lucide-react'
 import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookCoverCard.module.scss'
 
 /** Класс цветовой пилюли статуса на карточке. */
@@ -14,67 +15,6 @@ const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   DONE: styles['cover-card__status--done'],
   DROPPED: styles['cover-card__status--dropped'],
 }
-
-/**
- * Круглый бейдж с оценкой (или плейсхолдер если книга не оценена).
- */
-const ScoreBadge = forwardRef<
-  HTMLDivElement,
-  {
-    rating: number | null
-    onClick: (e: MouseEvent<HTMLElement>) => void
-  }
->(function ScoreBadge({ rating, onClick }, ref) {
-  if (rating === null) {
-    return (
-      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
-        <span
-          className={`${styles['cover-card__score-value']} ${styles['cover-card__score-value--empty']}`}
-        >
-          +
-        </span>
-      </div>
-    )
-  }
-
-  const radius = 14
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - rating / 10)
-  const color = scoreColor(rating)
-
-  return (
-    <Tooltip title={`Оценка ${rating}/10`}>
-      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
-        <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
-          <circle
-            cx="17"
-            cy="17"
-            r={radius}
-            fill="none"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="3"
-          />
-          <circle
-            cx="17"
-            cy="17"
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-          />
-        </svg>
-        {rating === 10 ? (
-          <Star size={14} fill="#fff" stroke="none" />
-        ) : (
-          <span className={styles['cover-card__score-value']}>{rating}</span>
-        )}
-      </div>
-    </Tooltip>
-  )
-})
 
 /** Размер карточки — масштабирует шрифты и бейдж оценки внутри обложки. */
 type CardSize = 'compact' | 'medium' | 'large'
@@ -152,7 +92,13 @@ export const BookCoverCard = ({
           transition={{ layout: { duration: 0 } }}
         >
           {status === 'DONE' && (
-            <ScoreBadge ref={setScoreEl} rating={rating} onClick={handleRatingClick} />
+            <ScoreBadge
+              ref={setScoreEl}
+              rating={rating}
+              size="sm"
+              className={styles['cover-card__score']}
+              onClick={handleRatingClick}
+            />
           )}
           <div className={styles['cover-card__title']}>
             <span className={styles['cover-card__title-text']}>{book.title}</span>

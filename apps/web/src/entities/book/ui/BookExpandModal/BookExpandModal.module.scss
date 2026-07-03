@@ -99,32 +99,12 @@
   }
 }
 
+// Размер, фон и кольцо задаёт ScoreBadge; здесь только позиционирование.
 .em__score {
   position: absolute;
   top: 14px;
   right: 16px;
   z-index: 1;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(15, 20, 18, 0.55);
-  backdrop-filter: blur(6px);
-}
-
-.em__score-svg {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-}
-
-.em__score-value {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
 }
 
 // ─── Контент ──────────────────────────────────────────────────────────────────

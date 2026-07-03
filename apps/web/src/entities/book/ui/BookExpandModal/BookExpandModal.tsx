@@ -10,6 +10,7 @@ import {
   scoreColor,
 } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookExpandModal.module.scss'
 
 function formatDate(iso: string): string {
@@ -380,36 +381,7 @@ export const BookExpandModal = ({
                       <X size={15} />
                     </button>
                     {entry.status === 'DONE' && entry.rating !== null && (
-                      <div className={styles['em__score']}>
-                        <svg viewBox="0 0 42 42" className={styles['em__score-svg']}>
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r="18"
-                            fill="none"
-                            stroke="rgba(255,255,255,0.2)"
-                            strokeWidth="3"
-                          />
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r="18"
-                            fill="none"
-                            stroke={entry.rating === 10 ? GOLD_COLOR : scoreColor(entry.rating)}
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeDasharray={2 * Math.PI * 18}
-                            strokeDashoffset={2 * Math.PI * 18 * (1 - entry.rating / 10)}
-                          />
-                        </svg>
-                        <div className={styles['em__score-value']}>
-                          {entry.rating === 10 ? (
-                            <Star size={13} fill={GOLD_COLOR} stroke="none" />
-                          ) : (
-                            <span>{entry.rating}</span>
-                          )}
-                        </div>
-                      </div>
+                      <ScoreBadge rating={entry.rating} size="md" className={styles['em__score']} />
                     )}
                   </div>
 
