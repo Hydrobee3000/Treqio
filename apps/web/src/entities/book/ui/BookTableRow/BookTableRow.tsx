@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
-import { Box, Menu, MenuItem, Popover, Rating, Slider, Typography } from '@mui/material'
+import { Box, Menu, MenuItem, Rating } from '@mui/material'
 import { Check, Star } from 'lucide-react'
 import {
   STATUS_DOT_COLOR,
@@ -10,6 +10,7 @@ import {
   scoreColor,
 } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { RatingPicker } from '../RatingPicker/RatingPicker'
 import styles from './BookTableRow.module.scss'
 
 const STATUS_CLASS: Record<BookStatus, string | undefined> = {
@@ -55,9 +56,6 @@ export const BookTableRow = ({
   const [ratingEl, setRatingEl] = useState<HTMLDivElement | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [ratingOpen, setRatingOpen] = useState(false)
-  // Черновое значение слайдера — обновляется при перетаскивании,
-  // а мутация отправляется только когда пользователь отпускает слайдер.
-  const [ratingDraft, setRatingDraft] = useState(rating ?? 5)
 
   /** Открывает поп-овер выбора статуса, не давая клику дойти до редактирования строки. */
   const handleStatusClick = (e: MouseEvent<HTMLElement>) => {
@@ -68,7 +66,6 @@ export const BookTableRow = ({
   /** Открывает поп-овер выбора оценки, не давая клику дойти до редактирования строки. */
   const handleRatingClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
-    setRatingDraft(rating ?? 5)
     setRatingOpen(true)
   }
 
@@ -154,50 +151,13 @@ export const BookTableRow = ({
         ))}
       </Menu>
 
-      <Popover
+      <RatingPicker
         anchorEl={ratingEl}
         open={ratingOpen}
+        rating={rating}
         onClose={() => setRatingOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-            <Rating
-              value={ratingDraft / 2}
-              precision={0.5}
-              max={5}
-              sx={{
-                fontSize: 30,
-                '& .MuiRating-iconFilled': { color: scoreColor(ratingDraft) },
-                '& .MuiRating-iconHover': { color: scoreColor(ratingDraft) },
-              }}
-              onChange={(_, value) => {
-                const next = Math.max(1, Math.round((value ?? 0) * 2))
-                setRatingDraft(next)
-                onRatingChange?.(next)
-                setRatingOpen(false)
-              }}
-            />
-          </Box>
-          <Slider
-            value={ratingDraft}
-            min={1}
-            max={10}
-            step={1}
-            onChange={(_, value) => setRatingDraft(value as number)}
-            onChangeCommitted={(_, value) => {
-              onRatingChange?.(value as number)
-              setRatingOpen(false)
-            }}
-          />
-          <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>
-            {ratingDraft}{' '}
-            <Typography component="span" variant="caption" color="text.secondary">
-              / 10
-            </Typography>
-          </Typography>
-        </Box>
-      </Popover>
+        onChange={(r) => onRatingChange?.(r)}
+      />
     </div>
   )
 }

@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, MenuItem, Popover, Rating, Slider } from '@mui/material'
+import { Menu, MenuItem } from '@mui/material'
 import { Check } from 'lucide-react'
-import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
+import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { RatingPicker } from '../RatingPicker/RatingPicker'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookCoverCard.module.scss'
 
@@ -59,9 +60,6 @@ export const BookCoverCard = ({
   const [scoreEl, setScoreEl] = useState<HTMLDivElement | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [ratingOpen, setRatingOpen] = useState(false)
-  // Черновое значение слайдера — обновляется при перетаскивании,
-  // а мутация отправляется только когда пользователь отпускает слайдер.
-  const [ratingDraft, setRatingDraft] = useState(rating ?? 5)
 
   const progressPct =
     status === 'READING' && progress !== null && book.pageCount
@@ -77,7 +75,6 @@ export const BookCoverCard = ({
   /** Открывает поп-овер выбора оценки, не давая клику дойти до редактирования всей карточки. */
   const handleRatingClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
-    setRatingDraft(rating ?? 5)
     setRatingOpen(true)
   }
 
@@ -158,47 +155,13 @@ export const BookCoverCard = ({
         ))}
       </Menu>
 
-      <Popover
+      <RatingPicker
         anchorEl={scoreEl}
         open={ratingOpen}
+        rating={rating}
         onClose={() => setRatingOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <div className={styles['cover-card__rating-picker']} onClick={(e) => e.stopPropagation()}>
-          <div className={styles['cover-card__rating-stars']}>
-            <Rating
-              value={ratingDraft / 2}
-              precision={0.5}
-              max={5}
-              sx={{
-                fontSize: 30,
-                '& .MuiRating-iconFilled': { color: scoreColor(ratingDraft) },
-                '& .MuiRating-iconHover': { color: scoreColor(ratingDraft) },
-              }}
-              onChange={(_, value) => {
-                const next = Math.max(1, Math.round((value ?? 0) * 2))
-                setRatingDraft(next)
-                onRatingChange?.(next)
-                setRatingOpen(false)
-              }}
-            />
-          </div>
-          <Slider
-            value={ratingDraft}
-            min={1}
-            max={10}
-            step={1}
-            onChange={(_, value) => setRatingDraft(value as number)}
-            onChangeCommitted={(_, value) => {
-              onRatingChange?.(value as number)
-              setRatingOpen(false)
-            }}
-          />
-          <p className={styles['cover-card__rating-value']}>
-            {ratingDraft} <span className={styles['cover-card__rating-value-denom']}>/ 10</span>
-          </p>
-        </div>
-      </Popover>
+        onChange={(r) => onRatingChange?.(r)}
+      />
     </div>
   )
 }
