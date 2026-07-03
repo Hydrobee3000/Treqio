@@ -140,10 +140,22 @@
 .em__scroll {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: none;
+  // Резервирует место под скроллбар заранее — предотвращает скачок ширины при его появлении.
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, currentColor 18%, transparent) transparent;
 
   &::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    border-radius: 4px;
   }
 }
 
