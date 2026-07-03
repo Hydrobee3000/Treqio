@@ -3,6 +3,14 @@ import { useForm, useWatch } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { Check, Pencil, Star, Trash2, X } from 'lucide-react'
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@mui/material'
+import {
   GOLD_COLOR,
   STATUS_LABEL,
   STATUS_OPTIONS,
@@ -86,7 +94,7 @@ export const BookEntryView = ({
   const [statusOpen, setStatusOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
@@ -154,23 +162,26 @@ export const BookEntryView = ({
   }
 
   const handleDeleteClick = () => {
-    if (!deleteConfirm) {
-      setDeleteConfirm(true)
-      return
-    }
-    void handleDeleteConfirmed()
+    setDeleteError(null)
+    setDeleteDialogOpen(true)
   }
 
   const handleDeleteConfirmed = async () => {
     setIsDeleting(true)
     try {
       await onDelete?.()
+      setDeleteDialogOpen(false)
       onClose()
     } catch {
       setDeleteError('Не удалось удалить. Попробуй ещё раз.')
       setIsDeleting(false)
-      setDeleteConfirm(false)
     }
+  }
+
+  const handleDeleteDialogClose = () => {
+    if (isDeleting) return
+    setDeleteError(null)
+    setDeleteDialogOpen(false)
   }
 
   return (
@@ -322,9 +333,7 @@ export const BookEntryView = ({
                   <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
                 </div>
 
-                {(saveError ?? deleteError) && (
-                  <p className={styles['em__error']}>{saveError ?? deleteError}</p>
-                )}
+                {saveError && <p className={styles['em__error']}>{saveError}</p>}
               </>
             ) : (
               /* ── Режим просмотра ── */
@@ -462,8 +471,6 @@ export const BookEntryView = ({
                     <p className={styles['em__placeholder']}>Нет заметок</p>
                   )}
                 </div>
-
-                {deleteError && <p className={styles['em__error']}>{deleteError}</p>}
               </>
             )}
           </div>
@@ -489,52 +496,55 @@ export const BookEntryView = ({
           </div>
         ) : (
           <div className={styles['em__footer']}>
-            {deleteConfirm ? (
-              <>
-                <button
-                  className={`${styles['em__btn']} ${styles['em__btn--delete']} ${styles['em__btn--delete-confirm']}`}
-                  onClick={handleDeleteClick}
-                  disabled={isDeleting}
-                >
-                  <Trash2 size={14} />
-                  {isDeleting ? 'Удаление…' : 'Точно?'}
-                </button>
-                <button
-                  className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
-                  onClick={() => setDeleteConfirm(false)}
-                >
-                  Отмена
-                </button>
-              </>
-            ) : (
-              <>
-                <div className={styles['em__footer-actions']}>
-                  <button
-                    className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
-                      isMobile ? styles['em__btn--icon'] : ''
-                    }`}
-                    onClick={handleDeleteClick}
-                    disabled={isDeleting}
-                  >
-                    <Trash2 size={isMobile ? 18 : 14} />
-                    {!isMobile && 'Удалить'}
-                  </button>
-                  <span className={styles['em__date']}>
-                    Добавлено {formatDate(entry.createdAt)}
-                  </span>
-                </div>
-                <button
-                  className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
-                  onClick={() => setIsEditing(true)}
-                >
-                  <Pencil size={isMobile ? 18 : 14} />
-                  {!isMobile && 'Редактировать'}
-                </button>
-              </>
-            )}
+            <div className={styles['em__footer-actions']}>
+              <button
+                className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
+                  isMobile ? styles['em__btn--icon'] : ''
+                }`}
+                onClick={handleDeleteClick}
+              >
+                <Trash2 size={isMobile ? 18 : 14} />
+                {!isMobile && 'Удалить'}
+              </button>
+              <span className={styles['em__date']}>Добавлено {formatDate(entry.createdAt)}</span>
+            </div>
+            <button
+              className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
+              onClick={() => setIsEditing(true)}
+            >
+              <Pencil size={isMobile ? 18 : 14} />
+              {!isMobile && 'Редактировать'}
+            </button>
           </div>
         )}
       </motion.div>
+
+      <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
+        <DialogTitle>Удалить запись?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Книга «{entry.book.title}» будет удалена из библиотеки. Это действие нельзя отменить.
+          </DialogContentText>
+          {deleteError && (
+            <DialogContentText color="error" sx={{ mt: 1 }}>
+              {deleteError}
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleDeleteDialogClose} disabled={isDeleting}>
+            Отмена
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => void handleDeleteConfirmed()}
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Удаление…' : 'Удалить'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </motion.div>
   )
 }

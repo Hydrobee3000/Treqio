@@ -120,7 +120,7 @@ export const LibraryPage = () => {
     () => (localStorage.getItem(CARD_SIZE_STORAGE_KEY) as CardSize | null) ?? 'medium',
   )
   const [addOpen, setAddOpen] = useState(false)
-  const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null)
+  const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
   const [searchQuery, setSearchQuery] = useState('')
