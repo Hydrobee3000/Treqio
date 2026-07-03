@@ -120,7 +120,7 @@ export const LibraryPage = () => {
     () => (localStorage.getItem(CARD_SIZE_STORAGE_KEY) as CardSize | null) ?? 'medium',
   )
   const [addOpen, setAddOpen] = useState(false)
-  const [expandedEntry, setExpandedEntry] = useState<BookEntry | null>(null)
+  const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null)
   const [guestPromptOpen, setGuestPromptOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
   const [searchQuery, setSearchQuery] = useState('')
@@ -145,6 +145,7 @@ export const LibraryPage = () => {
   const [updateBook] = useUpdateBookMutation()
   const [deleteEntry] = useDeleteEntryMutation()
   const entries = data ?? []
+  const expandedEntry = entries.find((e) => e.id === expandedEntryId) ?? null
   const isEmpty = !isError && entries.length === 0
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredEntries = sortEntries(
@@ -466,7 +467,7 @@ export const LibraryPage = () => {
               <BookTableRow
                 key={entry.id}
                 entry={entry}
-                onEdit={() => setExpandedEntry(entry)}
+                onEdit={() => setExpandedEntryId(entry.id)}
                 onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
                 onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
               />
@@ -482,7 +483,7 @@ export const LibraryPage = () => {
                 entry={entry}
                 size={effectiveCardSize}
                 showStatus={statusFilter === 'ALL'}
-                onExpand={() => setExpandedEntry(entry)}
+                onExpand={() => setExpandedEntryId(entry.id)}
                 onStatusChange={(status) => updateEntry({ id: entry.id, dto: { status } })}
                 onRatingChange={(rating) => updateEntry({ id: entry.id, dto: { rating } })}
               />
@@ -494,7 +495,7 @@ export const LibraryPage = () => {
           entry={expandedEntry}
           creating={addOpen}
           onClose={() => {
-            setExpandedEntry(null)
+            setExpandedEntryId(null)
             setAddOpen(false)
           }}
           onSaveBook={handleSaveBook}
