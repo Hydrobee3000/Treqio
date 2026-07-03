@@ -489,31 +489,48 @@ export const BookEntryView = ({
           </div>
         ) : (
           <div className={styles['em__footer']}>
-            <button
-              className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
-                deleteConfirm ? styles['em__btn--delete-confirm'] : ''
-              }`}
-              onClick={handleDeleteClick}
-              disabled={isDeleting}
-            >
-              <Trash2 size={14} />
-              {isDeleting ? 'Удаление…' : deleteConfirm ? 'Точно?' : 'Удалить'}
-            </button>
             {deleteConfirm ? (
-              <button
-                className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
-                onClick={() => setDeleteConfirm(false)}
-              >
-                Отмена
-              </button>
-            ) : (
-              <div className={styles['em__footer-actions']}>
-                <span className={styles['em__date']}>Добавлено {formatDate(entry.createdAt)}</span>
-                <button className={styles['em__edit-btn']} onClick={() => setIsEditing(true)}>
-                  <Pencil size={14} />
-                  Редактировать
+              <>
+                <button
+                  className={`${styles['em__btn']} ${styles['em__btn--delete']} ${styles['em__btn--delete-confirm']}`}
+                  onClick={handleDeleteClick}
+                  disabled={isDeleting}
+                >
+                  <Trash2 size={14} />
+                  {isDeleting ? 'Удаление…' : 'Точно?'}
                 </button>
-              </div>
+                <button
+                  className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
+                  onClick={() => setDeleteConfirm(false)}
+                >
+                  Отмена
+                </button>
+              </>
+            ) : (
+              <>
+                <div className={styles['em__footer-actions']}>
+                  <button
+                    className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
+                      isMobile ? styles['em__btn--icon'] : ''
+                    }`}
+                    onClick={handleDeleteClick}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 size={isMobile ? 18 : 14} />
+                    {!isMobile && 'Удалить'}
+                  </button>
+                  <span className={styles['em__date']}>
+                    Добавлено {formatDate(entry.createdAt)}
+                  </span>
+                </div>
+                <button
+                  className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Pencil size={isMobile ? 18 : 14} />
+                  {!isMobile && 'Редактировать'}
+                </button>
+              </>
             )}
           </div>
         )}
