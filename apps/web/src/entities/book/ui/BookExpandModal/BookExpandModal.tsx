@@ -13,6 +13,7 @@ import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookExpandModal.module.scss'
 
+/** Форматирует дату для отображения. */
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('ru-RU', {
     day: 'numeric',
@@ -25,9 +26,13 @@ function formatDate(iso: string): string {
  * Поля книги (book), обновляемые по одному.
  */
 export interface BookFieldUpdate {
+  /** Название. */
   title?: string
+  /** Автор. */
   author?: string
+  /** Количество страниц. */
   pageCount?: number
+  /** Описание. */
   description?: string
 }
 
@@ -35,9 +40,13 @@ export interface BookFieldUpdate {
  * Поля записи пользователя (entry), обновляемые по одному.
  */
 export interface EntryFieldUpdate {
+  /** Статус чтения. */
   status?: BookStatus
+  /** Оценка (1–10). */
   rating?: number
+  /** Прочитано страниц. */
   progress?: number
+  /** Заметки. */
   notes?: string
 }
 
@@ -45,24 +54,41 @@ export interface EntryFieldUpdate {
  * Данные для создания новой книги и записи.
  */
 export interface CreateBookPayload {
+  /** Название. */
   title: string
+  /** Автор. */
   author: string
+  /** Количество страниц. */
   pageCount?: number
+  /** Описание. */
   description?: string
+  /** Статус чтения. */
   status: BookStatus
+  /** Оценка (1–10). */
   rating?: number
+  /** Прочитано страниц. */
   progress?: number
+  /** Заметки. */
   notes?: string
 }
 
+/** Черновик формы создания книги. */
 interface CreateDraft {
+  /** Название. */
   title: string
+  /** Автор. */
   author: string
+  /** Количество страниц. */
   pageCount: string
+  /** Описание. */
   description: string
+  /** Статус чтения. */
   status: BookStatus
+  /** Оценка (1–10). */
   rating: string
+  /** Прочитано страниц. */
   progress: string
+  /** Заметки. */
   notes: string
 }
 
@@ -121,6 +147,7 @@ export const BookExpandModal = ({
   const openAnimationCompleteRef = useRef(false)
   const pendingCloseRef = useRef(false)
 
+  /** Закрывает модалку. */
   const triggerClose = () => {
     if (openAnimationCompleteRef.current) {
       onClose()
@@ -175,6 +202,7 @@ export const BookExpandModal = ({
 
   // ── Инлайн-редактирование ───────────────────────────────────────────────────
 
+  /** Открывает редактирование поля. */
   const startEdit = (field: string, value: string) => {
     setEditingField(field)
     setFieldDraft(value)
@@ -182,6 +210,7 @@ export const BookExpandModal = ({
     setError(null)
   }
 
+  /** Обработчик клавиш в однострочных полях ввода. */
   const handleInputKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     onEnter: () => void,
@@ -194,6 +223,7 @@ export const BookExpandModal = ({
     }
   }
 
+  /** Обработчик клавиш в многострочных полях ввода. */
   const handleTextareaKeyDown = (
     e: React.KeyboardEvent<HTMLTextAreaElement>,
     originalValue: string,
@@ -204,6 +234,7 @@ export const BookExpandModal = ({
     }
   }
 
+  /** Сохраняет поле книги. */
   const commitBookField = async (
     field: 'title' | 'author' | 'pageCount' | 'description',
     originalValue: string,
@@ -224,6 +255,7 @@ export const BookExpandModal = ({
     }
   }
 
+  /** Сохраняет заметки. */
   const commitNotes = async (originalValue: string) => {
     if (closingRef.current) return
     setEditingField(null)
@@ -237,6 +269,7 @@ export const BookExpandModal = ({
     }
   }
 
+  /** Сохраняет оценку. */
   const commitRating = async () => {
     if (closingRef.current) return
     setEditingField(null)
@@ -249,6 +282,7 @@ export const BookExpandModal = ({
     }
   }
 
+  /** Сохраняет прогресс чтения. */
   const commitProgress = async () => {
     if (closingRef.current) return
     setEditingField(null)
@@ -262,6 +296,7 @@ export const BookExpandModal = ({
 
   // ── Статус ──────────────────────────────────────────────────────────────────
 
+  /** Обработчик выбора статуса. */
   const handleStatusSelect = (status: BookStatus) => {
     setStatusOpen(false)
     setLocalStatus(status)
@@ -270,6 +305,7 @@ export const BookExpandModal = ({
 
   // ── Удаление ────────────────────────────────────────────────────────────────
 
+  /** Обработчик клика по кнопке удаления. */
   const handleDeleteClick = () => {
     if (!deleteConfirm) {
       setDeleteConfirm(true)
@@ -278,6 +314,7 @@ export const BookExpandModal = ({
     void handleDeleteConfirmed()
   }
 
+  /** Обработчик подтверждения удаления. */
   const handleDeleteConfirmed = async () => {
     setIsDeleting(true)
     try {
@@ -292,6 +329,7 @@ export const BookExpandModal = ({
 
   // ── Создание ────────────────────────────────────────────────────────────────
 
+  /** Обработчик создания новой книги. */
   const handleCreate = async () => {
     if (!createDraft.title.trim()) return
     setIsSubmitting(true)
