@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Star, Trash2, X } from 'lucide-react'
 import { useMediaQuery, useTheme } from '@mui/material'
@@ -11,7 +10,11 @@ import {
 } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
+import { useBookExpandModal } from './useBookExpandModal'
 import styles from './BookExpandModal.module.scss'
+import type { BookFieldUpdate, EntryFieldUpdate, CreateBookPayload } from './BookExpandModal.types'
+
+export type { BookFieldUpdate, EntryFieldUpdate, CreateBookPayload }
 
 /** Форматирует дату для отображения. */
 function formatDate(iso: string): string {
@@ -20,87 +23,6 @@ function formatDate(iso: string): string {
     month: 'long',
     year: 'numeric',
   })
-}
-
-/**
- * Поля книги (book), обновляемые по одному.
- */
-export interface BookFieldUpdate {
-  /** Название. */
-  title?: string
-  /** Автор. */
-  author?: string
-  /** Количество страниц. */
-  pageCount?: number
-  /** Описание. */
-  description?: string
-}
-
-/**
- * Поля записи пользователя (entry), обновляемые по одному.
- */
-export interface EntryFieldUpdate {
-  /** Статус чтения. */
-  status?: BookStatus
-  /** Оценка (1–10). */
-  rating?: number
-  /** Прочитано страниц. */
-  progress?: number
-  /** Заметки. */
-  notes?: string
-}
-
-/**
- * Данные для создания новой книги и записи.
- */
-export interface CreateBookPayload {
-  /** Название. */
-  title: string
-  /** Автор. */
-  author: string
-  /** Количество страниц. */
-  pageCount?: number
-  /** Описание. */
-  description?: string
-  /** Статус чтения. */
-  status: BookStatus
-  /** Оценка (1–10). */
-  rating?: number
-  /** Прочитано страниц. */
-  progress?: number
-  /** Заметки. */
-  notes?: string
-}
-
-/** Черновик формы создания книги. */
-interface CreateDraft {
-  /** Название. */
-  title: string
-  /** Автор. */
-  author: string
-  /** Количество страниц. */
-  pageCount: string
-  /** Описание. */
-  description: string
-  /** Статус чтения. */
-  status: BookStatus
-  /** Оценка (1–10). */
-  rating: string
-  /** Прочитано страниц. */
-  progress: string
-  /** Заметки. */
-  notes: string
-}
-
-const DEFAULT_CREATE: CreateDraft = {
-  title: '',
-  author: '',
-  pageCount: '',
-  description: '',
-  status: 'WANT',
-  rating: '',
-  progress: '',
-  notes: '',
 }
 
 /**
@@ -141,227 +63,52 @@ export const BookExpandModal = ({
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const closingRef = useRef(false)
-  // Предотвращает закрытие до завершения открывающей layout-анимации (shared element).
-  // Если пользователь закрывает раньше — вызов откладывается до onLayoutAnimationComplete.
-  const openAnimationCompleteRef = useRef(false)
-  const pendingCloseRef = useRef(false)
-
-  /** Закрывает модалку. */
-  const triggerClose = () => {
-    if (openAnimationCompleteRef.current) {
-      onClose()
-    } else {
-      pendingCloseRef.current = true
-    }
-  }
-
-  const [editingField, setEditingField] = useState<string | null>(null)
-  const [fieldDraft, setFieldDraft] = useState('')
-  const [ratingDraft, setRatingDraft] = useState(0)
-  const [progressDraft, setProgressDraft] = useState(0)
-  const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
-  const [statusOpen, setStatusOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [createDraft, setCreateDraft] = useState<CreateDraft>(DEFAULT_CREATE)
-  const [prevEntryId, setPrevEntryId] = useState(entry?.id)
-  const [prevCreating, setPrevCreating] = useState(creating)
-
-  // Сброс полей при открытии новой записи.
-  if (entry?.id !== prevEntryId) {
-    setPrevEntryId(entry?.id)
-    setLocalStatus(null)
-    setEditingField(null)
-    setFieldDraft('')
-    setError(null)
-    setDeleteConfirm(false)
-    setStatusOpen(false)
-  }
-
-  // Сброс черновика формы создания при закрытии.
-  if (creating !== prevCreating) {
-    setPrevCreating(creating)
-    if (!creating) setCreateDraft(DEFAULT_CREATE)
-    setError(null)
-  }
-
-  useEffect(() => {
-    closingRef.current = false
-    openAnimationCompleteRef.current = false
-    pendingCloseRef.current = false
-  }, [entry?.id])
-
-  const displayStatus = localStatus ?? entry?.status ?? 'WANT'
-  const progressPct =
-    entry?.status === 'READING' && entry.progress !== null && entry.book.pageCount
-      ? Math.min(100, Math.round((entry.progress / entry.book.pageCount) * 100))
-      : null
-
-  // ── Инлайн-редактирование ───────────────────────────────────────────────────
-
-  /** Открывает редактирование поля. */
-  const startEdit = (field: string, value: string) => {
-    setEditingField(field)
-    setFieldDraft(value)
-    setStatusOpen(false)
-    setError(null)
-  }
-
-  /** Обработчик клавиш в однострочных полях ввода. */
-  const handleInputKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    onEnter: () => void,
-    originalValue: string,
-  ) => {
-    if (e.key === 'Enter') onEnter()
-    else if (e.key === 'Escape') {
-      setFieldDraft(originalValue)
-      setEditingField(null)
-    }
-  }
-
-  /** Обработчик клавиш в многострочных полях ввода. */
-  const handleTextareaKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-    originalValue: string,
-  ) => {
-    if (e.key === 'Escape') {
-      setFieldDraft(originalValue)
-      setEditingField(null)
-    }
-  }
-
-  /** Сохраняет поле книги. */
-  const commitBookField = async (
-    field: 'title' | 'author' | 'pageCount' | 'description',
-    originalValue: string,
-  ) => {
-    if (closingRef.current) return
-    setEditingField(null)
-    const trimmed = fieldDraft.trim()
-    if (trimmed === originalValue) return
-    if (!trimmed) return
-    try {
-      if (field === 'pageCount') {
-        await onSaveBook?.({ pageCount: Number(trimmed) })
-      } else {
-        await onSaveBook?.({ [field]: trimmed })
-      }
-    } catch {
-      setError('Не удалось сохранить')
-    }
-  }
-
-  /** Сохраняет заметки. */
-  const commitNotes = async (originalValue: string) => {
-    if (closingRef.current) return
-    setEditingField(null)
-    const trimmed = fieldDraft.trim()
-    if (trimmed === originalValue) return
-    if (!trimmed) return
-    try {
-      await onSaveEntry?.({ notes: trimmed })
-    } catch {
-      setError('Не удалось сохранить')
-    }
-  }
-
-  /** Сохраняет оценку. */
-  const commitRating = async () => {
-    if (closingRef.current) return
-    setEditingField(null)
-    if (ratingDraft === (entry?.rating ?? 0)) return
-    if (!ratingDraft) return
-    try {
-      await onSaveEntry?.({ rating: ratingDraft })
-    } catch {
-      setError('Не удалось сохранить')
-    }
-  }
-
-  /** Сохраняет прогресс чтения. */
-  const commitProgress = async () => {
-    if (closingRef.current) return
-    setEditingField(null)
-    if (progressDraft === (entry?.progress ?? 0)) return
-    try {
-      await onSaveEntry?.({ progress: progressDraft })
-    } catch {
-      setError('Не удалось сохранить')
-    }
-  }
-
-  // ── Статус ──────────────────────────────────────────────────────────────────
-
-  /** Обработчик выбора статуса. */
-  const handleStatusSelect = (status: BookStatus) => {
-    setStatusOpen(false)
-    setLocalStatus(status)
-    onStatusChange?.(status)
-  }
-
-  // ── Удаление ────────────────────────────────────────────────────────────────
-
-  /** Обработчик клика по кнопке удаления. */
-  const handleDeleteClick = () => {
-    if (!deleteConfirm) {
-      setDeleteConfirm(true)
-      return
-    }
-    void handleDeleteConfirmed()
-  }
-
-  /** Обработчик подтверждения удаления. */
-  const handleDeleteConfirmed = async () => {
-    setIsDeleting(true)
-    try {
-      await onDelete?.()
-      onClose()
-    } catch {
-      setError('Не удалось удалить. Попробуй ещё раз.')
-      setIsDeleting(false)
-      setDeleteConfirm(false)
-    }
-  }
-
-  // ── Создание ────────────────────────────────────────────────────────────────
-
-  /** Обработчик создания новой книги. */
-  const handleCreate = async () => {
-    if (!createDraft.title.trim()) return
-    setIsSubmitting(true)
-    setError(null)
-    const hasPageCount = !!(createDraft.pageCount && Number(createDraft.pageCount) > 0)
-    try {
-      await onCreate?.({
-        title: createDraft.title.trim(),
-        author: createDraft.author.trim() || 'Автор неизвестен',
-        ...(hasPageCount && { pageCount: Number(createDraft.pageCount) }),
-        ...(createDraft.description.trim() && { description: createDraft.description.trim() }),
-        status: createDraft.status,
-        ...(createDraft.status === 'DONE' &&
-          createDraft.rating && { rating: Number(createDraft.rating) }),
-        ...((createDraft.status === 'READING' || createDraft.status === 'DROPPED') &&
-          hasPageCount &&
-          createDraft.progress && { progress: Number(createDraft.progress) }),
-        ...(createDraft.notes.trim() && { notes: createDraft.notes.trim() }),
-      })
-      onClose()
-    } catch {
-      setError('Не удалось добавить книгу. Попробуй ещё раз.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const showCreate = !entry && creating
-  const hasCreatePageCount = !!(createDraft.pageCount && Number(createDraft.pageCount) > 0)
-  const showCreateProgress =
-    (createDraft.status === 'READING' || createDraft.status === 'DROPPED') && hasCreatePageCount
-  const createRatingVal = createDraft.rating ? Number(createDraft.rating) : 0
+  const {
+    editingField,
+    fieldDraft,
+    ratingDraft,
+    progressDraft,
+    statusOpen,
+    isSubmitting,
+    isDeleting,
+    error,
+    deleteConfirm,
+    createDraft,
+    displayStatus,
+    progressPct,
+    showCreate,
+    showCreateProgress,
+    createRatingVal,
+    setEditingField,
+    setFieldDraft,
+    setRatingDraft,
+    setProgressDraft,
+    setStatusOpen,
+    setDeleteConfirm,
+    setCreateDraft,
+    handleCloseMouseDown,
+    handleCloseClick,
+    handleLayoutAnimationComplete,
+    startEdit,
+    handleInputKeyDown,
+    handleTextareaKeyDown,
+    commitBookField,
+    commitNotes,
+    commitRating,
+    commitProgress,
+    handleStatusSelect,
+    handleDeleteClick,
+    handleCreate,
+  } = useBookExpandModal({
+    entry,
+    creating,
+    onClose,
+    onSaveBook,
+    onSaveEntry,
+    onCreate,
+    onDelete,
+    onStatusChange,
+  })
 
   return (
     <AnimatePresence>
@@ -373,13 +120,8 @@ export const BookExpandModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          onMouseDown={() => {
-            closingRef.current = true
-          }}
-          onClick={() => {
-            closingRef.current = false
-            triggerClose()
-          }}
+          onMouseDown={handleCloseMouseDown}
+          onClick={handleCloseClick}
         >
           <div
             className={`${styles['em__centering']} ${isMobile ? styles['em__centering--mobile'] : ''}`}
@@ -397,24 +139,13 @@ export const BookExpandModal = ({
                   onMouseDown={(e) => e.stopPropagation()}
                   exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: 'easeIn' } }}
                   transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-                  onLayoutAnimationComplete={() => {
-                    openAnimationCompleteRef.current = true
-                    if (pendingCloseRef.current) {
-                      pendingCloseRef.current = false
-                      onClose()
-                    }
-                  }}
+                  onLayoutAnimationComplete={handleLayoutAnimationComplete}
                 >
                   <div className={styles['em__hero']}>
                     <button
                       className={styles['em__close']}
-                      onMouseDown={() => {
-                        closingRef.current = true
-                      }}
-                      onClick={() => {
-                        closingRef.current = false
-                        triggerClose()
-                      }}
+                      onMouseDown={handleCloseMouseDown}
+                      onClick={handleCloseClick}
                     >
                       <X size={15} />
                     </button>

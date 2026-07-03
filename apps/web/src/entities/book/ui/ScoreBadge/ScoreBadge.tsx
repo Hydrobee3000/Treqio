@@ -9,12 +9,13 @@ import styles from './ScoreBadge.module.scss'
  * Пропсы ScoreBadge.
  */
 interface ScoreBadgeProps {
-  /** Оценка книги (null — плейсхолдер «+»). */
+  /** Оценка книги */
   rating: number | null
-  /** sm — карточка, md — модалка. */
+  /** Размер рейтинга */
   size?: 'sm' | 'md'
   /** Класс позиционирования в родителе. */
   className?: string | undefined
+  /** Функция при нажатии. */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void
 }
 
@@ -35,8 +36,6 @@ const CONFIG = {
 
 /**
  * Круглый бейдж оценки: SVG-кольцо прогресса с числом или звездой в центре.
- * При rating=null показывает плейсхолдер «+». Tooltip и интерактивность
- * включаются при передаче onClick. Позиционирование задаётся через className.
  */
 export const ScoreBadge = forwardRef<HTMLDivElement, ScoreBadgeProps>(function ScoreBadge(
   { rating, size = 'sm', className, onClick },
