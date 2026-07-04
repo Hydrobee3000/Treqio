@@ -1,9 +1,12 @@
-import { forwardRef, useState } from 'react'
-import type { MouseEvent } from 'react'
-import { Box, Menu, MenuItem, Popover, Rating, Slider, Tooltip, Typography } from '@mui/material'
-import { Check, Star } from 'lucide-react'
-import { STATUS_LABEL } from '../../model/book.types'
+import { useState } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
+import { motion } from 'framer-motion'
+import { Menu, MenuItem } from '@mui/material'
+import { Check } from 'lucide-react'
+import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { RatingPicker } from '../RatingPicker/RatingPicker'
+import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookCoverCard.module.scss'
 
 /** Класс цветовой пилюли статуса на карточке. */
@@ -13,97 +16,6 @@ const STATUS_CLASS: Record<BookStatus, string | undefined> = {
   DONE: styles['cover-card__status--done'],
   DROPPED: styles['cover-card__status--dropped'],
 }
-
-/** Цвет статуса «Прочитано» — фиксированный зелёный, не зависит от акцентного цвета темы. */
-const STATUS_DONE_COLOR = '#4caf6e'
-
-/** Цвет точки статуса в поп-овере выбора — совпадает с цветом пилюли на карточке. */
-const STATUS_DOT_COLOR: Record<BookStatus, string> = {
-  /** Прочитаю. */
-  WANT: '#9c8a6a',
-  /** Читаю. */
-  READING: '#5aa0c8',
-  /** Прочитано. */
-  DONE: STATUS_DONE_COLOR,
-  /** Брошено. */
-  DROPPED: '#b94040',
-}
-
-/** Варианты статуса для быстрого выбора в поп-овере. */
-const STATUS_OPTIONS = Object.entries(STATUS_LABEL).map(([value, label]) => ({
-  value: value as BookStatus,
-  label,
-}))
-
-/** Цвет кольца и числа в бейдже оценки — по диапазону. */
-function scoreColor(rating: number): string {
-  // Цвета фиксированы (не из токенов темы) — это семантическая «светофорная»
-  // шкала оценки, а не акцентный цвет, поэтому она не должна зависеть от темы.
-  if (rating >= 8) return '#5e9b84'
-  if (rating >= 6) return '#c49a3a'
-  return '#b94040'
-}
-
-/**
- * Круглый бейдж с оценкой (или плейсхолдер если книга не оценена).
- */
-const ScoreBadge = forwardRef<
-  HTMLDivElement,
-  {
-    rating: number | null
-    onClick: (e: MouseEvent<HTMLElement>) => void
-  }
->(function ScoreBadge({ rating, onClick }, ref) {
-  if (rating === null) {
-    return (
-      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
-        <span
-          className={`${styles['cover-card__score-value']} ${styles['cover-card__score-value--empty']}`}
-        >
-          +
-        </span>
-      </div>
-    )
-  }
-
-  const radius = 14
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - rating / 10)
-  const color = scoreColor(rating)
-
-  return (
-    <Tooltip title={`Оценка ${rating}/10`}>
-      <div ref={ref} className={styles['cover-card__score']} onClick={onClick}>
-        <svg className={styles['cover-card__score-ring']} viewBox="0 0 34 34">
-          <circle
-            cx="17"
-            cy="17"
-            r={radius}
-            fill="none"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="3"
-          />
-          <circle
-            cx="17"
-            cy="17"
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-          />
-        </svg>
-        {rating === 10 ? (
-          <Star size={14} fill="#fff" stroke="none" />
-        ) : (
-          <span className={styles['cover-card__score-value']}>{rating}</span>
-        )}
-      </div>
-    </Tooltip>
-  )
-})
 
 /** Размер карточки — масштабирует шрифты и бейдж оценки внутри обложки. */
 type CardSize = 'compact' | 'medium' | 'large'
@@ -118,8 +30,8 @@ interface BookCoverCardProps {
   size?: CardSize
   /** Флаг отображения пилюли статуса под обложкой. По умолчанию true. */
   showStatus?: boolean
-  /** Клик по карточке вне статуса и рейтинга — открывает редактирование всех полей. */
-  onEdit?: () => void
+  /** Клик по обложке — открывает просмотр/редактирование карточки. */
+  onExpand?: () => void
   /** Выбор статуса в быстром поп-овере. */
   onStatusChange?: (status: BookStatus) => void
   /** Выбор оценки в быстром поп-овере. */
@@ -127,15 +39,13 @@ interface BookCoverCardProps {
 }
 
 /**
- * Карточка книги в стиле «обложка» — один из стилей отображения библиотеки.
- * Клик по статусу или оценке открывает быстрый выбор этого поля,
- * клик по остальной области карточки — открывает полное редактирование.
+ * Карточка книги в стиле «обложка».
  */
 export const BookCoverCard = ({
   entry,
   size = 'large',
   showStatus = true,
-  onEdit,
+  onExpand,
   onStatusChange,
   onRatingChange,
 }: BookCoverCardProps) => {
@@ -150,9 +60,6 @@ export const BookCoverCard = ({
   const [scoreEl, setScoreEl] = useState<HTMLDivElement | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [ratingOpen, setRatingOpen] = useState(false)
-  // Черновое значение слайдера — обновляется при перетаскивании,
-  // а мутация отправляется только когда пользователь отпускает слайдер.
-  const [ratingDraft, setRatingDraft] = useState(rating ?? 5)
 
   const progressPct =
     status === 'READING' && progress !== null && book.pageCount
@@ -168,22 +75,33 @@ export const BookCoverCard = ({
   /** Открывает поп-овер выбора оценки, не давая клику дойти до редактирования всей карточки. */
   const handleRatingClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation()
-    setRatingDraft(rating ?? 5)
     setRatingOpen(true)
   }
 
   return (
     <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
-        <div className={styles['cover-card__cover']} onClick={onEdit}>
+        <motion.div
+          layoutId={`book-cover-${entry.id}`}
+          data-card-id={entry.id}
+          className={styles['cover-card__cover']}
+          onClick={onExpand}
+          transition={{ layout: { duration: 0 } }}
+        >
           {status === 'DONE' && (
-            <ScoreBadge ref={setScoreEl} rating={rating} onClick={handleRatingClick} />
+            <ScoreBadge
+              ref={setScoreEl}
+              rating={rating}
+              size="sm"
+              className={styles['cover-card__score']}
+              onClick={handleRatingClick}
+            />
           )}
           <div className={styles['cover-card__title']}>
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
           <div className={styles['cover-card__author']}>{book.author}</div>
-        </div>
+        </motion.div>
         {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>
 
@@ -203,7 +121,7 @@ export const BookCoverCard = ({
             <div className={styles['cover-card__progress']}>
               <span
                 className={styles['cover-card__progress-bar']}
-                style={{ width: `${progressPct}%` }}
+                style={{ '--progress-pct': `${progressPct}%` } as CSSProperties}
               />
             </div>
           )}
@@ -220,72 +138,30 @@ export const BookCoverCard = ({
           <MenuItem
             key={option.value}
             selected={option.value === status}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 160 }}
+            className={styles['cover-card__menu-item']}
             onClick={(e) => {
               e.stopPropagation()
               onStatusChange?.(option.value)
               setStatusOpen(false)
             }}
           >
-            <Box
-              sx={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                flexShrink: 0,
-                bgcolor: STATUS_DOT_COLOR[option.value],
-              }}
+            <span
+              className={styles['cover-card__menu-dot']}
+              style={{ background: STATUS_DOT_COLOR[option.value] }}
             />
-            <Box sx={{ flex: 1, fontSize: 13 }}>{option.label}</Box>
+            <span className={styles['cover-card__menu-label']}>{option.label}</span>
             {option.value === status && <Check size={14} />}
           </MenuItem>
         ))}
       </Menu>
 
-      <Popover
+      <RatingPicker
         anchorEl={scoreEl}
         open={ratingOpen}
+        rating={rating}
         onClose={() => setRatingOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Box sx={{ width: 200, pt: 2, px: 2, pb: 0.5 }} onClick={(e) => e.stopPropagation()}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-            <Rating
-              value={ratingDraft / 2}
-              precision={0.5}
-              max={5}
-              sx={{
-                fontSize: 30,
-                '& .MuiRating-iconFilled': { color: scoreColor(ratingDraft) },
-                '& .MuiRating-iconHover': { color: scoreColor(ratingDraft) },
-              }}
-              onChange={(_, value) => {
-                const next = Math.max(1, Math.round((value ?? 0) * 2))
-                setRatingDraft(next)
-                onRatingChange?.(next)
-                setRatingOpen(false)
-              }}
-            />
-          </Box>
-          <Slider
-            value={ratingDraft}
-            min={1}
-            max={10}
-            step={1}
-            onChange={(_, value) => setRatingDraft(value as number)}
-            onChangeCommitted={(_, value) => {
-              onRatingChange?.(value as number)
-              setRatingOpen(false)
-            }}
-          />
-          <Typography align="center" sx={{ fontWeight: 600, mb: 0.5 }}>
-            {ratingDraft}{' '}
-            <Typography component="span" variant="caption" color="text.secondary">
-              / 10
-            </Typography>
-          </Typography>
-        </Box>
-      </Popover>
+        onChange={(r) => onRatingChange?.(r)}
+      />
     </div>
   )
 }

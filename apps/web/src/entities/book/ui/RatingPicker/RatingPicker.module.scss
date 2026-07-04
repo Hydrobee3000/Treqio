@@ -1,0 +1,22 @@
+.rating-picker {
+  width: 200px;
+  padding: 16px 16px 4px;
+}
+
+.rating-picker__stars {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.rating-picker__value {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.rating-picker__denom {
+  font-size: 12px;
+  opacity: 0.55;
+}

@@ -22,14 +22,8 @@
       right: 7px;
       width: 28px;
       height: 28px;
-    }
-
-    .cover-card__score-value {
-      font-size: 11px;
-
-      &--empty {
-        font-size: 13px;
-      }
+      --score-badge-font-size: 11px;
+      --score-badge-empty-size: 13px;
     }
 
     .cover-card__status {
@@ -63,14 +57,8 @@
       right: 6px;
       width: 22px;
       height: 22px;
-    }
-
-    .cover-card__score-value {
-      font-size: 9px;
-
-      &--empty {
-        font-size: 11px;
-      }
+      --score-badge-font-size: 9px;
+      --score-badge-empty-size: 11px;
     }
 
     .cover-card__footer {
@@ -207,39 +195,13 @@
 }
 
 // ─── Круглый бейдж оценки ─────────────────────────────────────────────────────
+// Размер, фон и кольцо задаёт ScoreBadge; здесь только позиционирование.
 
 .cover-card__score {
   position: absolute;
   top: 9px;
   right: 9px;
   z-index: 2;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(15, 20, 18, 0.55);
-  backdrop-filter: blur(6px);
-}
-
-.cover-card__score-ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.cover-card__score-value {
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-
-  &--empty {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 14px;
-  }
 }
 
 // ─── Подпись под обложкой ─────────────────────────────────────────────────────
@@ -317,6 +279,27 @@
 .cover-card__progress-bar {
   display: block;
   height: 100%;
+  width: var(--progress-pct);
   border-radius: 999px;
   background: #5aa0c8;
 }
+
+// ─── Меню статуса ─────────────────────────────────────────────────────────────
+
+.cover-card__menu-item {
+  gap: 8px;
+  min-width: 160px;
+}
+
+.cover-card__menu-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cover-card__menu-label {
+  flex: 1;
+  font-size: 13px;
+}
+

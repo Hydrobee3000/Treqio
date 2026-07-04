@@ -1,0 +1,48 @@
+// Используем grid-overlay вместо position:absolute для SVG — контейнер не требует
+// position:relative и позиционирование полностью задаётся родительским className.
+
+.score-badge {
+  border-radius: 50%;
+  background: rgba(15, 20, 18, 0.55);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+}
+
+.score-badge--sm {
+  width: 34px;
+  height: 34px;
+}
+
+.score-badge--md {
+  width: 42px;
+  height: 42px;
+  --score-badge-font-size: 13px;
+}
+
+.score-badge__svg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-badge__content {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.score-badge__value {
+  font-size: var(--score-badge-font-size, 12px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.score-badge__empty {
+  font-size: var(--score-badge-empty-size, 14px);
+  color: rgba(255, 255, 255, 0.5);
+}
