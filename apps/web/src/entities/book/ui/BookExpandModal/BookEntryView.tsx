@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { Check, Pencil, Star, Trash2, X } from 'lucide-react'
 import {
@@ -20,27 +21,9 @@ import {
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import type { BookFieldUpdate, EntryFieldUpdate } from './BookExpandModal.types'
+import { editBookSchema } from './bookFormSchemas'
+import type { EditFormValues } from './bookFormSchemas'
 import styles from './BookExpandModal.module.scss'
-
-/**
- * Значения формы редактирования записи.
- */
-interface EditFormValues {
-  /** Название книги. */
-  title: string
-  /** Автор книги. */
-  author: string
-  /** Количество страниц (строка, конвертируется при отправке). */
-  pageCount: string
-  /** Описание книги. */
-  description: string
-  /** Заметки пользователя. */
-  notes: string
-  /** Оценка (1–10). */
-  rating: number
-  /** Прочитано страниц. */
-  progress: number
-}
 
 /**
  * Пропсы BookEntryView.
@@ -110,8 +93,9 @@ export const BookEntryView = ({
     handleSubmit,
     reset,
     control,
-    formState: { isSubmitting, dirtyFields },
+    formState: { isSubmitting, dirtyFields, errors },
   } = useForm<EditFormValues>({
+    resolver: zodResolver(editBookSchema),
     defaultValues: {
       title: entry.book.title,
       author: entry.book.author,
@@ -227,6 +211,7 @@ export const BookEntryView = ({
                     autoFocus
                     {...register('title')}
                   />
+                  {errors.title && <p className={styles['em__error']}>{errors.title.message}</p>}
                 </div>
 
                 <div className={styles['em__field']}>

@@ -1,33 +1,13 @@
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { STATUS_OPTIONS, STATUS_TEXT_COLOR } from '../../model/book.types'
-import type { BookStatus } from '../../model/book.types'
 import type { CreateBookPayload } from './BookExpandModal.types'
+import { createBookSchema } from './bookFormSchemas'
+import type { CreateFormValues } from './bookFormSchemas'
 import styles from './BookExpandModal.module.scss'
-
-/**
- * Значения формы создания книги.
- */
-interface CreateFormValues {
-  /** Название книги. */
-  title: string
-  /** Автор книги. */
-  author: string
-  /** Количество страниц (строка, конвертируется при отправке). */
-  pageCount: string
-  /** Описание книги. */
-  description: string
-  /** Статус чтения. */
-  status: BookStatus
-  /** Оценка (1–10). */
-  rating: number
-  /** Прочитано страниц. */
-  progress: number
-  /** Заметки пользователя. */
-  notes: string
-}
 
 /**
  * Пропсы BookCreateForm.
@@ -53,8 +33,9 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     handleSubmit,
     setValue,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<CreateFormValues>({
+    resolver: zodResolver(createBookSchema),
     defaultValues: {
       title: '',
       author: '',
@@ -126,6 +107,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
                 placeholder="Введите название"
                 {...register('title')}
               />
+              {errors.title && <p className={styles['em__error']}>{errors.title.message}</p>}
             </div>
 
             <div className={styles['em__field']}>
