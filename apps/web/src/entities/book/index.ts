@@ -1,4 +1,5 @@
 export { BookCoverCard } from './ui/BookCoverCard/BookCoverCard'
+export { BookCoverCardSkeleton } from './ui/BookCoverCardSkeleton/BookCoverCardSkeleton'
 export { BookTableRow } from './ui/BookTableRow/BookTableRow'
 export { BookExpandModal } from './ui/BookExpandModal/BookExpandModal'
 export type {
