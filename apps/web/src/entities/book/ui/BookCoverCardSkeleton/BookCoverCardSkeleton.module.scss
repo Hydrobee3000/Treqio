@@ -1,0 +1,10 @@
+.card-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  &--compact {
+    gap: 7px;
+  }
+}

@@ -24,11 +24,18 @@ import {
   Box,
   Menu,
   MenuItem,
+  Skeleton,
   Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { BookCoverCard, BookExpandModal, BookTableRow, STATUS_LABEL } from '@/entities/book'
+import {
+  BookCoverCard,
+  BookCoverCardSkeleton,
+  BookExpandModal,
+  BookTableRow,
+  STATUS_LABEL,
+} from '@/entities/book'
 import type {
   BookEntry,
   BookFieldUpdate,
@@ -221,7 +228,58 @@ export const LibraryPage = () => {
     await deleteEntry(expandedEntry.id).unwrap()
   }
 
-  if (isLoading) return null
+  if (isLoading) {
+    return (
+      <div className={styles.library} style={{ height: '100%' }}>
+        <div className={styles['library__header']}>
+          <h1 className={styles['library__title']}>Моя библиотека</h1>
+          <button className={styles['library__add-btn']} onClick={handleAddClick}>
+            <Plus size={16} />
+            <span className={styles['library__add-btn-label']}>Добавить книгу</span>
+          </button>
+        </div>
+
+        {!isMobile && (
+          <div className={styles['library__tabs']}>
+            {[56, 110, 80, 95, 75].map((w, i) => (
+              <Skeleton
+                key={i}
+                variant="rounded"
+                width={w}
+                height={34}
+                sx={{ borderRadius: '999px' }}
+              />
+            ))}
+          </div>
+        )}
+
+        <div className={styles['library__label-row']}>
+          <Skeleton
+            variant="rounded"
+            sx={{ flex: 1, maxWidth: 480, height: 36, borderRadius: '10px' }}
+          />
+          <div className={styles['library__label-row-actions']}>
+            <Skeleton variant="rounded" width={110} height={36} sx={{ borderRadius: '10px' }} />
+            {!isMobile && (
+              <>
+                <Skeleton variant="rounded" width={110} height={36} sx={{ borderRadius: '10px' }} />
+                <Skeleton variant="rounded" width={72} height={40} sx={{ borderRadius: '11px' }} />
+              </>
+            )}
+          </div>
+        </div>
+
+        <div
+          className={`${styles['library__grid']} ${styles[`library__grid--${effectiveCardSize}`] ?? ''}`}
+          style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}
+        >
+          {Array.from({ length: 24 }).map((_, i) => (
+            <BookCoverCardSkeleton key={i} size={effectiveCardSize} />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <LayoutGroup id="library">
