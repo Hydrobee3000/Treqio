@@ -1,5 +1,4 @@
-import { forwardRef } from 'react'
-import type { MouseEvent } from 'react'
+import type { MouseEvent, Ref } from 'react'
 import { Tooltip } from '@mui/material'
 import { Star } from 'lucide-react'
 import { GOLD_COLOR, scoreColor } from '../../model/book.types'
@@ -17,6 +16,8 @@ interface ScoreBadgeProps {
   className?: string | undefined
   /** Функция при нажатии. */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void
+  /** Ref на корневой div — React 19: ref как обычный проп, без forwardRef. */
+  ref?: Ref<HTMLDivElement>
 }
 
 // md: кольцо и звезда для 10/10 — золотые; sm: scoreColor, CSS-кольцо обложки даёт золотой эффект.
@@ -37,10 +38,7 @@ const CONFIG = {
 /**
  * Круглый бейдж оценки: SVG-кольцо прогресса с числом или звездой в центре.
  */
-export const ScoreBadge = forwardRef<HTMLDivElement, ScoreBadgeProps>(function ScoreBadge(
-  { rating, size = 'sm', className, onClick },
-  ref,
-) {
+export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
   const rootClass = [styles['score-badge'], styles[`score-badge--${size}`], className]
     .filter(Boolean)
     .join(' ')
@@ -85,4 +83,4 @@ export const ScoreBadge = forwardRef<HTMLDivElement, ScoreBadgeProps>(function S
   )
 
   return onClick ? <Tooltip title={`Оценка ${rating}/10`}>{badge}</Tooltip> : badge
-})
+}
