@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Collapse, Tooltip } from '@mui/material'
+import { Collapse, Skeleton, Tooltip } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
@@ -256,7 +256,73 @@ export const ProfilePage = () => {
     if (editingName) nameInputRef.current?.focus()
   }, [editingName])
 
-  if (isLoading) return null
+  if (isLoading) {
+    return (
+      <div className={styles['profile']}>
+        <div className={styles['header']}>
+          <div className={styles['header__top']}>
+            <Skeleton variant="circular" width={80} height={80} sx={{ flexShrink: 0 }} />
+            <div className={styles['header__info']}>
+              <Skeleton variant="rounded" width={160} height={36} sx={{ borderRadius: '8px' }} />
+              <div className={styles['header__meta']}>
+                <Skeleton variant="text" width={100} sx={{ fontSize: '13px' }} />
+              </div>
+            </div>
+            <Skeleton
+              variant="rounded"
+              width={76}
+              height={32}
+              sx={{ borderRadius: '8px', marginLeft: 'auto', alignSelf: 'flex-start' }}
+            />
+          </div>
+        </div>
+
+        <div className={styles['tabs']}>
+          <button className={`${styles['tab']} ${styles['tab--active']}`}>
+            <History size={17} />
+            Активность
+          </button>
+          <button className={styles['tab']}>
+            <BarChart3 size={17} />
+            Статистика
+          </button>
+        </div>
+
+        <div className={styles['history']}>
+          {[3, 2].map((count, gi) => (
+            <div key={gi} className={styles['history__day']}>
+              <Skeleton
+                variant="rounded"
+                height={30}
+                sx={{ borderRadius: '10px', margin: '10px 0 6px -6px' }}
+              />
+              <div className={styles['history__timeline']}>
+                {Array.from({ length: count }).map((_, i) => (
+                  <div key={i} className={styles['history__event']}>
+                    <Skeleton
+                      variant="circular"
+                      width={28}
+                      height={28}
+                      sx={{
+                        position: 'absolute',
+                        left: -34,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                      }}
+                    />
+                    <div className={styles['history__body']}>
+                      <Skeleton variant="text" width={130 + i * 30} sx={{ fontSize: '14px' }} />
+                    </div>
+                    <Skeleton variant="text" width={36} sx={{ fontSize: '12px', flexShrink: 0 }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   /**
    * Функция редактирования имени пользователя.
