@@ -28,8 +28,8 @@ function loadState(): ThemeState {
   const defaults: ThemeState = {
     lightVariant: DEFAULT_THEME,
     darkVariant: defaultDark,
-    themeMode: 'light',
-    isDark: false,
+    themeMode: 'system',
+    isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
     isCustomPair: false,
   }
   try {
