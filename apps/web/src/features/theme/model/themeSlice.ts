@@ -29,7 +29,9 @@ function loadState(): ThemeState {
     lightVariant: DEFAULT_THEME,
     darkVariant: defaultDark,
     themeMode: 'system',
-    isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
+    isDark:
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches,
     isCustomPair: false,
   }
   try {
