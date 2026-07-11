@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Tooltip } from '@mui/material'
-import { BookOpen, Gamepad2, LayoutGrid, Palette, PanelTop, User } from 'lucide-react'
+import { BookOpen, Gamepad2, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/features/layout'
@@ -65,6 +65,7 @@ function ArrowIcon() {
 export function HomePage() {
   const dispatch = useAppDispatch()
   const layout = useAppSelector((s) => s.layout.variant)
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
 
   const handleLayoutChange = (variant: LayoutVariant) => {
     dispatch(setLayout(variant))
@@ -102,12 +103,12 @@ export function HomePage() {
 
       {layout === 'grid' ? (
         <div className={styles['home__grid-section']}>
-          <GridLayout />
+          <GridLayout isGuest={isGuest} />
           <div className={styles['home__spacer']} />
           <ImportStrip />
         </div>
       ) : (
-        <BentoLayout />
+        <BentoLayout isGuest={isGuest} />
       )}
     </div>
   )
@@ -116,12 +117,33 @@ export function HomePage() {
 /**
  * Сетка 2×2.
  */
-function GridLayout() {
+function GridLayout({ isGuest }: { isGuest: boolean }) {
   const navigate = useNavigate()
 
   return (
     <div className={styles['grid']}>
       {TILES.map((tile) => {
+        if (tile.disabled && isGuest) {
+          return (
+            <button
+              key={tile.title}
+              className={styles['grid__tile']}
+              onClick={() => navigate('/login')}
+            >
+              <div className={styles['grid__tile-icon']}>
+                <LogIn size={22} />
+              </div>
+              <div>
+                <p className={styles['grid__tile-title']}>Войти в профиль</p>
+                <p className={styles['grid__tile-desc']}>Войдите, чтобы не иметь ограничений.</p>
+              </div>
+              <span className={styles['grid__tile-arrow']}>
+                <ArrowIcon />
+              </span>
+            </button>
+          )
+        }
+
         const button = (
           <button
             className={`${styles['grid__tile']} ${tile.disabled ? styles['grid__tile--disabled'] : ''}`}
@@ -154,7 +176,7 @@ function GridLayout() {
 /**
  * Bento-раскладка.
  */
-function BentoLayout() {
+function BentoLayout({ isGuest }: { isGuest: boolean }) {
   const navigate = useNavigate()
   const books = TILES[0]!
   const games = TILES[1]!
@@ -174,18 +196,33 @@ function BentoLayout() {
         </div>
       </button>
 
-      <UnderConstruction>
+      {isGuest ? (
         <button
-          className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
-          disabled
+          className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+          onClick={() => navigate('/login')}
         >
-          <div className={styles['bento__cell-icon']}>{games.icon}</div>
+          <div className={styles['bento__cell-icon']}>
+            <LogIn size={22} />
+          </div>
           <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>{games.title}</p>
-            <p className={styles['bento__cell-desc']}>{games.desc}</p>
+            <p className={styles['bento__cell-title']}>Войти в профиль</p>
+            <p className={styles['bento__cell-desc']}>Войдите, чтобы не иметь ограничений.</p>
           </div>
         </button>
-      </UnderConstruction>
+      ) : (
+        <UnderConstruction>
+          <button
+            className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
+            disabled
+          >
+            <div className={styles['bento__cell-icon']}>{games.icon}</div>
+            <div className={styles['bento__cell-content']}>
+              <p className={styles['bento__cell-title']}>{games.title}</p>
+              <p className={styles['bento__cell-desc']}>{games.desc}</p>
+            </div>
+          </button>
+        </UnderConstruction>
+      )}
 
       <button className={styles['bento__cell']} onClick={() => navigate(profile.href)}>
         <div className={styles['bento__cell-icon']}>{profile.icon}</div>
