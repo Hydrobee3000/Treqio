@@ -1,0 +1,42 @@
+{
+  "home": {
+    "title": "What are we doing today?",
+    "quickActions": "Quick actions",
+    "layoutGrid": "Grid",
+    "layoutBento": "Bento",
+    "cards": {
+      "addBook": {
+        "title": "Add a book",
+        "desc": "Change status, set a rating."
+      },
+      "addGame": {
+        "title": "Add a game",
+        "desc": "Change status, set a rating."
+      },
+      "login": {
+        "title": "Sign in",
+        "desc": "Sign in to unlock all features."
+      },
+      "profile": {
+        "title": "Set up profile",
+        "desc": "Name, avatar, visibility and privacy."
+      },
+      "theme": {
+        "title": "Set up theme",
+        "desc": "Color palette and animations."
+      },
+      "import": {
+        "bento": {
+          "title": "Import",
+          "desc": "Goodreads, HLTB — coming soon",
+          "cta": "Connect"
+        },
+        "strip": {
+          "title": "Import lists",
+          "desc": "Goodreads, HLTB — coming soon",
+          "cta": "Connect"
+        }
+      }
+    }
+  }
+}
