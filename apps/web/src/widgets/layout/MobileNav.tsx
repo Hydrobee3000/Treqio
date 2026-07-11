@@ -6,23 +6,25 @@ import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { useNavigate, useLocation } from 'react-router'
 import type { SvgIconComponent } from '@mui/icons-material'
+import { useTranslation } from 'react-i18next'
 import styles from './MobileNav.module.scss'
 
-/** Раздел еще не реализован — пункт виден, но недоступен для перехода. */
-const NAV_ITEMS: { to: string; icon: SvgIconComponent; label: string; disabled?: boolean }[] = [
-  { to: '/', icon: HomeOutlinedIcon, label: 'Главная' },
-  { to: '/profile', icon: AccountCircleOutlinedIcon, label: 'Профиль' },
-  { to: '/library', icon: AutoStoriesOutlinedIcon, label: 'Библиотека' },
-  { to: '/feed', icon: RssFeedOutlinedIcon, label: 'Лента', disabled: true },
-  { to: '/search', icon: SearchOutlinedIcon, label: 'Поиск', disabled: true },
-]
-
 /**
- * Нижняя навигация для мобильных устройств
+ * Нижняя навигация для мобильных устройств.
  */
 export const MobileNav = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+
+  /** Конфигурация пункта нижней навигации. */
+  const navItems: { to: string; icon: SvgIconComponent; label: string; disabled?: boolean }[] = [
+    { to: '/', icon: HomeOutlinedIcon, label: t('nav.home') },
+    { to: '/profile', icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
+    { to: '/library', icon: AutoStoriesOutlinedIcon, label: t('nav.library') },
+    { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed'), disabled: true },
+    { to: '/search', icon: SearchOutlinedIcon, label: t('nav.search'), disabled: true },
+  ]
 
   return (
     <Paper
@@ -32,7 +34,7 @@ export const MobileNav = () => {
       sx={{ zIndex: (theme) => theme.zIndex.appBar }}
     >
       <Box className={styles['mobile-nav__items']}>
-        {NAV_ITEMS.map(({ to, icon: Icon, label, disabled }) => {
+        {navItems.map(({ to, icon: Icon, label, disabled }) => {
           // Для "/" нужно точное совпадение, иначе будет активен на всех страницах
           const isActive = !disabled && (to === '/' ? pathname === '/' : pathname.startsWith(to))
           return (
