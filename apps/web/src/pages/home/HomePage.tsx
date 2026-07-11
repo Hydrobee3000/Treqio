@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { Tooltip } from '@mui/material'
 import { BookOpen, Gamepad2, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/features/layout'
@@ -9,35 +10,38 @@ import type { LayoutVariant } from '@/shared/config/layout'
 import styles from './HomePage.module.scss'
 
 /**
- * Плитки быстрых действий.
+ * Плитки быстрых действий — зависят от переводов.
  */
-const TILES = [
-  {
-    icon: <BookOpen size={22} />,
-    title: 'Добавить книгу',
-    desc: 'Изменить статус, поставить оценку.',
-    href: '/library',
-  },
-  {
-    icon: <Gamepad2 size={22} />,
-    title: 'Добавить игру',
-    desc: 'Изменить статус, поставить оценку.',
-    href: '/library',
-    disabled: true,
-  },
-  {
-    icon: <User size={22} />,
-    title: 'Настроить профиль',
-    desc: 'Имя, аватар, видимость и приватность.',
-    href: '/profile',
-  },
-  {
-    icon: <Palette size={22} />,
-    title: 'Настроить тему',
-    desc: 'Цветовая палитра и анимации.',
-    href: '/settings/appearance',
-  },
-]
+function useTiles() {
+  const { t } = useTranslation()
+  return [
+    {
+      icon: <BookOpen size={22} />,
+      title: t('home.cards.addBook.title'),
+      desc: t('home.cards.addBook.desc'),
+      href: '/library',
+    },
+    {
+      icon: <Gamepad2 size={22} />,
+      title: t('home.cards.addGame.title'),
+      desc: t('home.cards.addGame.desc'),
+      href: '/library',
+      disabled: true,
+    },
+    {
+      icon: <User size={22} />,
+      title: t('home.cards.profile.title'),
+      desc: t('home.cards.profile.desc'),
+      href: '/profile',
+    },
+    {
+      icon: <Palette size={22} />,
+      title: t('home.cards.theme.title'),
+      desc: t('home.cards.theme.desc'),
+      href: '/settings/appearance',
+    },
+  ]
+}
 
 /**
  * Иконка стрелки для плитки.
@@ -66,6 +70,7 @@ export function HomePage() {
   const dispatch = useAppDispatch()
   const layout = useAppSelector((s) => s.layout.variant)
   const isGuest = useAppSelector((s) => s.auth.isGuest)
+  const { t } = useTranslation()
 
   const handleLayoutChange = (variant: LayoutVariant) => {
     dispatch(setLayout(variant))
@@ -74,15 +79,15 @@ export function HomePage() {
   return (
     <div className={styles['home']}>
       <div className={styles['home__header']}>
-        <h1 className={styles['home__title']}>Чем сегодня займёмся?</h1>
+        <h1 className={styles['home__title']}>{t('home.title')}</h1>
       </div>
 
       <div className={styles['home__label-row']}>
-        <span className={styles['home__label']}>Быстрые действия</span>
+        <span className={styles['home__label']}>{t('home.quickActions')}</span>
 
         {/* Переключатель вида */}
         <div className={styles['home__layout-toggle']}>
-          <Tooltip title="Сетка">
+          <Tooltip title={t('home.layoutGrid')}>
             <button
               className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
               onClick={() => handleLayoutChange('grid')}
@@ -90,7 +95,7 @@ export function HomePage() {
               <LayoutGrid size={16} />
             </button>
           </Tooltip>
-          <Tooltip title="Bento">
+          <Tooltip title={t('home.layoutBento')}>
             <button
               className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
               onClick={() => handleLayoutChange('bento')}
@@ -119,10 +124,12 @@ export function HomePage() {
  */
 function GridLayout({ isGuest }: { isGuest: boolean }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+  const tiles = useTiles()
 
   return (
     <div className={styles['grid']}>
-      {TILES.map((tile) => {
+      {tiles.map((tile) => {
         if (tile.disabled && isGuest) {
           return (
             <button
@@ -134,8 +141,8 @@ function GridLayout({ isGuest }: { isGuest: boolean }) {
                 <LogIn size={22} />
               </div>
               <div>
-                <p className={styles['grid__tile-title']}>Войти в профиль</p>
-                <p className={styles['grid__tile-desc']}>Войдите, чтобы не иметь ограничений.</p>
+                <p className={styles['grid__tile-title']}>{t('home.cards.login.title')}</p>
+                <p className={styles['grid__tile-desc']}>{t('home.cards.login.desc')}</p>
               </div>
               <span className={styles['grid__tile-arrow']}>
                 <ArrowIcon />
@@ -178,10 +185,12 @@ function GridLayout({ isGuest }: { isGuest: boolean }) {
  */
 function BentoLayout({ isGuest }: { isGuest: boolean }) {
   const navigate = useNavigate()
-  const books = TILES[0]!
-  const games = TILES[1]!
-  const profile = TILES[2]!
-  const theme = TILES[3]!
+  const { t } = useTranslation()
+  const tiles = useTiles()
+  const books = tiles[0]!
+  const games = tiles[1]!
+  const profile = tiles[2]!
+  const theme = tiles[3]!
 
   return (
     <div className={styles['bento']}>
@@ -205,8 +214,8 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
             <LogIn size={22} />
           </div>
           <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>Войти в профиль</p>
-            <p className={styles['bento__cell-desc']}>Войдите, чтобы не иметь ограничений.</p>
+            <p className={styles['bento__cell-title']}>{t('home.cards.login.title')}</p>
+            <p className={styles['bento__cell-desc']}>{t('home.cards.login.desc')}</p>
           </div>
         </button>
       ) : (
@@ -247,11 +256,13 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
             <BookOpen size={22} />
           </div>
           <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>Импорт</p>
-            <p className={styles['bento__cell-desc']}>Goodreads, HLTB — скоро</p>
+            <p className={styles['bento__cell-title']}>{t('home.cards.import.bento.title')}</p>
+            <p className={styles['bento__cell-desc']}>{t('home.cards.import.bento.desc')}</p>
           </div>
           <span className={styles['bento__cell-cta']}>
-            <span className={styles['bento__cell-cta-text']}>Подключить</span>
+            <span className={styles['bento__cell-cta-text']}>
+              {t('home.cards.import.bento.cta')}
+            </span>
             <span className={styles['bento__cell-cta-arrow']}>
               <ArrowIcon />
             </span>
@@ -266,6 +277,7 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
  * Заглушка полоски импорта из внешних сервисов.
  */
 function ImportStrip() {
+  const { t } = useTranslation()
   return (
     <UnderConstruction>
       <div className={styles['import-strip']}>
@@ -274,12 +286,14 @@ function ImportStrip() {
             <BookOpen size={18} />
           </div>
           <div>
-            <p className={styles['import-strip__title']}>Импортировать списки</p>
-            <p className={styles['import-strip__sub']}>Goodreads, HLTB — скоро</p>
+            <p className={styles['import-strip__title']}>{t('home.cards.import.strip.title')}</p>
+            <p className={styles['import-strip__sub']}>{t('home.cards.import.strip.desc')}</p>
           </div>
         </div>
         <button className={styles['import-strip__btn']} disabled>
-          <span className={styles['import-strip__btn-text']}>Подключить</span>
+          <span className={styles['import-strip__btn-text']}>
+            {t('home.cards.import.strip.cta')}
+          </span>
           <span className={styles['import-strip__btn-arrow']}>
             <ArrowIcon />
           </span>
