@@ -38,5 +38,17 @@
         }
       }
     }
+  },
+  "nav": {
+    "home": "Главная",
+    "profile": "Профиль",
+    "library": "Библиотека",
+    "feed": "Лента",
+    "friends": "Друзья",
+    "search": "Поиск",
+    "settings": "Настройки",
+    "comingSoon": "Скоро",
+    "lightTheme": "Светлая тема",
+    "darkTheme": "Тёмная тема"
   }
 }

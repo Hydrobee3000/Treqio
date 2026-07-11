@@ -38,5 +38,17 @@
         }
       }
     }
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "library": "Library",
+    "feed": "Feed",
+    "friends": "Friends",
+    "search": "Search",
+    "settings": "Settings",
+    "comingSoon": "Coming soon",
+    "lightTheme": "Light theme",
+    "darkTheme": "Dark theme"
   }
 }
