@@ -14,6 +14,7 @@ import {
   Info,
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setPair, setLightVariant, setDarkVariant, setThemeMode } from '@/features/theme'
 import type { ThemeMode } from '@/features/theme'
@@ -49,6 +50,7 @@ interface SettingsSection {
  * Страница настроек приложения.
  */
 export function SettingsPage() {
+  const { t } = useTranslation()
   const { section } = useParams<{ section: string }>()
   const navigate = useNavigate()
   const isGuest = useAppSelector((s) => s.auth.isGuest)
@@ -56,8 +58,8 @@ export function SettingsPage() {
   const sections: SettingsSection[] = [
     {
       id: 'appearance',
-      label: 'Внешний вид',
-      desc: 'Тема оформления',
+      label: t('settings.sections.appearance.label'),
+      desc: t('settings.sections.appearance.desc'),
       icon: <Palette size={18} />,
       content: <AppearanceContent />,
     },
@@ -74,10 +76,10 @@ export function SettingsPage() {
               className={styles['settings__breadcrumb']}
               onClick={() => navigate('/settings')}
             >
-              Настройки
+              {t('settings.title')}
             </button>
           ) : (
-            <span className={styles['settings__breadcrumb-static']}>Настройки</span>
+            <span className={styles['settings__breadcrumb-static']}>{t('settings.title')}</span>
           )}
           {active && (
             <>
@@ -112,7 +114,7 @@ export function SettingsPage() {
           <div className={styles['settings__content']}>
             <button className={styles['settings__back']} onClick={() => navigate('/settings')}>
               <ChevronLeft size={16} />
-              Назад
+              {t('settings.back')}
             </button>
             <div className={styles['settings__section']}>{active.content}</div>
           </div>
@@ -127,14 +129,12 @@ export function SettingsPage() {
                     <TriangleAlert size={18} />
                   </div>
                   <div>
-                    <p className={styles['guest-card__title']}>Войдите</p>
-                    <p className={styles['guest-card__sub']}>
-                      Чтобы не потерять данные и иметь доступ с любого устройства
-                    </p>
+                    <p className={styles['guest-card__title']}>{t('settings.guest.title')}</p>
+                    <p className={styles['guest-card__sub']}>{t('settings.guest.desc')}</p>
                   </div>
                 </div>
                 <button className={styles['guest-card__btn']} onClick={() => navigate('/login')}>
-                  Войти
+                  {t('settings.guest.login')}
                 </button>
               </div>
             )}
@@ -149,6 +149,7 @@ export function SettingsPage() {
  * Содержимое раздела «Внешний вид».
  */
 function AppearanceContent() {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { lightVariant, darkVariant, isDark, themeMode } = useAppSelector((s) => s.theme)
   const particlesEnabled = useAppSelector((s) => s.animations.particlesEnabled)
@@ -178,14 +179,13 @@ function AppearanceContent() {
 
   return (
     <>
-      {/* Режим темы */}
-      <p className={styles['settings-block-label']}>Цветовая схема</p>
+      <p className={styles['settings-block-label']}>{t('settings.appearance.colorScheme')}</p>
       <div className={styles['theme-color-mode']}>
         {(
           [
-            { mode: 'light', icon: <Sun size={20} />, label: 'Светлая' },
-            { mode: 'dark', icon: <Moon size={20} />, label: 'Тёмная' },
-            { mode: 'system', icon: getSystemIcon(), label: 'Системная' },
+            { mode: 'light', icon: <Sun size={20} />, label: t('settings.appearance.modes.light') },
+            { mode: 'dark', icon: <Moon size={20} />, label: t('settings.appearance.modes.dark') },
+            { mode: 'system', icon: getSystemIcon(), label: t('settings.appearance.modes.system') },
           ] as { mode: ThemeMode; icon: React.ReactNode; label: string }[]
         ).map(({ mode, icon, label }) => (
           <button
@@ -203,14 +203,11 @@ function AppearanceContent() {
 
       <div className={styles['theme-mode-header']}>
         <span className={styles['theme-mode-label']}>
-          Тема оформления
+          {t('settings.appearance.themeDesign')}
           <span className={styles['info-hint']}>
             <Info size={16} />
             <span className={styles['info-hint__tooltip']}>
-              У каждой темы есть светлая и тёмная версия. В <strong>простом</strong> режиме они
-              переключаются <strong>вместе</strong>. В <strong>расширенном</strong> режиме можно
-              выбрать светлую и тёмную версии из <strong>разных</strong> тем{' '}
-              <strong>независимо</strong>.
+              {t('settings.appearance.themeInfo')}
             </span>
           </span>
         </span>
@@ -220,25 +217,29 @@ function AppearanceContent() {
             onClick={() => handleModeChange('simple')}
           >
             <LayoutGrid size={13} />
-            <span className={styles['theme-mode-btn__text']}>Простой</span>
+            <span className={styles['theme-mode-btn__text']}>
+              {t('settings.appearance.modeToggle.simple')}
+            </span>
           </button>
           <button
             className={`${styles['theme-mode-btn']} ${advancedMode ? styles['theme-mode-btn--active'] : ''}`}
             onClick={() => handleModeChange('advanced')}
           >
             <SlidersHorizontal size={13} />
-            <span className={styles['theme-mode-btn__text']}>Расширенный</span>
+            <span className={styles['theme-mode-btn__text']}>
+              {t('settings.appearance.modeToggle.advanced')}
+            </span>
           </button>
         </div>
       </div>
 
       {!advancedMode ? (
         <div className={styles['theme-grid']}>
-          {LIGHT_THEMES.map((t) => (
+          {LIGHT_THEMES.map((th) => (
             <ThemeCard
-              key={t.variant}
-              theme={t}
-              isActive={t.variant === lightVariant}
+              key={th.variant}
+              theme={th}
+              isActive={th.variant === lightVariant}
               onSelect={handleSimpleSelect}
             />
           ))}
@@ -248,14 +249,14 @@ function AppearanceContent() {
           <div className={styles['theme-section']}>
             <p className={styles['theme-section__label']}>
               <Sun size={13} />
-              Светлая тема
+              {t('settings.appearance.lightTheme')}
             </p>
             <div className={styles['theme-grid']}>
-              {LIGHT_THEMES.map((t) => (
+              {LIGHT_THEMES.map((th) => (
                 <ThemeCard
-                  key={t.variant}
-                  theme={t}
-                  isActive={t.variant === lightVariant}
+                  key={th.variant}
+                  theme={th}
+                  isActive={th.variant === lightVariant}
                   onSelect={(v) => dispatch(setLightVariant(v))}
                 />
               ))}
@@ -265,14 +266,14 @@ function AppearanceContent() {
           <div className={styles['theme-section']}>
             <p className={styles['theme-section__label']}>
               <Moon size={13} />
-              Тёмная тема
+              {t('settings.appearance.darkTheme')}
             </p>
             <div className={styles['theme-grid']}>
-              {DARK_THEMES.map((t) => (
+              {DARK_THEMES.map((th) => (
                 <ThemeCard
-                  key={t.variant}
-                  theme={t}
-                  isActive={t.variant === darkVariant}
+                  key={th.variant}
+                  theme={th}
+                  isActive={th.variant === darkVariant}
                   onSelect={(v) => dispatch(setDarkVariant(v))}
                 />
               ))}
@@ -284,13 +285,21 @@ function AppearanceContent() {
       {hasParticles && (
         <>
           <hr className={styles['settings-divider']} />
-          <p className={styles['settings-block-label']}>Анимация</p>
+          <p className={styles['settings-block-label']}>
+            {t('settings.appearance.animation.title')}
+          </p>
           <button
             className={styles['animation-row']}
             onClick={() => dispatch(toggleParticles())}
-            aria-label={particlesEnabled ? 'Выключить анимацию' : 'Включить анимацию'}
+            aria-label={
+              particlesEnabled
+                ? t('settings.appearance.animation.disable')
+                : t('settings.appearance.animation.enable')
+            }
           >
-            <span className={styles['animation-row__desc']}>Фоновая анимация</span>
+            <span className={styles['animation-row__desc']}>
+              {t('settings.appearance.animation.background')}
+            </span>
             <span
               className={`${styles['animation-toggle']} ${particlesEnabled ? styles['animation-toggle--on'] : ''}`}
             >
