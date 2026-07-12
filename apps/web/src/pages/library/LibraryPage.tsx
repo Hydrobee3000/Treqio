@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogTitle,
@@ -34,7 +35,6 @@ import {
   BookCoverCardSkeleton,
   BookExpandModal,
   BookTableRow,
-  STATUS_LABEL,
 } from '@/entities/book'
 import type {
   BookEntry,
@@ -67,35 +67,14 @@ type CardSize = 'compact' | 'medium' | 'large'
 /** Ключ для сохранения выбранного размера карточек между визитами. */
 const CARD_SIZE_STORAGE_KEY = 'treqio_library_card_size'
 
-/** Варианты размера карточек для выпадающего списка. */
-const CARD_SIZE_OPTIONS: { value: CardSize; label: string }[] = [
-  { value: 'compact', label: 'Компактный' },
-  { value: 'medium', label: 'Средний' },
-  { value: 'large', label: 'Крупный' },
-]
-
 /** Максимальная длина поискового запроса — названия и авторы книг короче. */
 const SEARCH_QUERY_MAX = 60
 
 /** Фильтр по статусу записи — добавляет вариант «Все» к статусам книги. */
 type StatusFilter = BookStatus | 'ALL'
 
-/** Табы фильтра по статусу над сеткой карточек. */
-const STATUS_TABS: { value: StatusFilter; label: string }[] = [
-  { value: 'ALL', label: 'Все' },
-  ...Object.entries(STATUS_LABEL).map(([value, label]) => ({ value: value as BookStatus, label })),
-]
-
 /** Вариант сортировки списка книг. */
 type SortOption = 'recent' | 'title' | 'author' | 'rating'
-
-/** Варианты сортировки для выпадающего списка. */
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'recent', label: 'Сначала новые' },
-  { value: 'title', label: 'По названию' },
-  { value: 'author', label: 'По автору' },
-  { value: 'rating', label: 'По оценке' },
-]
 
 /** Сортирует записи по выбранному критерию — не мутирует исходный массив. */
 function sortEntries(entries: BookEntry[], sortBy: SortOption): BookEntry[] {
@@ -118,6 +97,29 @@ function sortEntries(entries: BookEntry[], sortBy: SortOption): BookEntry[] {
  * Страница библиотеки пользователя.
  */
 export const LibraryPage = () => {
+  const { t } = useTranslation()
+
+  const CARD_SIZE_OPTIONS: { value: CardSize; label: string }[] = [
+    { value: 'compact', label: t('library.size.compact') },
+    { value: 'medium', label: t('library.size.medium') },
+    { value: 'large', label: t('library.size.large') },
+  ]
+
+  const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+    { value: 'recent', label: t('library.sort.recent') },
+    { value: 'title', label: t('library.sort.title') },
+    { value: 'author', label: t('library.sort.author') },
+    { value: 'rating', label: t('library.sort.rating') },
+  ]
+
+  const STATUS_TABS: { value: StatusFilter; label: string }[] = [
+    { value: 'ALL', label: t('library.statusAll') },
+    { value: 'WANT', label: t('book.status.WANT') },
+    { value: 'READING', label: t('book.status.READING') },
+    { value: 'DONE', label: t('book.status.DONE') },
+    { value: 'DROPPED', label: t('book.status.DROPPED') },
+  ]
+
   // Читаем сохранённый стиль синхронно при инициализации — иначе при перезагрузке
   // страница на миг отрисуется с дефолтным стилем и тут же переключится на сохранённый.
   const [cardStyle, setCardStyleState] = useState<CardStyle>(
@@ -232,10 +234,10 @@ export const LibraryPage = () => {
     return (
       <div className={styles.library} style={{ height: '100%' }}>
         <div className={styles['library__header']}>
-          <h1 className={styles['library__title']}>Моя библиотека</h1>
+          <h1 className={styles['library__title']}>{t('library.title')}</h1>
           <button className={styles['library__add-btn']} onClick={handleAddClick}>
             <Plus size={16} />
-            <span className={styles['library__add-btn-label']}>Добавить книгу</span>
+            <span className={styles['library__add-btn-label']}>{t('library.addBook')}</span>
           </button>
         </div>
 
@@ -285,10 +287,10 @@ export const LibraryPage = () => {
     <LayoutGroup id="library">
       <div className={styles.library}>
         <div className={styles['library__header']}>
-          <h1 className={styles['library__title']}>Моя библиотека</h1>
+          <h1 className={styles['library__title']}>{t('library.title')}</h1>
           <button className={styles['library__add-btn']} onClick={handleAddClick}>
             <Plus size={16} />
-            <span className={styles['library__add-btn-label']}>Добавить книгу</span>
+            <span className={styles['library__add-btn-label']}>{t('library.addBook')}</span>
           </button>
         </div>
 
@@ -323,13 +325,13 @@ export const LibraryPage = () => {
               <input
                 className={styles['library__search-input']}
                 type="text"
-                placeholder="Поиск по названию или автору"
+                placeholder={t('library.searchPlaceholder')}
                 value={searchQuery}
                 maxLength={SEARCH_QUERY_MAX}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <Tooltip title="Очистить">
+                <Tooltip title={t('library.clearSearch')}>
                   <button
                     className={styles['library__search-clear']}
                     onClick={() => setSearchQuery('')}
@@ -342,7 +344,7 @@ export const LibraryPage = () => {
             <div className={styles['library__label-row-actions']}>
               {isMobile && (
                 <>
-                  <Tooltip title="Фильтр по статусу">
+                  <Tooltip title={t('library.filterByStatus')}>
                     <button
                       className={`${styles['library__filter-btn']} ${statusFilter !== 'ALL' ? styles['library__filter-btn--active'] : ''}`}
                       onClick={(e) => setFilterAnchor(e.currentTarget)}
@@ -410,7 +412,7 @@ export const LibraryPage = () => {
               </Menu>
               {!isMobile && effectiveCardStyle === 'cover' && (
                 <>
-                  <Tooltip title="Размер карточек">
+                  <Tooltip title={t('library.cardSizeLabel')}>
                     <button
                       className={styles['library__sort-btn']}
                       onClick={(e) => setSizeAnchor(e.currentTarget)}
@@ -444,7 +446,7 @@ export const LibraryPage = () => {
               )}
               {!isMobile && (
                 <div className={styles['library__style-toggle']}>
-                  <Tooltip title="Вид обложками">
+                  <Tooltip title={t('library.viewCovers')}>
                     <button
                       className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
                       onClick={() => setCardStyle('cover')}
@@ -452,7 +454,7 @@ export const LibraryPage = () => {
                       <Image size={22} />
                     </button>
                   </Tooltip>
-                  <Tooltip title="Табличный вид">
+                  <Tooltip title={t('library.viewTable')}>
                     <button
                       className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
                       onClick={() => setCardStyle('table')}
@@ -471,8 +473,8 @@ export const LibraryPage = () => {
             <div className={styles['library__empty-icon']}>
               <BookOpen size={48} />
             </div>
-            <p className={styles['library__empty-text']}>Не удалось загрузить библиотеку</p>
-            <p className={styles['library__empty-sub']}>Попробуй обновить страницу</p>
+            <p className={styles['library__empty-text']}>{t('library.error.loadTitle')}</p>
+            <p className={styles['library__empty-sub']}>{t('library.error.loadSub')}</p>
           </div>
         ) : isEmpty ? (
           <div className={styles['library__empty-lib']}>
@@ -483,20 +485,18 @@ export const LibraryPage = () => {
               <div className={`${styles['library__ghost']} ${styles['library__ghost--tall']}`} />
               <div className={styles['library__ghost']} />
             </div>
-            <h2 className={styles['library__empty-title']}>Здесь пока пусто</h2>
-            <p className={styles['library__empty-desc']}>
-              Добавь первую книгу — и она появится на твоей полке.
-            </p>
+            <h2 className={styles['library__empty-title']}>{t('library.empty.title')}</h2>
+            <p className={styles['library__empty-desc']}>{t('library.empty.desc')}</p>
             <div className={styles['library__empty-actions']}>
               <button className={styles['library__cta-primary']} onClick={handleAddClick}>
                 <Plus size={17} />
-                Добавить книгу
+                {t('library.empty.addBook')}
               </button>
-              <Tooltip title="Скоро">
+              <Tooltip title={t('nav.comingSoon')}>
                 <span>
                   <button className={styles['library__cta-ghost']} disabled>
                     <Upload size={16} />
-                    Импортировать список
+                    {t('library.empty.import')}
                   </button>
                 </span>
               </Tooltip>
@@ -509,17 +509,17 @@ export const LibraryPage = () => {
             </div>
             <p className={styles['library__empty-text']}>
               {normalizedQuery
-                ? `Ничего не найдено по запросу «${searchQuery.trim()}»`
-                : 'Нет книг с этим статусом'}
+                ? t('library.filteredEmpty.noResults', { query: searchQuery.trim() })
+                : t('library.filteredEmpty.noStatus')}
             </p>
           </div>
         ) : effectiveCardStyle === 'table' ? (
           <div className={styles['library__table']}>
             <div className={styles['library__table-head']}>
               <span />
-              <span>Название</span>
-              <span>Статус</span>
-              <span>Оценка</span>
+              <span>{t('library.table.title')}</span>
+              <span>{t('library.table.status')}</span>
+              <span>{t('library.table.rating')}</span>
             </div>
             {filteredEntries.map((entry) => (
               <BookTableRow
@@ -566,11 +566,9 @@ export const LibraryPage = () => {
         />
 
         <Dialog open={guestPromptOpen} onClose={() => setGuestPromptOpen(false)}>
-          <DialogTitle sx={{ pt: 3, px: 3 }}>Необходимо войти</DialogTitle>
+          <DialogTitle sx={{ pt: 3, px: 3 }}>{t('library.loginRequired.title')}</DialogTitle>
           <DialogContent sx={{ px: 3 }}>
-            <DialogContentText>
-              Добавлять книги может только зарегистрированный пользователь.
-            </DialogContentText>
+            <DialogContentText>{t('library.loginRequired.desc')}</DialogContentText>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
             <Button
@@ -578,10 +576,10 @@ export const LibraryPage = () => {
               sx={{ minWidth: 100 }}
               onClick={() => setGuestPromptOpen(false)}
             >
-              Отмена
+              {t('library.loginRequired.cancel')}
             </Button>
             <Button variant="contained" sx={{ minWidth: 100 }} onClick={handleGoToLogin}>
-              Войти
+              {t('library.loginRequired.login')}
             </Button>
           </DialogActions>
         </Dialog>

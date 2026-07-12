@@ -1,4 +1,51 @@
 {
+  "library": {
+    "title": "My Library",
+    "addBook": "Add book",
+    "searchPlaceholder": "Search by title or author",
+    "clearSearch": "Clear",
+    "filterByStatus": "Filter by status",
+    "cardSizeLabel": "Card size",
+    "viewCovers": "Cover view",
+    "viewTable": "Table view",
+    "statusAll": "All",
+    "size": {
+      "compact": "Compact",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "sort": {
+      "recent": "Newest first",
+      "title": "By title",
+      "author": "By author",
+      "rating": "By rating"
+    },
+    "table": {
+      "title": "Title",
+      "status": "Status",
+      "rating": "Rating"
+    },
+    "error": {
+      "loadTitle": "Failed to load library",
+      "loadSub": "Try refreshing the page"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "desc": "Add your first book and it will appear on your shelf.",
+      "addBook": "Add book",
+      "import": "Import list"
+    },
+    "filteredEmpty": {
+      "noResults": "Nothing found for «{{query}}»",
+      "noStatus": "No books with this status"
+    },
+    "loginRequired": {
+      "title": "Sign in required",
+      "desc": "Only registered users can add books.",
+      "cancel": "Cancel",
+      "login": "Sign in"
+    }
+  },
   "profile": {
     "defaultName": "Dreamer",
     "login": "Sign in",
