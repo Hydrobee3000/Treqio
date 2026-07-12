@@ -1,4 +1,49 @@
 {
+  "profile": {
+    "defaultName": "Dreamer",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "tabs": {
+      "history": "Activity",
+      "stats": "Statistics"
+    },
+    "history": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "withStatus": "with status",
+      "on": "to",
+      "empty": {
+        "title": "No activity yet",
+        "desc": "Add books and track progress — events will appear here"
+      },
+      "verbs": {
+        "ADDED_highlight": "added",
+        "ADDED_suffix": "a new book",
+        "READING_prefix": "started",
+        "READING_highlight": "reading",
+        "READING_suffix": "",
+        "DONE_highlight": "finished",
+        "DONE_suffix": "",
+        "DROPPED_highlight": "dropped",
+        "DROPPED_suffix": "",
+        "RATED_highlight": "updated",
+        "RATED_suffix": "the rating of",
+        "STATUS_highlight": "changed",
+        "STATUS_suffix": "the status of"
+      }
+    },
+    "stats": {
+      "empty": "Statistics will appear here later"
+    }
+  },
+  "book": {
+    "status": {
+      "WANT": "Want to read",
+      "READING": "Reading",
+      "DONE": "Read",
+      "DROPPED": "Dropped"
+    }
+  },
   "settings": {
     "title": "Settings",
     "back": "Back",
