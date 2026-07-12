@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { Button, useMediaQuery } from '@mui/material'
 import { Activity, BarChart2, LibraryBig } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { useAppDispatch } from '@/shared/lib/store'
 import { enterAsGuest } from '@/features/auth'
 import styles from './LoginPage.module.scss'
@@ -23,33 +24,24 @@ const CARD_GRADIENTS = [
 ]
 
 /**
- * Фичи, отображаемые в нижней панели лендинга.
+ * Иконки для фич лендинга.
  */
-const FEATURES = [
-  {
-    icon: <LibraryBig size={18} color="#4E7B6A" />,
-    label: 'Прогресс и оценки',
-    mobileLabel: 'Отмечай прогресс, ставь оценки.',
-    text: 'Добавляй книги и игры, отмечай прогресс. Ставь оценки и оставляй заметки.',
-  },
-  {
-    icon: <Activity size={18} color="#4E7B6A" />,
-    label: 'Лента друзей',
-    mobileLabel: 'Следи за активностью друзей.',
-    text: 'Следи за активностью друзей в реальном времени.',
-  },
-  {
-    icon: <BarChart2 size={18} color="#4E7B6A" />,
-    label: 'Статистика и история',
-    mobileLabel: 'Просматривай историю и статистику.',
-    text: 'Просматривай историю активности и личную статистику.',
-  },
+const FEATURE_ICONS = [
+  <LibraryBig size={18} color="#4E7B6A" />,
+  <Activity size={18} color="#4E7B6A" />,
+  <BarChart2 size={18} color="#4E7B6A" />,
 ]
+
+/**
+ * Ключи фич для получения переводов.
+ */
+const FEATURE_KEYS = ['progress', 'feed', 'stats'] as const
 
 /**
  * Landing-страница для неавторизованных пользователей.
  */
 export function LoginPage() {
+  const { t } = useTranslation()
   const isMobile = useMediaQuery('(max-width:599px)')
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -90,9 +82,9 @@ export function LoginPage() {
         <p className={styles['login-page__logo']}>Treqio</p>
 
         <p className={styles['login-page__description']}>
-          Личная библиотека книг и игр.
+          {t('login.description')}
           <br />
-          Отслеживай, ставь оценки, делись с друзьями.
+          {t('login.additionalDescription')}
         </p>
 
         <div className={styles['login-page__buttons']}>
@@ -102,12 +94,12 @@ export function LoginPage() {
             onClick={handleGoogleLogin}
             className={styles['login-page__google-btn']}
           >
-            Войти через Google
+            {t('login.googleLogin')}
           </Button>
 
           <div className={styles['login-page__or-divider']}>
             <span className={styles['login-page__or-line']} />
-            или
+            {t('login.or')}
             <span className={styles['login-page__or-line']} />
           </div>
 
@@ -118,11 +110,11 @@ export function LoginPage() {
               onClick={handleGuestLogin}
               className={styles['login-page__guest-btn']}
             >
-              Продолжить без входа
+              {t('login.guestLogin')}
             </Button>
           </span>
 
-          <p className={styles['login-page__hint']}>Без входа данные хранятся только в браузере</p>
+          <p className={styles['login-page__hint']}>{t('login.guestHint')}</p>
         </div>
 
         <div ref={cardsRef} className={styles['login-page__cards']}>
@@ -154,17 +146,21 @@ export function LoginPage() {
         </div>
 
         <div className={styles['login-page__features']}>
-          {FEATURES.map((feature) => (
-            <div key={feature.label} className={styles['login-page__feature-item']}>
+          {FEATURE_KEYS.map((key, i) => (
+            <div key={key} className={styles['login-page__feature-item']}>
               <div className={styles['login-page__feature-label-row']}>
-                <div className={styles['login-page__feature-icon']}>{feature.icon}</div>
+                <div className={styles['login-page__feature-icon']}>{FEATURE_ICONS[i]}</div>
                 <div className={styles['login-page__feature-label']}>
                   <span className={styles['login-page__feature-label-text']}>
-                    {isMobile ? feature.mobileLabel : feature.label}
+                    {isMobile
+                      ? t(`login.features.${key}.mobileLabel`)
+                      : t(`login.features.${key}.label`)}
                   </span>
                 </div>
               </div>
-              <p className={styles['login-page__feature-description']}>{feature.text}</p>
+              <p className={styles['login-page__feature-description']}>
+                {t(`login.features.${key}.text`)}
+              </p>
             </div>
           ))}
         </div>
