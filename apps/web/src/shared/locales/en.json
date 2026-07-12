@@ -39,6 +39,31 @@
       }
     }
   },
+  "login": {
+    "description": "Personal library for books and games.",
+    "additionalDescription": "Track progress, rate, share with friends.",
+    "googleLogin": "Sign in with Google",
+    "or": "or",
+    "guestLogin": "Continue without signing in",
+    "guestHint": "Without signing in, data is stored in the browser only",
+    "features": {
+      "progress": {
+        "label": "Progress and ratings",
+        "mobileLabel": "Track progress, set ratings.",
+        "text": "Add books and games, track progress. Set ratings and leave notes."
+      },
+      "feed": {
+        "label": "Friends feed",
+        "mobileLabel": "Follow your friends' activity.",
+        "text": "Follow your friends' activity in real time."
+      },
+      "stats": {
+        "label": "Stats and history",
+        "mobileLabel": "View history and statistics.",
+        "text": "View your activity history and personal statistics."
+      }
+    }
+  },
   "nav": {
     "home": "Home",
     "profile": "Profile",
