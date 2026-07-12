@@ -16,7 +16,8 @@ import {
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
-import { STATUS_LABEL, STATUS_TEXT_COLOR, GOLD_COLOR, scoreColor } from '@/entities/book'
+import { useTranslation } from 'react-i18next'
+import { STATUS_TEXT_COLOR, GOLD_COLOR, scoreColor } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
@@ -25,8 +26,6 @@ import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import styles from './ProfilePage.module.scss'
-
-const DEFAULT_DISPLAY_NAME = 'Мечтатель'
 
 /** Вкладка страницы профиля. */
 type ProfileTab = 'history' | 'stats'
@@ -52,40 +51,6 @@ interface HistoryDayGroup {
   label: string
   /** События за этот день, от новых к старым. */
   events: HistoryEvent[]
-}
-
-/** Части фразы-действия — акцентное слово (цвет события) и нейтральные слова-связки (серые). */
-interface HistoryVerbParts {
-  /** Серая часть перед акцентным словом. */
-  prefix?: string
-  /** Акцентное слово/словосочетание — выделяется цветом события. */
-  highlight: string
-  /** Серая часть после акцентного слова. */
-  suffix?: string
-}
-
-/** Глагол действия для текста события, разбитый на акцент и связки. */
-const HISTORY_VERB: Record<HistoryEventType, HistoryVerbParts> = {
-  ADDED: { highlight: 'добавил', suffix: 'новую книгу' },
-  READING: { prefix: 'начал', highlight: 'читать', suffix: 'книгу' },
-  DONE: { highlight: 'прочитал', suffix: 'книгу' },
-  DROPPED: { highlight: 'забросил', suffix: 'книгу' },
-  RATED: { highlight: 'изменил оценку', suffix: 'книги' },
-  STATUS: { highlight: 'изменил статус', suffix: 'книги' },
-}
-
-/** Фраза-действие события — акцентное слово цветом события, связки серым. */
-function VerbPhrase({ type }: { type: HistoryEventType }) {
-  const { prefix, highlight, suffix } = HISTORY_VERB[type]
-  return (
-    <>
-      {prefix && <span className={styles['history__filler']}>{prefix}</span>}
-      {prefix && ' '}
-      <span className={styles[`history__verb--${type.toLowerCase()}`]}>{highlight}</span>
-      {suffix && ' '}
-      {suffix && <span className={styles['history__filler']}>{suffix}</span>}
-    </>
-  )
 }
 
 /** Иконка узла на таймлайне для каждого типа события. */
@@ -114,16 +79,35 @@ function RatingRing({ rating }: { rating: number }) {
   )
 }
 
-/** Пилюля статуса в тексте события — цветной тинт фона, как у статуса на обложке в библиотеке. */
+/** Пилюля статуса в тексте события. */
 function StatusChip({ status }: { status: BookStatus }) {
+  const { t } = useTranslation()
   const color = STATUS_TEXT_COLOR[status]
   return (
     <span
       className={styles['history__status-chip']}
       style={{ color, background: `color-mix(in srgb, ${color} 16%, transparent)` }}
     >
-      {STATUS_LABEL[status]}
+      {t(`book.status.${status}`)}
     </span>
+  )
+}
+
+/** Фраза-действие события — акцентное слово цветом события, связки серым. */
+function VerbPhrase({ type }: { type: HistoryEventType }) {
+  const { t } = useTranslation()
+  const prefix = t(`profile.history.verbs.${type}_prefix`, { defaultValue: '' })
+  const highlight = t(`profile.history.verbs.${type}_highlight`)
+  const suffix = t(`profile.history.verbs.${type}_suffix`, { defaultValue: '' })
+
+  return (
+    <>
+      {prefix && <span className={styles['history__filler']}>{prefix}</span>}
+      {prefix && ' '}
+      <span className={styles[`history__verb--${type.toLowerCase()}`]}>{highlight}</span>
+      {suffix && ' '}
+      {suffix && <span className={styles['history__filler']}>{suffix}</span>}
+    </>
   )
 }
 
@@ -199,22 +183,30 @@ function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
   })
 }
 
-/** Лейбл дня события — «Сегодня», «Вчера» или дата в формате «12 июня». */
-function formatDayLabel(dateStr: string): string {
+/** Лейбл дня события — «Сегодня», «Вчера» или дата в локализованном формате. */
+function formatDayLabel(dateStr: string, lang: string, today: string, yesterday: string): string {
   const date = new Date(dateStr)
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
-  if (date.toDateString() === today.toDateString()) return 'Сегодня'
-  if (date.toDateString() === yesterday.toDateString()) return 'Вчера'
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+  const now = new Date()
+  const prev = new Date(now)
+  prev.setDate(now.getDate() - 1)
+  if (date.toDateString() === now.toDateString()) return today
+  if (date.toDateString() === prev.toDateString()) return yesterday
+  return date.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
+    day: 'numeric',
+    month: 'long',
+  })
 }
 
 /** Группирует отсортированные по дате события по дням. */
-function groupEventsByDay(events: HistoryEvent[]): HistoryDayGroup[] {
+function groupEventsByDay(
+  events: HistoryEvent[],
+  lang: string,
+  today: string,
+  yesterday: string,
+): HistoryDayGroup[] {
   const groups: HistoryDayGroup[] = []
   for (const event of events) {
-    const label = formatDayLabel(event.date)
+    const label = formatDayLabel(event.date, lang, today, yesterday)
     const lastGroup = groups[groups.length - 1]
     if (lastGroup && lastGroup.label === label) lastGroup.events.push(event)
     else groups.push({ label, events: [event] })
@@ -226,6 +218,7 @@ function groupEventsByDay(events: HistoryEvent[]): HistoryDayGroup[] {
  * Страница профиля пользователя.
  */
 export const ProfilePage = () => {
+  const { t, i18n } = useTranslation()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const isGuest = useAppSelector((s) => s.auth.isGuest)
@@ -234,6 +227,8 @@ export const ProfilePage = () => {
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [logoutMutation] = useLogoutMutation()
   const { data: entries } = useGetMyEntriesQuery()
+
+  const defaultName = t('profile.defaultName')
 
   /**
    * Функция выхода из аккаунта.
@@ -280,11 +275,11 @@ export const ProfilePage = () => {
         <div className={styles['tabs']}>
           <button className={`${styles['tab']} ${styles['tab--active']}`}>
             <History size={17} />
-            Активность
+            {t('profile.tabs.history')}
           </button>
           <button className={styles['tab']}>
             <BarChart3 size={17} />
-            Статистика
+            {t('profile.tabs.stats')}
           </button>
         </div>
 
@@ -329,7 +324,7 @@ export const ProfilePage = () => {
    */
   const handleEditName = () => {
     const current = isGuest
-      ? guestDisplayName || DEFAULT_DISPLAY_NAME
+      ? guestDisplayName || defaultName
       : user?.displayName || user?.username || ''
     setNameValue(current)
     setEditingName(true)
@@ -341,7 +336,7 @@ export const ProfilePage = () => {
   const handleSaveName = async () => {
     const trimmed = nameValue.trim()
     const current = isGuest
-      ? guestDisplayName || DEFAULT_DISPLAY_NAME
+      ? guestDisplayName || defaultName
       : user?.displayName || user?.username || ''
     // Если пустое значение или имя не изменилось
     if (!trimmed || trimmed === current) {
@@ -381,15 +376,22 @@ export const ProfilePage = () => {
     })
 
   const displayName = isGuest
-    ? guestDisplayName || DEFAULT_DISPLAY_NAME
-    : user?.displayName || user?.username || DEFAULT_DISPLAY_NAME
+    ? guestDisplayName || defaultName
+    : user?.displayName || user?.username || defaultName
   const avatarLetter = displayName.charAt(0).toUpperCase()
-  const dayGroups = groupEventsByDay(buildHistoryEvents(entries ?? []))
+
+  const todayLabel = t('profile.history.today')
+  const yesterdayLabel = t('profile.history.yesterday')
+  const dayGroups = groupEventsByDay(
+    buildHistoryEvents(entries ?? []),
+    i18n.language,
+    todayLabel,
+    yesterdayLabel,
+  )
 
   return (
     <div className={styles['profile']}>
       <div className={styles['header']}>
-        {/* Аватар + инфо */}
         <div className={styles['header__top']}>
           <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
           <div className={styles['header__info']}>
@@ -448,14 +450,14 @@ export const ProfilePage = () => {
             </div>
             {user?.bio && <p className={styles['header__bio']}>{user.bio}</p>}
           </div>
-          <Tooltip title={isGuest ? 'Войти' : 'Выйти'}>
+          <Tooltip title={isGuest ? t('profile.login') : t('profile.logout')}>
             <button
               className={styles['header__auth-btn']}
               onClick={isGuest ? () => navigate('/login') : handleLogout}
             >
               {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
               <span className={styles['header__auth-btn-label']}>
-                {isGuest ? 'Войти' : 'Выйти'}
+                {isGuest ? t('profile.login') : t('profile.logout')}
               </span>
             </button>
           </Tooltip>
@@ -468,14 +470,14 @@ export const ProfilePage = () => {
           onClick={() => setActiveTab('history')}
         >
           <History size={17} />
-          Активность
+          {t('profile.tabs.history')}
         </button>
         <button
           className={`${styles['tab']} ${activeTab === 'stats' ? styles['tab--active'] : ''}`}
           onClick={() => setActiveTab('stats')}
         >
           <BarChart3 size={17} />
-          Статистика
+          {t('profile.tabs.stats')}
         </button>
       </div>
 
@@ -485,10 +487,8 @@ export const ProfilePage = () => {
             <div className={styles['empty-state__icon']}>
               <History size={48} />
             </div>
-            <p className={styles['empty-state__text']}>Активность пока пуста</p>
-            <p className={styles['empty-state__sub']}>
-              Добавляй книги и отмечай прогресс — здесь появятся события
-            </p>
+            <p className={styles['empty-state__text']}>{t('profile.history.empty.title')}</p>
+            <p className={styles['empty-state__sub']}>{t('profile.history.empty.desc')}</p>
           </div>
         ) : (
           <div className={styles['history']}>
@@ -531,7 +531,7 @@ export const ProfilePage = () => {
                                     <>
                                       {' '}
                                       <span className={styles['history__filler']}>
-                                        со статусом
+                                        {t('profile.history.withStatus')}
                                       </span>{' '}
                                       <StatusChip status={event.entry.status} />
                                     </>
@@ -539,24 +539,28 @@ export const ProfilePage = () => {
                                 {event.type === 'STATUS' && (
                                   <>
                                     {' '}
-                                    <span className={styles['history__filler']}>на</span>{' '}
+                                    <span className={styles['history__filler']}>
+                                      {t('profile.history.on')}
+                                    </span>{' '}
                                     <StatusChip status={event.entry.status} />
                                   </>
                                 )}
                                 {showsRating && rating !== null && (
                                   <>
                                     {' '}
-                                    <span className={styles['history__filler']}>на</span>{' '}
+                                    <span className={styles['history__filler']}>
+                                      {t('profile.history.on')}
+                                    </span>{' '}
                                     <RatingRing rating={rating} />
                                   </>
                                 )}
                               </p>
                             </div>
                             <span className={styles['history__time']}>
-                              {new Date(event.date).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
+                              {new Date(event.date).toLocaleTimeString(
+                                i18n.language === 'ru' ? 'ru-RU' : 'en-US',
+                                { hour: '2-digit', minute: '2-digit' },
+                              )}
                             </span>
                           </div>
                         )
@@ -573,7 +577,7 @@ export const ProfilePage = () => {
           <div className={styles['empty-state__icon']}>
             <BarChart3 size={48} />
           </div>
-          <p className={styles['empty-state__text']}>Статистика появится здесь позже</p>
+          <p className={styles['empty-state__text']}>{t('profile.stats.empty')}</p>
         </div>
       )}
     </div>

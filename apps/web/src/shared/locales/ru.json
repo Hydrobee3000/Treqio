@@ -1,4 +1,49 @@
 {
+  "profile": {
+    "defaultName": "Мечтатель",
+    "login": "Войти",
+    "logout": "Выйти",
+    "tabs": {
+      "history": "Активность",
+      "stats": "Статистика"
+    },
+    "history": {
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "withStatus": "со статусом",
+      "on": "на",
+      "empty": {
+        "title": "Активность пока пуста",
+        "desc": "Добавляй книги и отмечай прогресс — здесь появятся события"
+      },
+      "verbs": {
+        "ADDED_highlight": "добавил",
+        "ADDED_suffix": "новую книгу",
+        "READING_prefix": "начал",
+        "READING_highlight": "читать",
+        "READING_suffix": "книгу",
+        "DONE_highlight": "прочитал",
+        "DONE_suffix": "книгу",
+        "DROPPED_highlight": "забросил",
+        "DROPPED_suffix": "книгу",
+        "RATED_highlight": "изменил оценку",
+        "RATED_suffix": "книги",
+        "STATUS_highlight": "изменил статус",
+        "STATUS_suffix": "книги"
+      }
+    },
+    "stats": {
+      "empty": "Статистика появится здесь позже"
+    }
+  },
+  "book": {
+    "status": {
+      "WANT": "Прочитаю",
+      "READING": "Читаю",
+      "DONE": "Прочитано",
+      "DROPPED": "Брошено"
+    }
+  },
   "settings": {
     "title": "Настройки",
     "back": "Назад",

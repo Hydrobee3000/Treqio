@@ -27,9 +27,9 @@ const CARD_GRADIENTS = [
  * Иконки для фич лендинга.
  */
 const FEATURE_ICONS = [
-  <LibraryBig size={18} color="#4E7B6A" />,
-  <Activity size={18} color="#4E7B6A" />,
-  <BarChart2 size={18} color="#4E7B6A" />,
+  <LibraryBig key="progress" size={18} color="#4E7B6A" />,
+  <Activity key="feed" size={18} color="#4E7B6A" />,
+  <BarChart2 key="stats" size={18} color="#4E7B6A" />,
 ]
 
 /**
