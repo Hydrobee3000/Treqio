@@ -1,4 +1,41 @@
 {
+  "settings": {
+    "title": "Settings",
+    "back": "Back",
+    "guest": {
+      "title": "Sign in",
+      "desc": "To keep your data and access it from any device",
+      "login": "Sign in"
+    },
+    "sections": {
+      "appearance": {
+        "label": "Appearance",
+        "desc": "Theme and colors"
+      }
+    },
+    "appearance": {
+      "colorScheme": "Color scheme",
+      "themeDesign": "Theme",
+      "modes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "modeToggle": {
+        "simple": "Simple",
+        "advanced": "Advanced"
+      },
+      "lightTheme": "Light theme",
+      "darkTheme": "Dark theme",
+      "themeInfo": "Each theme has a light and dark version. In simple mode they switch together. In advanced mode you can pick light and dark versions from different themes independently.",
+      "animation": {
+        "title": "Animation",
+        "background": "Background animation",
+        "enable": "Enable animation",
+        "disable": "Disable animation"
+      }
+    }
+  },
   "home": {
     "title": "What are we doing today?",
     "quickActions": "Quick actions",
