@@ -42,6 +42,8 @@ interface BookEntryViewProps {
   handleClose: () => void
   /** Функция обратного вызова при завершении layout-анимации. */
   onLayoutAnimationComplete: () => void
+  /** Флаг наличия источника layout-анимации (BookCoverCard). */
+  hasLayoutSource?: boolean
 }
 
 /** Форматирует дату для отображения. */
@@ -67,6 +69,7 @@ export const BookEntryView = ({
   onClose,
   handleClose,
   onLayoutAnimationComplete,
+  hasLayoutSource = true,
 }: BookEntryViewProps) => {
   const { t, i18n } = useTranslation()
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
@@ -191,7 +194,7 @@ export const BookEntryView = ({
 
       <motion.div
         className={styles['em__content']}
-        initial={{ opacity: 0 }}
+        initial={{ opacity: hasLayoutSource ? 0 : 1 }}
         animate={{ opacity: 1, transition: { duration: 0.22 } }}
       >
         <div className={styles['em__scroll']}>

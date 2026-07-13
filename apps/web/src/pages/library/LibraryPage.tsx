@@ -552,6 +552,7 @@ export const LibraryPage = () => {
         <BookExpandModal
           entry={expandedEntry}
           creating={addOpen}
+          hasLayoutSource={effectiveCardStyle === 'cover'}
           onClose={() => {
             setExpandedEntryId(null)
             setAddOpen(false)
