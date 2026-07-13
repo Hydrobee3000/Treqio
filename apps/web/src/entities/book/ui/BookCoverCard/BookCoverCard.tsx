@@ -102,7 +102,7 @@ export const BookCoverCard = ({
           <div className={styles['cover-card__title']}>
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
-          <div className={styles['cover-card__author']}>{book.author}</div>
+          <div className={styles['cover-card__author']}>{book.author || '—'}</div>
         </motion.div>
         {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>

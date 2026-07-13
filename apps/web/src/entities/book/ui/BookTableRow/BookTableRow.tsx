@@ -74,7 +74,7 @@ export const BookTableRow = ({
 
       <div className={styles['table-row__info']} onClick={onEdit}>
         <div className={styles['table-row__title']}>{book.title}</div>
-        <div className={styles['table-row__author']}>{book.author}</div>
+        <div className={styles['table-row__author']}>{book.author || '—'}</div>
       </div>
 
       <span

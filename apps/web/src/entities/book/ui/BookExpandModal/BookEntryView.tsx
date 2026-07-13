@@ -46,6 +46,9 @@ interface BookEntryViewProps {
   hasLayoutSource?: boolean
 }
 
+// Legacy-строки «автор неизвестен», которые раньше сохранялись в БД вместо пустого поля.
+const LEGACY_UNKNOWN_AUTHORS = new Set(['Автор неизвестен', 'Unknown author'])
+
 /** Форматирует дату для отображения. */
 function formatDate(iso: string, lang: string): string {
   return new Date(iso).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
@@ -97,7 +100,7 @@ export const BookEntryView = ({
     resolver: zodResolver(editBookSchema),
     defaultValues: {
       title: entry.book.title,
-      author: entry.book.author,
+      author: LEGACY_UNKNOWN_AUTHORS.has(entry.book.author) ? '' : entry.book.author,
       pageCount: entry.book.pageCount ? String(entry.book.pageCount) : '',
       description: entry.book.description ?? '',
       notes: entry.notes ?? '',
@@ -215,7 +218,11 @@ export const BookEntryView = ({
 
                 <div className={styles['em__field']}>
                   <label className={styles['em__field-label']}>{t('book.fields.author')}</label>
-                  <input className={styles['em__input']} {...register('author')} />
+                  <input
+                    className={styles['em__input']}
+                    placeholder={t('book.modal.authorPlaceholder')}
+                    {...register('author')}
+                  />
                 </div>
 
                 {/* Статус — всегда немедленный, не через форму */}
@@ -331,7 +338,7 @@ export const BookEntryView = ({
               <>
                 <div className={styles['em__head']}>
                   <h2 className={styles['em__book-title']}>{entry.book.title}</h2>
-                  <p className={styles['em__book-author']}>{entry.book.author}</p>
+                  <p className={styles['em__book-author']}>{entry.book.author || '—'}</p>
                 </div>
 
                 <div className={styles['em__status-wrap']}>
