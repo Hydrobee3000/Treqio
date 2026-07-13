@@ -61,7 +61,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     const hasPageCountVal = !!(values.pageCount && Number(values.pageCount) > 0)
     const payload: CreateBookPayload = {
       title: values.title.trim(),
-      author: values.author.trim() || t('book.modal.authorUnknown'),
+      author: values.author.trim(),
       ...(hasPageCountVal && { pageCount: Number(values.pageCount) }),
       ...(values.description.trim() && { description: values.description.trim() }),
       status: values.status,
