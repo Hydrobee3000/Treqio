@@ -14,6 +14,8 @@ interface UseBookExpandModalParams {
   onClose: () => void
   /** Функция создания новой книги. */
   onCreate?: ((payload: CreateBookPayload) => Promise<void>) | undefined
+  /** Есть ли в DOM источник layout-анимации (BookCoverCard с matching layoutId). */
+  hasLayoutSource?: boolean
 }
 
 /**
@@ -25,15 +27,17 @@ export const useBookExpandModal = ({
   creating,
   onClose,
   onCreate,
+  hasLayoutSource = true,
 }: UseBookExpandModalParams) => {
   // Предотвращает закрытие до завершения opening layout-анимации (shared element).
+  // Если источника анимации нет (table view) — считаем сразу завершённой.
   const openAnimationCompleteRef = useRef(false)
   const pendingCloseRef = useRef(false)
 
   useEffect(() => {
-    openAnimationCompleteRef.current = false
+    openAnimationCompleteRef.current = !hasLayoutSource
     pendingCloseRef.current = false
-  }, [entry?.id])
+  }, [entry?.id, hasLayoutSource])
 
   /** Закрывает модалку. Если layout-анимация открытия ещё идёт — откладывает закрытие. */
   const handleClose = () => {
