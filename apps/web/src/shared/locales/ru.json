@@ -89,6 +89,43 @@
       "READING": "Читаю",
       "DONE": "Прочитано",
       "DROPPED": "Брошено"
+    },
+    "fields": {
+      "title": "Название",
+      "titleRequired": "Название *",
+      "author": "Автор",
+      "status": "Статус",
+      "rating": "Оценка",
+      "pages": "Страниц",
+      "pagesRead": "Прочитано страниц",
+      "progress": "Прогресс",
+      "description": "Описание",
+      "notes": "Заметки"
+    },
+    "modal": {
+      "creating": "Создание",
+      "editing": "Редактирование",
+      "create": "Создать",
+      "creatingAction": "Создание…",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "saving": "Сохранение…",
+      "delete": "Удалить",
+      "deleting": "Удаление…",
+      "edit": "Редактировать",
+      "titlePlaceholder": "Введите название",
+      "authorPlaceholder": "Автор книги",
+      "authorUnknown": "Автор неизвестен",
+      "pagesSuffix": "стр.",
+      "readUpTo": "Дочитано до",
+      "noDescription": "Нет описания",
+      "noNotes": "Нет заметок",
+      "addedOn": "Добавлено {{date}}",
+      "deleteTitle": "Удалить запись?",
+      "deleteDesc": "Книга «{{title}}» будет удалена из библиотеки. Это действие нельзя отменить.",
+      "saveError": "Не удалось сохранить",
+      "deleteError": "Не удалось удалить. Попробуй ещё раз.",
+      "createError": "Не удалось добавить книгу. Попробуй ещё раз."
     }
   },
   "settings": {

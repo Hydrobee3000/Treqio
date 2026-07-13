@@ -11,13 +11,8 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material'
-import {
-  GOLD_COLOR,
-  STATUS_LABEL,
-  STATUS_OPTIONS,
-  STATUS_TEXT_COLOR,
-  scoreColor,
-} from '../../model/book.types'
+import { useTranslation } from 'react-i18next'
+import { GOLD_COLOR, STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import type { BookFieldUpdate, EntryFieldUpdate } from './BookExpandModal.types'
@@ -50,8 +45,8 @@ interface BookEntryViewProps {
 }
 
 /** Форматирует дату для отображения. */
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('ru-RU', {
+function formatDate(iso: string, lang: string): string {
+  return new Date(iso).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -73,6 +68,7 @@ export const BookEntryView = ({
   handleClose,
   onLayoutAnimationComplete,
 }: BookEntryViewProps) => {
+  const { t, i18n } = useTranslation()
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -129,7 +125,7 @@ export const BookEntryView = ({
 
       setIsEditing(false)
     } catch {
-      setSaveError('Не удалось сохранить')
+      setSaveError(t('book.modal.saveError'))
     }
   })
 
@@ -157,7 +153,7 @@ export const BookEntryView = ({
       setDeleteDialogOpen(false)
       onClose()
     } catch {
-      setDeleteError('Не удалось удалить. Попробуй ещё раз.')
+      setDeleteError(t('book.modal.deleteError'))
       setIsDeleting(false)
     }
   }
@@ -184,7 +180,7 @@ export const BookEntryView = ({
           <X size={15} />
         </button>
         {isEditing ? (
-          <span className={styles['em__mode-label']}>Редактирование</span>
+          <span className={styles['em__mode-label']}>{t('book.modal.editing')}</span>
         ) : (
           entry.status === 'DONE' &&
           entry.rating !== null && (
@@ -204,7 +200,7 @@ export const BookEntryView = ({
               /* ── Режим редактирования ── */
               <>
                 <div className={styles['em__field']}>
-                  <label className={styles['em__field-label']}>Название</label>
+                  <label className={styles['em__field-label']}>{t('book.fields.title')}</label>
                   <input
                     className={styles['em__input']}
                     style={{ fontSize: 16, fontWeight: 700 }}
@@ -215,7 +211,7 @@ export const BookEntryView = ({
                 </div>
 
                 <div className={styles['em__field']}>
-                  <label className={styles['em__field-label']}>Автор</label>
+                  <label className={styles['em__field-label']}>{t('book.fields.author')}</label>
                   <input className={styles['em__input']} {...register('author')} />
                 </div>
 
@@ -231,7 +227,7 @@ export const BookEntryView = ({
                     onClick={() => setStatusOpen((v) => !v)}
                   >
                     <Check size={16} strokeWidth={2.5} />
-                    <span>{STATUS_LABEL[displayStatus]}</span>
+                    <span>{t(`book.status.${displayStatus}`)}</span>
                     <span className={styles['em__status-btn-dots']}>•••</span>
                   </button>
                   {statusOpen && (
@@ -251,7 +247,7 @@ export const BookEntryView = ({
                             className={styles['em__status-dot']}
                             style={{ background: STATUS_TEXT_COLOR[opt.value] }}
                           />
-                          {opt.label}
+                          {t(`book.status.${opt.value}`)}
                           {opt.value === displayStatus && (
                             <Check size={13} className={styles['em__status-check']} />
                           )}
@@ -264,7 +260,7 @@ export const BookEntryView = ({
                 {displayStatus === 'DONE' && (
                   <div className={styles['em__field']}>
                     <label className={styles['em__field-label']}>
-                      Оценка
+                      {t('book.fields.rating')}
                       <span className={styles['em__field-label-val']}>{ratingVal} / 10</span>
                     </label>
                     <input
@@ -282,7 +278,7 @@ export const BookEntryView = ({
                   entry.book.pageCount && (
                     <div className={styles['em__field']}>
                       <label className={styles['em__field-label']}>
-                        Прочитано страниц
+                        {t('book.fields.pagesRead')}
                         <span className={styles['em__field-label-val']}>
                           {progressVal} / {entry.book.pageCount}
                         </span>
@@ -299,7 +295,7 @@ export const BookEntryView = ({
                   )}
 
                 <div className={styles['em__field']}>
-                  <label className={styles['em__field-label']}>Страниц</label>
+                  <label className={styles['em__field-label']}>{t('book.fields.pages')}</label>
                   <input
                     className={styles['em__input']}
                     style={{ width: 120 }}
@@ -310,7 +306,9 @@ export const BookEntryView = ({
                 </div>
 
                 <div className={styles['em__field']}>
-                  <label className={styles['em__field-label']}>Описание</label>
+                  <label className={styles['em__field-label']}>
+                    {t('book.fields.description')}
+                  </label>
                   <textarea
                     className={styles['em__textarea']}
                     rows={3}
@@ -319,7 +317,7 @@ export const BookEntryView = ({
                 </div>
 
                 <div className={styles['em__field']}>
-                  <label className={styles['em__field-label']}>Заметки</label>
+                  <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
                   <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
                 </div>
 
@@ -344,7 +342,7 @@ export const BookEntryView = ({
                     onClick={() => setStatusOpen((v) => !v)}
                   >
                     <Check size={16} strokeWidth={2.5} />
-                    <span>{STATUS_LABEL[displayStatus]}</span>
+                    <span>{t(`book.status.${displayStatus}`)}</span>
                     <span className={styles['em__status-btn-dots']}>•••</span>
                   </button>
                   {statusOpen && (
@@ -364,7 +362,7 @@ export const BookEntryView = ({
                             className={styles['em__status-dot']}
                             style={{ background: STATUS_TEXT_COLOR[opt.value] }}
                           />
-                          {opt.label}
+                          {t(`book.status.${opt.value}`)}
                           {opt.value === displayStatus && (
                             <Check size={13} className={styles['em__status-check']} />
                           )}
@@ -376,7 +374,7 @@ export const BookEntryView = ({
 
                 {entry.status === 'DONE' && (
                   <div className={styles['em__field']}>
-                    <label className={styles['em__field-label']}>Оценка</label>
+                    <label className={styles['em__field-label']}>{t('book.fields.rating')}</label>
                     <div className={styles['em__meta-value']} style={{ padding: '2px 0' }}>
                       {entry.rating !== null ? (
                         <span
@@ -403,12 +401,14 @@ export const BookEntryView = ({
                 {(entry.status === 'READING' || entry.status === 'DROPPED') &&
                   entry.book.pageCount && (
                     <div className={styles['em__field']}>
-                      <label className={styles['em__field-label']}>Прочитано страниц</label>
+                      <label className={styles['em__field-label']}>
+                        {t('book.fields.pagesRead')}
+                      </label>
                       <div className={styles['em__progress']}>
                         {progressPct !== null && (
                           <>
                             <div className={styles['em__progress-row']}>
-                              <span>Прогресс</span>
+                              <span>{t('book.fields.progress')}</span>
                               <span className={styles['em__progress-pct']}>{progressPct}%</span>
                             </div>
                             <div className={styles['em__progress-track']}>
@@ -420,7 +420,8 @@ export const BookEntryView = ({
                           </>
                         )}
                         <span className={styles['em__progress-pages']}>
-                          {entry.progress ?? 0} / {entry.book.pageCount} стр.
+                          {entry.progress ?? 0} / {entry.book.pageCount}{' '}
+                          {t('book.modal.pagesSuffix')}
                         </span>
                       </div>
                     </div>
@@ -428,37 +429,41 @@ export const BookEntryView = ({
 
                 {entry.status === 'DROPPED' && entry.progress !== null && !entry.book.pageCount && (
                   <div className={styles['em__meta']}>
-                    <span className={styles['em__meta-label']}>Дочитано до</span>
-                    <span className={styles['em__meta-value']}>{entry.progress} стр.</span>
+                    <span className={styles['em__meta-label']}>{t('book.modal.readUpTo')}</span>
+                    <span className={styles['em__meta-value']}>
+                      {entry.progress} {t('book.modal.pagesSuffix')}
+                    </span>
                   </div>
                 )}
 
                 <div className={styles['em__divider']} />
 
                 <div className={styles['em__meta']}>
-                  <span className={styles['em__meta-label']}>Страниц</span>
+                  <span className={styles['em__meta-label']}>{t('book.fields.pages')}</span>
                   <span className={styles['em__meta-value']}>{entry.book.pageCount ?? '—'}</span>
                 </div>
 
                 <div className={styles['em__divider']} />
 
                 <div>
-                  <span className={styles['em__section-label']}>Описание</span>
+                  <span className={styles['em__section-label']}>
+                    {t('book.fields.description')}
+                  </span>
                   {entry.book.description ? (
                     <p className={styles['em__description']}>{entry.book.description}</p>
                   ) : (
-                    <p className={styles['em__placeholder']}>Нет описания</p>
+                    <p className={styles['em__placeholder']}>{t('book.modal.noDescription')}</p>
                   )}
                 </div>
 
                 <div className={styles['em__divider']} />
 
                 <div>
-                  <span className={styles['em__section-label']}>Заметки</span>
+                  <span className={styles['em__section-label']}>{t('book.fields.notes')}</span>
                   {entry.notes ? (
                     <p className={styles['em__notes-text']}>{entry.notes}</p>
                   ) : (
-                    <p className={styles['em__placeholder']}>Нет заметок</p>
+                    <p className={styles['em__placeholder']}>{t('book.modal.noNotes')}</p>
                   )}
                 </div>
               </>
@@ -474,14 +479,14 @@ export const BookEntryView = ({
               onClick={handleCancelEdit}
               disabled={isSubmitting}
             >
-              Отмена
+              {t('book.modal.cancel')}
             </button>
             <button
               className={`${styles['em__btn']} ${styles['em__btn--save']}`}
               onClick={() => void onEditSubmit()}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Сохранение…' : 'Сохранить'}
+              {isSubmitting ? t('book.modal.saving') : t('book.modal.save')}
             </button>
           </div>
         ) : (
@@ -494,26 +499,28 @@ export const BookEntryView = ({
                 onClick={handleDeleteClick}
               >
                 <Trash2 size={isMobile ? 18 : 14} />
-                {!isMobile && 'Удалить'}
+                {!isMobile && t('book.modal.delete')}
               </button>
-              <span className={styles['em__date']}>Добавлено {formatDate(entry.createdAt)}</span>
+              <span className={styles['em__date']}>
+                {t('book.modal.addedOn', { date: formatDate(entry.createdAt, i18n.language) })}
+              </span>
             </div>
             <button
               className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
               onClick={() => setIsEditing(true)}
             >
               <Pencil size={isMobile ? 18 : 14} />
-              {!isMobile && 'Редактировать'}
+              {!isMobile && t('book.modal.edit')}
             </button>
           </div>
         )}
       </motion.div>
 
       <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-        <DialogTitle>Удалить запись?</DialogTitle>
+        <DialogTitle>{t('book.modal.deleteTitle')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Книга «{entry.book.title}» будет удалена из библиотеки. Это действие нельзя отменить.
+            {t('book.modal.deleteDesc', { title: entry.book.title })}
           </DialogContentText>
           {deleteError && (
             <DialogContentText color="error" sx={{ mt: 1 }}>
@@ -523,7 +530,7 @@ export const BookEntryView = ({
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={handleDeleteDialogClose} disabled={isDeleting}>
-            Отмена
+            {t('book.modal.cancel')}
           </Button>
           <Button
             variant="contained"
@@ -531,7 +538,7 @@ export const BookEntryView = ({
             onClick={() => void handleDeleteConfirmed()}
             disabled={isDeleting}
           >
-            {isDeleting ? 'Удаление…' : 'Удалить'}
+            {isDeleting ? t('book.modal.deleting') : t('book.modal.delete')}
           </Button>
         </DialogActions>
       </Dialog>

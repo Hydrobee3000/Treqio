@@ -89,6 +89,43 @@
       "READING": "Reading",
       "DONE": "Read",
       "DROPPED": "Dropped"
+    },
+    "fields": {
+      "title": "Title",
+      "titleRequired": "Title *",
+      "author": "Author",
+      "status": "Status",
+      "rating": "Rating",
+      "pages": "Pages",
+      "pagesRead": "Pages read",
+      "progress": "Progress",
+      "description": "Description",
+      "notes": "Notes"
+    },
+    "modal": {
+      "creating": "Creating",
+      "editing": "Editing",
+      "create": "Create",
+      "creatingAction": "Creating…",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving…",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "edit": "Edit",
+      "titlePlaceholder": "Enter title",
+      "authorPlaceholder": "Book author",
+      "authorUnknown": "Unknown author",
+      "pagesSuffix": "pp.",
+      "readUpTo": "Read up to",
+      "noDescription": "No description",
+      "noNotes": "No notes",
+      "addedOn": "Added {{date}}",
+      "deleteTitle": "Delete entry?",
+      "deleteDesc": "The book «{{title}}» will be removed from your library. This action cannot be undone.",
+      "saveError": "Failed to save",
+      "deleteError": "Failed to delete. Please try again.",
+      "createError": "Failed to add book. Please try again."
     }
   },
   "settings": {

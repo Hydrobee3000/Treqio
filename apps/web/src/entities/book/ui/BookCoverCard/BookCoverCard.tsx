@@ -3,7 +3,8 @@ import type { CSSProperties, MouseEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Menu, MenuItem } from '@mui/material'
 import { Check } from 'lucide-react'
-import { STATUS_DOT_COLOR, STATUS_LABEL, STATUS_OPTIONS } from '../../model/book.types'
+import { useTranslation } from 'react-i18next'
+import { STATUS_DOT_COLOR, STATUS_OPTIONS } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { RatingPicker } from '../RatingPicker/RatingPicker'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
@@ -49,6 +50,7 @@ export const BookCoverCard = ({
   onStatusChange,
   onRatingChange,
 }: BookCoverCardProps) => {
+  const { t } = useTranslation()
   const { book, status, rating, progress } = entry
   // anchorEl держим в state, обновляемом через callback ref, а не как
   // ссылку, замороженную в момент клика: если фоновая перезагрузка списка
@@ -114,7 +116,7 @@ export const BookCoverCard = ({
               onClick={handleStatusClick}
             >
               <span className={styles['cover-card__status-dot']} />
-              {STATUS_LABEL[status]}
+              {t(`book.status.${status}`)}
             </span>
           )}
           {progressPct !== null && (
@@ -149,7 +151,9 @@ export const BookCoverCard = ({
               className={styles['cover-card__menu-dot']}
               style={{ background: STATUS_DOT_COLOR[option.value] }}
             />
-            <span className={styles['cover-card__menu-label']}>{option.label}</span>
+            <span className={styles['cover-card__menu-label']}>
+              {t(`book.status.${option.value}`)}
+            </span>
             {option.value === status && <Check size={14} />}
           </MenuItem>
         ))}
