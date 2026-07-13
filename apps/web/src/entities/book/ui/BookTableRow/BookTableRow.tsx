@@ -2,13 +2,8 @@ import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Box, Menu, MenuItem, Rating } from '@mui/material'
 import { Check, Star } from 'lucide-react'
-import {
-  STATUS_DOT_COLOR,
-  STATUS_LABEL,
-  STATUS_OPTIONS,
-  GOLD_COLOR,
-  scoreColor,
-} from '../../model/book.types'
+import { useTranslation } from 'react-i18next'
+import { STATUS_DOT_COLOR, STATUS_OPTIONS, GOLD_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { RatingPicker } from '../RatingPicker/RatingPicker'
 import styles from './BookTableRow.module.scss'
@@ -45,6 +40,7 @@ export const BookTableRow = ({
   onStatusChange,
   onRatingChange,
 }: BookTableRowProps) => {
+  const { t } = useTranslation()
   const { book, status, rating } = entry
   // anchorEl держим в state, обновляемом через callback ref, а не как
   // ссылку, замороженную в момент клика: если фоновая перезагрузка списка
@@ -87,7 +83,7 @@ export const BookTableRow = ({
         onClick={handleStatusClick}
       >
         <span className={styles['table-row__status-dot']} />
-        {STATUS_LABEL[status]}
+        {t(`book.status.${status}`)}
       </span>
 
       <div
@@ -145,7 +141,7 @@ export const BookTableRow = ({
                 bgcolor: STATUS_DOT_COLOR[option.value],
               }}
             />
-            <Box sx={{ flex: 1, fontSize: 13 }}>{option.label}</Box>
+            <Box sx={{ flex: 1, fontSize: 13 }}>{t(`book.status.${option.value}`)}</Box>
             {option.value === status && <Check size={14} />}
           </MenuItem>
         ))}

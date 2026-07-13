@@ -3,6 +3,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { STATUS_OPTIONS, STATUS_TEXT_COLOR } from '../../model/book.types'
 import type { CreateBookPayload } from './BookExpandModal.types'
 import { createBookSchema } from './bookFormSchemas'
@@ -25,6 +26,7 @@ interface BookCreateFormProps {
  * Модальная форма создания новой книги.
  */
 export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormProps) => {
+  const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
@@ -59,7 +61,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     const hasPageCountVal = !!(values.pageCount && Number(values.pageCount) > 0)
     const payload: CreateBookPayload = {
       title: values.title.trim(),
-      author: values.author.trim() || 'Автор неизвестен',
+      author: values.author.trim() || t('book.modal.authorUnknown'),
       ...(hasPageCountVal && { pageCount: Number(values.pageCount) }),
       ...(values.description.trim() && { description: values.description.trim() }),
       status: values.status,
@@ -74,7 +76,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
       await onCreate(payload)
       setSubmitted(true)
     } catch {
-      setError('Не удалось добавить книгу. Попробуй ещё раз.')
+      setError(t('book.modal.createError'))
     }
   })
 
@@ -93,34 +95,34 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
         <button className={styles['em__close']} onClick={onClose}>
           <X size={15} />
         </button>
-        <span className={styles['em__mode-label']}>Создание</span>
+        <span className={styles['em__mode-label']}>{t('book.modal.creating')}</span>
       </div>
 
       <div className={styles['em__content']}>
         <div className={styles['em__scroll']}>
           <div className={styles['em__body']}>
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Название *</label>
+              <label className={styles['em__field-label']}>{t('book.fields.titleRequired')}</label>
               <input
                 className={styles['em__input']}
                 autoFocus
-                placeholder="Введите название"
+                placeholder={t('book.modal.titlePlaceholder')}
                 {...register('title')}
               />
               {errors.title && <p className={styles['em__error']}>{errors.title.message}</p>}
             </div>
 
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Автор</label>
+              <label className={styles['em__field-label']}>{t('book.fields.author')}</label>
               <input
                 className={styles['em__input']}
-                placeholder="Автор книги"
+                placeholder={t('book.modal.authorPlaceholder')}
                 {...register('author')}
               />
             </div>
 
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Статус</label>
+              <label className={styles['em__field-label']}>{t('book.fields.status')}</label>
               <div className={styles['em__chips']}>
                 {STATUS_OPTIONS.map((opt) => {
                   const active = statusVal === opt.value
@@ -140,7 +142,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
                       }
                       onClick={() => setValue('status', opt.value)}
                     >
-                      {opt.label}
+                      {t(`book.status.${opt.value}`)}
                     </button>
                   )
                 })}
@@ -148,7 +150,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
             </div>
 
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Страниц</label>
+              <label className={styles['em__field-label']}>{t('book.fields.pages')}</label>
               <input
                 className={styles['em__input']}
                 style={{ width: 120 }}
@@ -162,7 +164,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
             {statusVal === 'DONE' && (
               <div className={styles['em__field']}>
                 <label className={styles['em__field-label']}>
-                  Оценка
+                  {t('book.fields.rating')}
                   <span className={styles['em__field-label-val']}>{ratingVal} / 10</span>
                 </label>
                 <input
@@ -179,7 +181,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
             {showProgress && (
               <div className={styles['em__field']}>
                 <label className={styles['em__field-label']}>
-                  Прочитано страниц
+                  {t('book.fields.pagesRead')}
                   <span className={styles['em__field-label-val']}>
                     {progressVal} / {pageCountStr}
                   </span>
@@ -196,12 +198,12 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
             )}
 
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Описание</label>
+              <label className={styles['em__field-label']}>{t('book.fields.description')}</label>
               <textarea className={styles['em__textarea']} rows={3} {...register('description')} />
             </div>
 
             <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>Заметки</label>
+              <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
               <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
             </div>
 
@@ -215,14 +217,14 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
             onClick={onClose}
             disabled={isSubmitting || submitted}
           >
-            Отмена
+            {t('book.modal.cancel')}
           </button>
           <button
             className={`${styles['em__btn']} ${styles['em__btn--save']}`}
             onClick={() => void onSubmit()}
             disabled={isSubmitting || submitted || !titleVal.trim()}
           >
-            {isSubmitting ? 'Создание…' : 'Создать'}
+            {isSubmitting ? t('book.modal.creatingAction') : t('book.modal.create')}
           </button>
         </div>
       </div>
