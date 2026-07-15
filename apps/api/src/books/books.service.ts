@@ -46,7 +46,7 @@ export class BooksService {
    * Создание новой книги.
    */
   createBook(dto: CreateBookDto) {
-    return this.prisma.book.create({ data: dto })
+    return this.prisma.book.create({ data: { ...dto, author: dto.author ?? '' } })
   }
 
   /**
