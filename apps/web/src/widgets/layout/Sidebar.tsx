@@ -55,7 +55,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed, disabled }: NavItemProps) =
     )
   }
 
-  return (
+  const link = (
     <Link
       to={to}
       className={`${styles['nav-item']} ${isActive ? styles['nav-item--active'] : ''} ${collapsed ? styles['nav-item--collapsed'] : ''}`}
@@ -63,6 +63,14 @@ const NavItem = ({ to, icon: Icon, label, collapsed, disabled }: NavItemProps) =
       <Icon style={{ fontSize: 22, flexShrink: 0 }} />
       {!collapsed && <span className={styles['nav-item__label']}>{label}</span>}
     </Link>
+  )
+
+  return collapsed ? (
+    <Tooltip title={label} placement="right">
+      {link}
+    </Tooltip>
+  ) : (
+    link
   )
 }
 
@@ -126,15 +134,21 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
       </nav>
 
       <div className={styles['sidebar__footer']}>
-        <Tooltip title={themeLabel} placement="right">
-          <button
-            className={`${styles['theme-toggle']} ${collapsed ? styles['theme-toggle--collapsed'] : ''}`}
-            onClick={() => dispatch(toggleDark())}
-          >
+        {collapsed ? (
+          <Tooltip title={themeLabel} placement="right">
+            <button
+              className={`${styles['theme-toggle']} ${styles['theme-toggle--collapsed']}`}
+              onClick={() => dispatch(toggleDark())}
+            >
+              {isDark ? <Sun size={22} /> : <Moon size={22} />}
+            </button>
+          </Tooltip>
+        ) : (
+          <button className={styles['theme-toggle']} onClick={() => dispatch(toggleDark())}>
             {isDark ? <Sun size={22} /> : <Moon size={22} />}
-            {!collapsed && <span className={styles['theme-toggle__label']}>{themeLabel}</span>}
+            <span className={styles['theme-toggle__label']}>{themeLabel}</span>
           </button>
-        </Tooltip>
+        )}
 
         {footerItems.map((item) => (
           <NavItem key={item.to} {...item} collapsed={collapsed} />
