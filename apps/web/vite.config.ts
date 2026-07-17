@@ -5,8 +5,15 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+// Версия приложения — единая на весь монорепо, хранится в корневом package.json.
+import pkg from '../../package.json'
 
 export default defineConfig({
+  define: {
+    // Заменяется на строку-литерал при сборке (build-time константа).
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
+
   plugins: [
     // Добавляет поддержку JSX и Fast Refresh (горячая перезагрузка
     // компонентов без потери состояния при изменении кода).
