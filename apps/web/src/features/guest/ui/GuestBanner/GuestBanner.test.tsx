@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router'
@@ -9,6 +9,8 @@ import { themeReducer } from '@/features/theme'
 import { layoutReducer } from '@/features/layout'
 import { animationsReducer } from '@/features/animations'
 import { baseApi } from '@/shared/api/baseApi'
+import { I18nProvider } from '@/app/providers/I18nProvider'
+import i18n from '@/shared/lib/i18n'
 import { GuestBanner } from './GuestBanner'
 
 /**
@@ -42,14 +44,20 @@ const makeStore = (isGuest: boolean) =>
  */
 const renderBanner = (isGuest: boolean) =>
   render(
-    <Provider store={makeStore(isGuest)}>
-      <MemoryRouter>
-        <GuestBanner />
-      </MemoryRouter>
-    </Provider>,
+    <I18nProvider>
+      <Provider store={makeStore(isGuest)}>
+        <MemoryRouter>
+          <GuestBanner />
+        </MemoryRouter>
+      </Provider>
+    </I18nProvider>,
   )
 
 describe('GuestBanner', () => {
+  beforeAll(async () => {
+    await i18n.changeLanguage('ru')
+  })
+
   // GuestBanner читает localStorage при монтировании — очищаем между тестами
   beforeEach(() => {
     localStorage.clear()

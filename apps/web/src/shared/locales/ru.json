@@ -241,5 +241,10 @@
     "comingSoon": "Скоро",
     "lightTheme": "Светлая тема",
     "darkTheme": "Тёмная тема"
+  },
+  "guestBanner": {
+    "message": "Данные хранятся только в браузере",
+    "login": "Войти",
+    "close": "Закрыть"
   }
 }

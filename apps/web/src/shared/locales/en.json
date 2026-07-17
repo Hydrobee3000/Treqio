@@ -241,5 +241,10 @@
     "comingSoon": "Coming soon",
     "lightTheme": "Light theme",
     "darkTheme": "Dark theme"
+  },
+  "guestBanner": {
+    "message": "Data is stored in the browser only",
+    "login": "Sign in",
+    "close": "Close"
   }
 }
