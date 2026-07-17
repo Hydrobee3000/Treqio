@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch } from '@/shared/lib/store'
 import { enterAsGuest } from '@/features/auth'
+import { baseApi } from '@/shared/api/baseApi'
 import styles from './LoginPage.module.scss'
 
 const API_URL = import.meta.env['VITE_API_URL'] as string
@@ -53,6 +54,7 @@ export function LoginPage() {
   /** Вход в гостевой режим без регистрации. */
   const handleGuestLogin = () => {
     dispatch(enterAsGuest())
+    dispatch(baseApi.util.resetApiState())
     navigate('/')
   }
 

@@ -24,6 +24,7 @@ import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
 import { setGuestDisplayName } from '@/features/guest'
 import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
+import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import styles from './ProfilePage.module.scss'
 
@@ -236,6 +237,7 @@ export const ProfilePage = () => {
   const handleLogout = async () => {
     await logoutMutation()
     dispatch(logout())
+    dispatch(baseApi.util.resetApiState())
     navigate('/login')
   }
   const [activeTab, setActiveTab] = useState<ProfileTab>('history')
