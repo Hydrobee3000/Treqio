@@ -472,6 +472,12 @@ $breakpoint-small: 600px;
   gap: 14px;
   height: 140px;
   margin-bottom: 28px;
+
+  @media (max-width: $breakpoint-small) {
+    gap: 8px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
 }
 
 .library__ghost {
@@ -483,6 +489,10 @@ $breakpoint-small: 600px;
   position: relative;
   opacity: 0.9;
   animation: floaty 4.5s ease-in-out infinite;
+
+  @media (max-width: $breakpoint-small) {
+    width: 46px;
+  }
 
   &::before {
     content: '';
@@ -505,6 +515,10 @@ $breakpoint-small: 600px;
   &--tall {
     height: 122px;
     animation-delay: 0.5s;
+
+    @media (max-width: $breakpoint-small) {
+      height: 88px;
+    }
   }
 
   &--accent {
@@ -523,6 +537,11 @@ $breakpoint-small: 600px;
       height: 24px;
       border-radius: 50%;
       border: 2px dashed var(--ghost-primary, #6fa68c);
+
+      @media (max-width: $breakpoint-small) {
+        width: 18px;
+        height: 18px;
+      }
     }
   }
 }
