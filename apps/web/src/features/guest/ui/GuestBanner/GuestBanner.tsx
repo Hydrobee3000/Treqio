@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Snackbar, Alert, Button, IconButton } from '@mui/material'
 import { X } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { useAppSelector } from '@/shared/lib/store'
 
 const DISMISSED_KEY = 'treqio_guest_banner_dismissed'
@@ -12,6 +13,7 @@ const DISMISSED_KEY = 'treqio_guest_banner_dismissed'
 export const GuestBanner = () => {
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === 'true')
 
   const handleDismiss = () => {
@@ -40,12 +42,12 @@ export const GuestBanner = () => {
                 px: 1.5,
               }}
             >
-              Войти
+              {t('guestBanner.login')}
             </Button>
             <IconButton
               size="small"
               color="inherit"
-              aria-label="Закрыть"
+              aria-label={t('guestBanner.close')}
               onClick={handleDismiss}
               sx={{ ml: 1 }}
             >
@@ -55,7 +57,7 @@ export const GuestBanner = () => {
         }
         sx={{ backdropFilter: 'blur(8px)', backgroundColor: 'var(--color-warning-bg)' }}
       >
-        Данные хранятся только в браузере
+        {t('guestBanner.message')}
       </Alert>
     </Snackbar>
   )
