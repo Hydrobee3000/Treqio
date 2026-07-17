@@ -10,6 +10,9 @@
     "strict": true,
     "skipLibCheck": true,
 
+    // Разрешает импорт .json-файлов (корневой package.json в vite.config.ts).
+    "resolveJsonModule": true,
+
     // Явно подключаем типы Node.js: __dirname, path, process и т.д.
     // Намеренно не добавляем в tsconfig.app.json, чтобы Node-глобалы
     // не были доступны в браузерном коде.

@@ -85,24 +85,28 @@ export function HomePage() {
       <div className={styles['home__label-row']}>
         <span className={styles['home__label']}>{t('home.quickActions')}</span>
 
-        {/* Переключатель вида */}
-        <div className={styles['home__layout-toggle']}>
-          <Tooltip title={t('home.layoutGrid')}>
-            <button
-              className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
-              onClick={() => handleLayoutChange('grid')}
-            >
-              <LayoutGrid size={16} />
-            </button>
-          </Tooltip>
-          <Tooltip title={t('home.layoutBento')}>
-            <button
-              className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
-              onClick={() => handleLayoutChange('bento')}
-            >
-              <PanelTop size={16} />
-            </button>
-          </Tooltip>
+        <div className={styles['home__label-row-end']}>
+          <span className={styles['home__version']}>v{__APP_VERSION__}</span>
+
+          {/* Переключатель вида */}
+          <div className={styles['home__layout-toggle']}>
+            <Tooltip title={t('home.layoutGrid')}>
+              <button
+                className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
+                onClick={() => handleLayoutChange('grid')}
+              >
+                <LayoutGrid size={16} />
+              </button>
+            </Tooltip>
+            <Tooltip title={t('home.layoutBento')}>
+              <button
+                className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
+                onClick={() => handleLayoutChange('bento')}
+              >
+                <PanelTop size={16} />
+              </button>
+            </Tooltip>
+          </div>
         </div>
       </div>
 
