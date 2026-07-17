@@ -2,7 +2,8 @@
 
 A personal media tracker — books, games, movies and more. Track what you've read, played or watched, rate and review them, share progress with friends via a real-time activity feed.
 
-> #  [**🚀 Open site**](https://treqio.online)
+> # [**🚀 Open site**](https://treqio.online)
+>
 > <img width="1534" height="726" alt="home-desktop" src="https://github.com/user-attachments/assets/50aaef86-107c-4a41-9bcb-ef338fdeda92" />
 > <img width="361" height="642" alt="home-mobile" src="https://github.com/user-attachments/assets/590b19d6-5115-4c27-92cb-857cc7f9ecaa" />
 
@@ -19,6 +20,10 @@ A personal media tracker — books, games, movies and more. Track what you've re
 - [Environment Variables](#environment-variables)
 - [Available Scripts](#available-scripts)
 - [Development Workflow](#development-workflow)
+  - [Branch naming](#branch-naming)
+  - [Commit convention](#commit-convention)
+  - [Merge strategy](#merge-strategy)
+  - [Release process](#release-process)
 - [API](#api)
 
 ---
@@ -27,15 +32,20 @@ A personal media tracker — books, games, movies and more. Track what you've re
 
 ### Frontend
 
-| Tool                                          | Purpose                      |
-| --------------------------------------------- | ---------------------------- |
-| [React 19](https://react.dev)                 | UI library                   |
-| [TypeScript](https://www.typescriptlang.org)  | Type safety                  |
-| [Vite](https://vitejs.dev)                    | Build tool & dev server      |
-| [Material UI v9](https://mui.com)             | Component library            |
-| [Redux Toolkit](https://redux-toolkit.js.org) | State management + RTK Query |
-| [React Router v7](https://reactrouter.com)    | Client-side routing          |
-| [SCSS Modules](https://sass-lang.com)         | Component scoped styles      |
+| Tool                                            | Purpose                      |
+| ----------------------------------------------- | ---------------------------- |
+| [React 19](https://react.dev)                   | UI library                   |
+| [TypeScript](https://www.typescriptlang.org)    | Type safety                  |
+| [Vite](https://vitejs.dev)                      | Build tool & dev server      |
+| [Material UI v9](https://mui.com)               | Component library            |
+| [Redux Toolkit](https://redux-toolkit.js.org)   | State management + RTK Query |
+| [React Router v7](https://reactrouter.com)      | Client-side routing          |
+| [SCSS Modules](https://sass-lang.com)           | Component scoped styles      |
+| [Framer Motion](https://www.framer.com/motion/) | Animations                   |
+| [react-i18next](https://react.i18next.com)      | Internationalization (i18n)  |
+| [React Hook Form](https://react-hook-form.com)  | Form state & validation      |
+| [Zod](https://zod.dev)                          | Schema validation            |
+| [Lucide React](https://lucide.dev)              | Icon set                     |
 
 ### Backend
 
@@ -260,15 +270,17 @@ npm run db:studio
 ### Branch naming
 
 ```
-feature/<issue-number>-<short-description>   # new functionality
-fix/<issue-number>-<short-description>        # bug fixes
+<type>/<issue-number>-<short-description>
 ```
+
+`<type>` matches the nature of the change — `feature`, `fix`, `docs`, `refactor`, etc. (same vocabulary as [Commit convention](#commit-convention)). Whenever work is tied to a filed issue, its number is always included.
 
 Examples:
 
 ```
 feature/16-app-layout
 fix/42-auth-token-refresh
+docs/220-release-process
 ```
 
 ### Commit convention
@@ -295,10 +307,41 @@ chore(deps): update MUI to v9
 
 ### Merge strategy
 
-| Merge               | Strategy     | Reason                      |
-| ------------------- | ------------ | --------------------------- |
-| `feature → develop` | Squash merge | Keeps develop history clean |
-| `develop → main`    | Merge commit | Marks release point         |
+| Merge            | Strategy     | Reason                    |
+| ---------------- | ------------ | ------------------------- |
+| `feature → main` | Squash merge | One commit per feature    |
+| `fix → main`     | Squash merge | Keeps main history linear |
+
+Branches are deleted after merge (GitHub is configured with `delete_branch_on_merge`).
+
+---
+
+### Release process
+
+The whole monorepo shares a **single product version**, stored in the root `package.json` — the single source of truth, kept in sync with the git tag. The `version` fields inside `apps/web/package.json` and `apps/api/package.json` are not used and stay untouched.
+
+Versions are bumped **manually** at release time and pushed **directly to `main`** (no PR). Direct pushes are allowed — the `main-protection` ruleset only blocks branch deletion and force-pushes.
+
+Pick the bump from the type of change:
+
+| Change                  | Bump    | Command             | Example       |
+| ----------------------- | ------- | ------------------- | ------------- |
+| Fix                     | `patch` | `npm version patch` | 0.1.5 → 0.1.6 |
+| New feature             | `minor` | `npm version minor` | 0.1.5 → 0.2.0 |
+| Breaking / major rework | `major` | `npm version major` | 0.1.5 → 1.0.0 |
+
+Steps (from the project root, on `main`):
+
+```bash
+npm version 0.1.6 --no-git-tag-version   # bump the root package.json only
+git commit -am "chore: release v0.1.6"    # the version bump lives in this commit
+git push origin main
+git tag -a v0.1.6 -m "v0.1.6"             # the tag sits on the release commit
+git push origin v0.1.6
+gh release create v0.1.6 --title "v0.1.6" --notes "..."
+```
+
+> The tag points at the release commit itself, so the version bump and the tag are the same commit.
 
 ---
 
