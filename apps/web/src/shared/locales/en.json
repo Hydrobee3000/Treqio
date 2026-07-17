@@ -210,7 +210,7 @@
     "additionalDescription": "Track progress, rate, share with friends.",
     "googleLogin": "Sign in with Google",
     "or": "or",
-    "guestLogin": "Continue without signing in",
+    "guestLogin": "Continue as a guest",
     "guestHint": "Without signing in, data is stored in the browser only",
     "features": {
       "progress": {

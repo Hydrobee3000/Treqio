@@ -15,21 +15,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Box,
-  Menu,
-  MenuItem,
-  Skeleton,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { Box, Menu, MenuItem, Skeleton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import {
   BookCoverCard,
   BookCoverCardSkeleton,
@@ -53,6 +39,7 @@ import {
 } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
+import { GuestLoginCard } from './ui/GuestLoginCard/GuestLoginCard'
 import styles from './LibraryPage.module.scss'
 
 /** Стиль отображения карточек книги. */
@@ -566,24 +553,11 @@ export const LibraryPage = () => {
           }}
         />
 
-        <Dialog open={guestPromptOpen} onClose={() => setGuestPromptOpen(false)}>
-          <DialogTitle sx={{ pt: 3, px: 3 }}>{t('library.loginRequired.title')}</DialogTitle>
-          <DialogContent sx={{ px: 3 }}>
-            <DialogContentText>{t('library.loginRequired.desc')}</DialogContentText>
-          </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
-            <Button
-              variant="outlined"
-              sx={{ minWidth: 100 }}
-              onClick={() => setGuestPromptOpen(false)}
-            >
-              {t('library.loginRequired.cancel')}
-            </Button>
-            <Button variant="contained" sx={{ minWidth: 100 }} onClick={handleGoToLogin}>
-              {t('library.loginRequired.login')}
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <GuestLoginCard
+          open={guestPromptOpen}
+          onClose={() => setGuestPromptOpen(false)}
+          onLogin={handleGoToLogin}
+        />
       </div>
     </LayoutGroup>
   )

@@ -1,0 +1,113 @@
+// ─── Оверлей ──────────────────────────────────────────────────────────────────
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(3px);
+}
+
+// ─── Центрирующий контейнер ───────────────────────────────────────────────────
+
+.centering {
+  position: fixed;
+  inset: 0;
+  z-index: 1201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+}
+
+// ─── Карточка ─────────────────────────────────────────────────────────────────
+
+.card {
+  pointer-events: all;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  // Градиент только на hero — карточка снизу paper, чтобы не просвечивал
+  background: var(--color-paper, white);
+  box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.5);
+}
+
+// ─── Герой ────────────────────────────────────────────────────────────────────
+
+.hero {
+  position: relative;
+  background: linear-gradient(
+    150deg,
+    var(--color-primary, #4e7b6a),
+    var(--color-primary-dark, #3a5c4f)
+  );
+  padding: 14px 48px 34px 16px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.hero__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.48);
+  }
+}
+
+// ─── Контент (pill-эффект — белая область с закруглёнными верхними углами) ────
+
+.content {
+  border-radius: 20px 20px 0 0;
+  background: var(--color-paper, white);
+  padding: 20px 14px 4px;
+  margin-top: -20px;
+  position: relative;
+  z-index: 1;
+  min-height: 75px;
+}
+
+// ─── Футер ────────────────────────────────────────────────────────────────────
+
+.footer {
+  flex-shrink: 0;
+  padding: 8px 14px 14px;
+  background: var(--color-paper, white);
+  display: flex;
+  gap: 8px;
+}
+
+// min-width переопределяет дефолт MUI (64px) — нужен !important из-за специфичности emotion
+.footer__btn-cancel {
+  min-width: 90px !important;
+}
+
+.footer__btn-login {
+  margin-left: auto;
+  min-width: 120px !important;
+}

@@ -210,7 +210,7 @@
     "additionalDescription": "Отслеживай, ставь оценки, делись с друзьями.",
     "googleLogin": "Войти через Google",
     "or": "или",
-    "guestLogin": "Продолжить без входа",
+    "guestLogin": "Продолжить как гость",
     "guestHint": "Без входа данные хранятся только в браузере",
     "features": {
       "progress": {
