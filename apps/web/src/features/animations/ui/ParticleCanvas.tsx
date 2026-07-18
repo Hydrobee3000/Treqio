@@ -73,8 +73,7 @@ function getColor(): string {
 /**
  * Рисует лист — миндалевидная форма с центральной жилкой.
  */
-function drawLeaf(ctx: CanvasRenderingContext2D, p: Particle) {
-  const color = getColor()
+function drawLeaf(ctx: CanvasRenderingContext2D, p: Particle, color: string) {
   ctx.save()
   ctx.translate(p.x, p.y)
   ctx.rotate(p.rot)
@@ -97,38 +96,32 @@ function drawLeaf(ctx: CanvasRenderingContext2D, p: Particle) {
 
 /**
  * Рисует точку.
+ * Без save/restore — нет трансформаций, globalAlpha и fillStyle перезаписываются
+ * следующим вызовом отрисовки, восстанавливать состояние контекста не нужно.
  */
-function drawDot(ctx: CanvasRenderingContext2D, p: Particle) {
-  const color = getColor()
-  ctx.save()
+function drawDot(ctx: CanvasRenderingContext2D, p: Particle, color: string) {
   ctx.globalAlpha = p.opacity * 0.6
   ctx.fillStyle = color
   ctx.beginPath()
   ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
   ctx.fill()
-  ctx.restore()
 }
 
 /**
  * Рисует пылинку — уменьшенная точка с повышенной прозрачностью.
  */
-function drawDust(ctx: CanvasRenderingContext2D, p: Particle) {
-  const color = getColor()
-  ctx.save()
+function drawDust(ctx: CanvasRenderingContext2D, p: Particle, color: string) {
   ctx.globalAlpha = p.opacity * 0.5
   ctx.fillStyle = color
   ctx.beginPath()
   ctx.arc(p.x, p.y, p.size * 0.7, 0, Math.PI * 2)
   ctx.fill()
-  ctx.restore()
 }
 
 /**
  * Рисует уголёк — радиальный градиент от цвета к прозрачному.
  */
-function drawEmber(ctx: CanvasRenderingContext2D, p: Particle) {
-  const color = getColor()
-  ctx.save()
+function drawEmber(ctx: CanvasRenderingContext2D, p: Particle, color: string) {
   ctx.globalAlpha = p.opacity * 0.7
   const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 0.8)
   grd.addColorStop(0, color)
@@ -137,7 +130,6 @@ function drawEmber(ctx: CanvasRenderingContext2D, p: Particle) {
   ctx.beginPath()
   ctx.arc(p.x, p.y, p.size * 0.8, 0, Math.PI * 2)
   ctx.fill()
-  ctx.restore()
 }
 
 /**
@@ -200,22 +192,36 @@ export function ParticleCanvas({ type }: Props) {
       makeParticle(getW(), getH(), type, true),
     )
 
+    // Цвет темы меняется только когда пользователь её переключает, а не каждый
+    // кадр — кэшируем значение и обновляем по факту изменения через
+    // MutationObserver за стилями <html> (их правит ThemeProvider через
+    // setProperty), вместо дорогого getComputedStyle на каждом кадре.
+    let color = getColor()
+    const colorObserver = new MutationObserver(() => {
+      color = getColor()
+    })
+    colorObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['style'],
+    })
+
     let raf: number
     const tick = () => {
       const w = getW()
       const h = getH()
       ctx.clearRect(0, 0, w, h)
 
-      particles.forEach((p, i) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]!
         p.sway += p.swaySpeed
         p.x += p.vx + Math.sin(p.sway) * 0.3
         p.y += p.vy
         p.rot += p.vrot
 
-        if (type === 'leaf') drawLeaf(ctx, p)
-        else if (type === 'dust') drawDust(ctx, p)
-        else if (type === 'dot') drawDot(ctx, p)
-        else if (type === 'ember') drawEmber(ctx, p)
+        if (type === 'leaf') drawLeaf(ctx, p, color)
+        else if (type === 'dust') drawDust(ctx, p, color)
+        else if (type === 'dot') drawDot(ctx, p, color)
+        else if (type === 'ember') drawEmber(ctx, p, color)
 
         // Ember пересекает верхнюю границу, остальные — нижнюю
         const isEmber = type === 'ember'
@@ -223,7 +229,7 @@ export function ParticleCanvas({ type }: Props) {
         if (outOfBounds) {
           particles[i] = makeParticle(w, h, type)
         }
-      })
+      }
 
       raf = requestAnimationFrame(tick)
     }
@@ -233,6 +239,7 @@ export function ParticleCanvas({ type }: Props) {
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
+      colorObserver.disconnect()
     }
   }, [type])
 
