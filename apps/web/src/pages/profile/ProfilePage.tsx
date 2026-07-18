@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Collapse, Skeleton, Tooltip } from '@mui/material'
+import { Button, Collapse, Skeleton, Tooltip } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
@@ -8,7 +8,6 @@ import {
   History,
   LogIn,
   LogOut,
-  Pencil,
   Plus,
   RefreshCw,
   Star,
@@ -397,11 +396,9 @@ export const ProfilePage = () => {
         <div className={styles['header__top']}>
           <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
           <div className={styles['header__info']}>
-            <div
-              className={`${styles['name-field']} ${editingName ? styles['name-field--editing'] : ''}`}
-            >
-              {editingName ? (
-                <>
+            {editingName ? (
+              <div className={styles['name-field']}>
+                <div className={styles['name-field__input-row']}>
                   <input
                     ref={nameInputRef}
                     className={styles['name-field__input']}
@@ -413,40 +410,44 @@ export const ProfilePage = () => {
                       if (e.key === 'Escape') handleCancelName()
                     }}
                   />
-                  <div className={styles['name-field__actions']}>
-                    <button className={styles['name-field__btn']} onClick={handleCancelName}>
-                      <X size={15} />
-                    </button>
-                    <button
-                      className={styles['name-field__btn']}
-                      onClick={handleSaveName}
-                      disabled={isSaving}
+                  {nameValue.length >= DISPLAY_NAME_MAX - 5 && (
+                    <p
+                      className={[
+                        styles['name-counter'],
+                        nameValue.length >= DISPLAY_NAME_MAX
+                          ? styles['name-counter--max']
+                          : styles['name-counter--warn'],
+                      ].join(' ')}
                     >
-                      <Check size={15} />
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <h1 className={styles['header__name']}>{displayName}</h1>
-                  <button className={styles['name-field__btn']} onClick={handleEditName}>
-                    <Pencil size={14} />
-                  </button>
-                </>
-              )}
-              {editingName && nameValue.length >= DISPLAY_NAME_MAX - 5 && (
-                <p
-                  className={[
-                    styles['name-counter'],
-                    nameValue.length >= DISPLAY_NAME_MAX
-                      ? styles['name-counter--max']
-                      : styles['name-counter--warn'],
-                  ].join(' ')}
-                >
-                  {nameValue.length}/{DISPLAY_NAME_MAX}
-                </p>
-              )}
-            </div>
+                      {nameValue.length}/{DISPLAY_NAME_MAX}
+                    </p>
+                  )}
+                </div>
+                <div className={styles['name-field__actions']}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    className={styles['name-field__btn-cancel']}
+                    onClick={handleCancelName}
+                  >
+                    {t('profile.editName.cancel')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    className={styles['name-field__btn-save']}
+                    onClick={handleSaveName}
+                    disabled={isSaving}
+                  >
+                    {t('profile.editName.save')}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <button className={styles['name-field__view']} onClick={handleEditName}>
+                <h1 className={styles['header__name']}>{displayName}</h1>
+              </button>
+            )}
             <div className={styles['header__meta']}>
               {user?.username && <span>@{user.username}</span>}
             </div>

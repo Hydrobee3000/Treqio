@@ -129,8 +129,6 @@ $history-status-color: #8a6fc4;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
-  min-width: 0;
 
   @media (max-width: $breakpoint-small) {
     font-size: 18px;
@@ -160,27 +158,22 @@ $history-status-color: #8a6fc4;
   }
 }
 
-// ─── Инлайн-редактирование имени ─────────────────────────────────────────────
+// ─── Просмотр имени ───────────────────────────────────────────────────────────
 
-.name-field {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 36px;
-  width: 100%;
+.name-field__view {
+  display: block;
   max-width: 320px;
-  position: relative;
-  padding: 0 6px 0 14px;
+  padding: 4px 10px;
+  margin: -4px -10px;
+  border: none;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 8%, var(--color-paper-2, #f0f0f0));
-  border: 1px solid transparent;
-  transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
 
-  &--editing {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+  &:hover {
+    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 10%, transparent);
   }
 
   @media (max-width: $breakpoint-small) {
@@ -188,10 +181,30 @@ $history-status-color: #8a6fc4;
   }
 }
 
+// ─── Редактирование имени ─────────────────────────────────────────────────────
+
+.name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+
+  @media (max-width: $breakpoint-small) {
+    max-width: 240px;
+  }
+}
+
+.name-field__input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
 .name-field__input {
   flex: 1;
   min-width: 0;
-  padding: 0;
+  padding: 6px 12px;
   margin: 0;
   appearance: none;
   font-size: 24px;
@@ -199,8 +212,9 @@ $history-status-color: #8a6fc4;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--color-text, inherit);
-  background: transparent;
-  border: none;
+  background: var(--color-paper, white);
+  border: 1.5px solid var(--color-primary, #4e7b6a);
+  border-radius: 8px;
   outline: none;
   font-family: inherit;
 
@@ -211,42 +225,20 @@ $history-status-color: #8a6fc4;
 
 .name-field__actions {
   display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
-.name-field__btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-text-2, #666);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition:
-    background 0.15s,
-    color 0.15s;
+.name-field__btn-cancel {
+  min-width: 90px !important;
+}
 
-  &:hover {
-    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 12%, transparent);
-    color: var(--color-primary, #4e7b6a);
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+.name-field__btn-save {
+  min-width: 110px !important;
 }
 
 .name-counter {
-  position: absolute;
-  top: 26px;
-  right: 6px;
+  flex-shrink: 0;
+  align-self: flex-end;
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
