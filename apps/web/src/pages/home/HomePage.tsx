@@ -1,11 +1,9 @@
-import { Fragment } from 'react'
 import { Tooltip } from '@mui/material'
-import { BookOpen, Gamepad2, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
+import { BookOpen, Languages, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/features/layout'
-import { UnderConstruction } from '@/shared/ui'
 import type { LayoutVariant } from '@/shared/config/layout'
 import styles from './HomePage.module.scss'
 
@@ -22,11 +20,10 @@ function useTiles() {
       href: '/library',
     },
     {
-      icon: <Gamepad2 size={22} />,
-      title: t('home.cards.addGame.title'),
-      desc: t('home.cards.addGame.desc'),
-      href: '/library',
-      disabled: true,
+      icon: <Languages size={22} />,
+      title: t('home.cards.language.title'),
+      desc: t('home.cards.language.desc'),
+      href: '/settings/language',
     },
     {
       icon: <User size={22} />,
@@ -112,9 +109,9 @@ export function HomePage() {
 
       {layout === 'grid' ? (
         <div className={styles['home__grid-section']}>
-          <GridLayout isGuest={isGuest} />
+          <GridLayout />
           <div className={styles['home__spacer']} />
-          <ImportStrip />
+          {isGuest && <LoginStrip />}
         </div>
       ) : (
         <BentoLayout isGuest={isGuest} />
@@ -126,60 +123,28 @@ export function HomePage() {
 /**
  * Сетка 2×2.
  */
-function GridLayout({ isGuest }: { isGuest: boolean }) {
+function GridLayout() {
   const navigate = useNavigate()
-  const { t } = useTranslation()
   const tiles = useTiles()
 
   return (
     <div className={styles['grid']}>
-      {tiles.map((tile) => {
-        if (tile.disabled && isGuest) {
-          return (
-            <button
-              key={tile.title}
-              className={styles['grid__tile']}
-              onClick={() => navigate('/login')}
-            >
-              <div className={styles['grid__tile-icon']}>
-                <LogIn size={22} />
-              </div>
-              <div>
-                <p className={styles['grid__tile-title']}>{t('home.cards.login.title')}</p>
-                <p className={styles['grid__tile-desc']}>{t('home.cards.login.desc')}</p>
-              </div>
-              <span className={styles['grid__tile-arrow']}>
-                <ArrowIcon />
-              </span>
-            </button>
-          )
-        }
-
-        const button = (
-          <button
-            className={`${styles['grid__tile']} ${tile.disabled ? styles['grid__tile--disabled'] : ''}`}
-            disabled={tile.disabled}
-            onClick={() => navigate(tile.href)}
-          >
-            <div className={styles['grid__tile-icon']}>{tile.icon}</div>
-            <div>
-              <p className={styles['grid__tile-title']}>{tile.title}</p>
-              <p className={styles['grid__tile-desc']}>{tile.desc}</p>
-            </div>
-            {!tile.disabled && (
-              <span className={styles['grid__tile-arrow']}>
-                <ArrowIcon />
-              </span>
-            )}
-          </button>
-        )
-
-        return tile.disabled ? (
-          <UnderConstruction key={tile.title}>{button}</UnderConstruction>
-        ) : (
-          <Fragment key={tile.title}>{button}</Fragment>
-        )
-      })}
+      {tiles.map((tile) => (
+        <button
+          key={tile.title}
+          className={styles['grid__tile']}
+          onClick={() => navigate(tile.href)}
+        >
+          <div className={styles['grid__tile-icon']}>{tile.icon}</div>
+          <div>
+            <p className={styles['grid__tile-title']}>{tile.title}</p>
+            <p className={styles['grid__tile-desc']}>{tile.desc}</p>
+          </div>
+          <span className={styles['grid__tile-arrow']}>
+            <ArrowIcon />
+          </span>
+        </button>
+      ))}
     </div>
   )
 }
@@ -192,7 +157,7 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
   const { t } = useTranslation()
   const tiles = useTiles()
   const books = tiles[0]!
-  const games = tiles[1]!
+  const language = tiles[1]!
   const profile = tiles[2]!
   const theme = tiles[3]!
 
@@ -209,33 +174,16 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
         </div>
       </button>
 
-      {isGuest ? (
-        <button
-          className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
-          onClick={() => navigate('/login')}
-        >
-          <div className={styles['bento__cell-icon']}>
-            <LogIn size={22} />
-          </div>
-          <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>{t('home.cards.login.title')}</p>
-            <p className={styles['bento__cell-desc']}>{t('home.cards.login.desc')}</p>
-          </div>
-        </button>
-      ) : (
-        <UnderConstruction>
-          <button
-            className={`${styles['bento__cell']} ${styles['bento__cell--dark']} ${styles['bento__cell--disabled']}`}
-            disabled
-          >
-            <div className={styles['bento__cell-icon']}>{games.icon}</div>
-            <div className={styles['bento__cell-content']}>
-              <p className={styles['bento__cell-title']}>{games.title}</p>
-              <p className={styles['bento__cell-desc']}>{games.desc}</p>
-            </div>
-          </button>
-        </UnderConstruction>
-      )}
+      <button
+        className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+        onClick={() => navigate(language.href)}
+      >
+        <div className={styles['bento__cell-icon']}>{language.icon}</div>
+        <div className={styles['bento__cell-content']}>
+          <p className={styles['bento__cell-title']}>{language.title}</p>
+          <p className={styles['bento__cell-desc']}>{language.desc}</p>
+        </div>
+      </button>
 
       <button className={styles['bento__cell']} onClick={() => navigate(profile.href)}>
         <div className={styles['bento__cell-icon']}>{profile.icon}</div>
@@ -253,56 +201,46 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
         </div>
       </button>
 
-      {/* Импорт как пятая ячейка bento */}
-      <UnderConstruction>
-        <button className={`${styles['bento__cell']} ${styles['bento__cell--import']}`} disabled>
+      {/* Гостю в пятой ячейке bento предлагаем войти */}
+      {isGuest && (
+        <button
+          className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+          onClick={() => navigate('/login')}
+        >
           <div className={styles['bento__cell-icon']}>
-            <BookOpen size={22} />
+            <LogIn size={22} />
           </div>
           <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>{t('home.cards.import.bento.title')}</p>
-            <p className={styles['bento__cell-desc']}>{t('home.cards.import.bento.desc')}</p>
+            <p className={styles['bento__cell-title']}>{t('home.cards.login.title')}</p>
+            <p className={styles['bento__cell-desc']}>{t('home.cards.login.desc')}</p>
           </div>
-          <span className={styles['bento__cell-cta']}>
-            <span className={styles['bento__cell-cta-text']}>
-              {t('home.cards.import.bento.cta')}
-            </span>
-            <span className={styles['bento__cell-cta-arrow']}>
-              <ArrowIcon />
-            </span>
-          </span>
         </button>
-      </UnderConstruction>
+      )}
     </div>
   )
 }
 
 /**
- * Заглушка полоски импорта из внешних сервисов.
+ * Полоска-приглашение войти — показывается гостю внизу сетки быстрых действий.
  */
-function ImportStrip() {
+function LoginStrip() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+
   return (
-    <UnderConstruction>
-      <div className={styles['import-strip']}>
-        <div className={styles['import-strip__left']}>
-          <div className={styles['import-strip__icon']}>
-            <BookOpen size={18} />
-          </div>
-          <div>
-            <p className={styles['import-strip__title']}>{t('home.cards.import.strip.title')}</p>
-            <p className={styles['import-strip__sub']}>{t('home.cards.import.strip.desc')}</p>
-          </div>
+    <button className={styles['login-strip']} onClick={() => navigate('/login')}>
+      <div className={styles['login-strip__left']}>
+        <div className={styles['login-strip__icon']}>
+          <LogIn size={18} />
         </div>
-        <button className={styles['import-strip__btn']} disabled>
-          <span className={styles['import-strip__btn-text']}>
-            {t('home.cards.import.strip.cta')}
-          </span>
-          <span className={styles['import-strip__btn-arrow']}>
-            <ArrowIcon />
-          </span>
-        </button>
+        <div>
+          <p className={styles['login-strip__title']}>{t('home.cards.login.title')}</p>
+          <p className={styles['login-strip__sub']}>{t('home.cards.login.desc')}</p>
+        </div>
       </div>
-    </UnderConstruction>
+      <span className={styles['login-strip__arrow']}>
+        <ArrowIcon />
+      </span>
+    </button>
   )
 }

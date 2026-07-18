@@ -12,6 +12,19 @@ $breakpoint-medium: 900px;
   }
 }
 
+// Проход шиммера занимает ~1с в начале цикла, остальное время ждёт за краем
+@keyframes login-strip-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  25% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 // ─── Страница ─────────────────────────────────────────────────────────────────
 
 .home {
@@ -463,83 +476,9 @@ $breakpoint-medium: 900px;
   opacity: 0.55;
 }
 
-// ─── Bento — ячейка импорта и CTA ────────────────────────────────────────────
+// ─── Полоска-приглашение войти ────────────────────────────────────────────────
 
-.bento__cell--disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-
-  &:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: var(--color-divider, #e0e0e0);
-
-    .bento__cell-icon {
-      transform: none;
-    }
-  }
-}
-
-.bento__cell--import {
-  cursor: not-allowed;
-  opacity: 0.7;
-
-  &:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: var(--color-divider, #e0e0e0);
-
-    &::before {
-      opacity: 0;
-    }
-
-    .bento__cell-icon {
-      transform: none;
-    }
-  }
-}
-
-.bento__cell-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: var(--color-primary, #4e7b6a);
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  align-self: flex-start;
-  pointer-events: none;
-  flex-shrink: 0;
-
-  @media (max-width: $breakpoint-small) {
-    align-self: center;
-    margin-left: auto;
-    padding: 6px;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--color-text-2, #666);
-  }
-}
-
-.bento__cell-cta-text {
-  @media (max-width: $breakpoint-small) {
-    display: none;
-  }
-}
-
-.bento__cell-cta-arrow {
-  display: none;
-
-  @media (max-width: $breakpoint-small) {
-    display: flex;
-  }
-}
-
-// ─── Полоска импорта ──────────────────────────────────────────────────────────
-
-.import-strip {
+.login-strip {
   margin: 0 36px 32px;
   padding: 10px 20px;
   background: var(--color-paper, white);
@@ -551,9 +490,21 @@ $breakpoint-medium: 900px;
   gap: 16px;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
   animation: rise 0.6s ease 0.25s both;
+  transition: border-color 0.15s;
 
-  // Шиммер в цвет основного акцента темы
+  // На узкой доступной ширине/высоте (например при увеличенном масштабе
+  // страницы) не сжимаемся дальше — пусть лучше появится скролл, чем сломается вид
+  min-height: 60px;
+
+  @media (min-width: $breakpoint-small) {
+    min-width: 320px;
+  }
+
+  // Шиммер в цвет основного акцента темы — сам проходит раз в 4с
   &::after {
     content: '';
     position: absolute;
@@ -565,12 +516,12 @@ $breakpoint-medium: 900px;
       transparent
     );
     transform: translateX(-100%);
-    transition: transform 1s ease;
     pointer-events: none;
+    animation: login-strip-shimmer 4s ease infinite;
   }
 
-  &:hover::after {
-    transform: translateX(100%);
+  &:hover {
+    border-color: var(--color-primary, #4e7b6a);
   }
 
   @media (max-width: $breakpoint-small) {
@@ -578,13 +529,13 @@ $breakpoint-medium: 900px;
   }
 }
 
-.import-strip__left {
+.login-strip__left {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.import-strip__icon {
+.login-strip__icon {
   width: 36px;
   height: 36px;
   border-radius: 10px;
@@ -596,54 +547,28 @@ $breakpoint-medium: 900px;
   flex-shrink: 0;
 }
 
-.import-strip__title {
+.login-strip__title {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text, inherit);
 }
 
-.import-strip__sub {
+.login-strip__sub {
   margin: 2px 0 0;
   font-size: 11.5px;
   color: var(--color-text-2, #666);
 }
 
-.import-strip__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  border: none;
-  border-radius: 10px;
-  background: var(--color-primary, #4e7b6a);
-  color: white;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: not-allowed;
-  opacity: 0.6;
+.login-strip__arrow {
   flex-shrink: 0;
+  color: var(--color-text-2, #999);
+  transition:
+    transform 0.2s,
+    color 0.15s;
 
-  @media (max-width: $breakpoint-small) {
-    padding: 8px;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--color-text-2, #666);
-    opacity: 1;
-  }
-}
-
-.import-strip__btn-text {
-  @media (max-width: $breakpoint-small) {
-    display: none;
-  }
-}
-
-.import-strip__btn-arrow {
-  display: none;
-
-  @media (max-width: $breakpoint-small) {
-    display: flex;
+  .login-strip:hover & {
+    transform: translate(3px, -2px);
+    color: var(--color-primary, #4e7b6a);
   }
 }

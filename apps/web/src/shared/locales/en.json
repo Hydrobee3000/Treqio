@@ -32,8 +32,7 @@
     "empty": {
       "title": "Nothing here yet",
       "desc": "Add your first book and it will appear on your shelf.",
-      "addBook": "Add book",
-      "import": "Import list"
+      "addBook": "Add book"
     },
     "filteredEmpty": {
       "noResults": "Nothing found for «{{query}}»",
@@ -183,9 +182,9 @@
         "title": "Add a book",
         "desc": "Change status, set a rating."
       },
-      "addGame": {
-        "title": "Add a game",
-        "desc": "Change status, set a rating."
+      "language": {
+        "title": "Language",
+        "desc": "Change language"
       },
       "login": {
         "title": "Sign in",
@@ -198,18 +197,6 @@
       "theme": {
         "title": "Set up theme",
         "desc": "Color palette and animations."
-      },
-      "import": {
-        "bento": {
-          "title": "Import",
-          "desc": "Goodreads, HLTB — coming soon",
-          "cta": "Connect"
-        },
-        "strip": {
-          "title": "Import lists",
-          "desc": "Goodreads, HLTB — coming soon",
-          "cta": "Connect"
-        }
       }
     }
   },
