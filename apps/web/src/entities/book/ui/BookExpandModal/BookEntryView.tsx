@@ -36,14 +36,8 @@ interface BookEntryViewProps {
   onDelete?: (() => Promise<void>) | undefined
   /** Функция смены статуса (немедленная, без формы). */
   onStatusChange?: ((status: BookStatus) => void) | undefined
-  /** Функция закрытия модалки (прямая, без layout-анимации). */
+  /** Функция закрытия модалки. */
   onClose: () => void
-  /** Функция закрытия с учётом layout-анимации открытия. */
-  handleClose: () => void
-  /** Функция обратного вызова при завершении layout-анимации. */
-  onLayoutAnimationComplete: () => void
-  /** Флаг наличия источника layout-анимации (BookCoverCard). */
-  hasLayoutSource?: boolean
 }
 
 // Legacy-строки «автор неизвестен», которые раньше сохранялись в БД вместо пустого поля.
@@ -60,7 +54,6 @@ function formatDate(iso: string, lang: string): string {
 
 /**
  * Просмотр и редактирование существующей записи книги.
- * Использует shared-element (layoutId) анимацию входа/выхода.
  */
 export const BookEntryView = ({
   entry,
@@ -70,9 +63,6 @@ export const BookEntryView = ({
   onDelete,
   onStatusChange,
   onClose,
-  handleClose,
-  onLayoutAnimationComplete,
-  hasLayoutSource = true,
 }: BookEntryViewProps) => {
   const { t, i18n } = useTranslation()
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
@@ -172,17 +162,17 @@ export const BookEntryView = ({
 
   return (
     <motion.div
-      layoutId={`book-cover-${entry.id}`}
       className={`${styles['em__modal']} ${isMobile ? styles['em__modal--mobile'] : ''}`}
       style={{ pointerEvents: 'auto' }}
       onClick={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
-      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: 'easeIn' } }}
+      initial={{ opacity: 0, scale: 0.97 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.18, ease: 'easeIn' } }}
       transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-      onLayoutAnimationComplete={onLayoutAnimationComplete}
     >
       <div className={styles['em__hero']}>
-        <button className={styles['em__close']} onClick={handleClose}>
+        <button className={styles['em__close']} onClick={onClose}>
           <X size={15} />
         </button>
         {isEditing ? (
@@ -195,11 +185,7 @@ export const BookEntryView = ({
         )}
       </div>
 
-      <motion.div
-        className={styles['em__content']}
-        initial={{ opacity: hasLayoutSource ? 0 : 1 }}
-        animate={{ opacity: 1, transition: { duration: 0.22 } }}
-      >
+      <div className={styles['em__content']}>
         <div className={styles['em__scroll']}>
           <div className={styles['em__body']}>
             {isEditing ? (
@@ -524,7 +510,7 @@ export const BookEntryView = ({
             </button>
           </div>
         )}
-      </motion.div>
+      </div>
 
       <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
         <DialogTitle>{t('book.modal.deleteTitle')}</DialogTitle>

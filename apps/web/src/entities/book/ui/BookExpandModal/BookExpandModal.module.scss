@@ -594,12 +594,15 @@
 .em__edit-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 10px 20px;
+  min-width: 140px;
 
   &--icon {
     padding: 10px 20px;
     gap: 0;
+    min-width: auto;
   }
   border-radius: 10px;
   border: none;
