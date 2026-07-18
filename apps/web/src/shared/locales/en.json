@@ -49,6 +49,10 @@
     "defaultName": "Dreamer",
     "login": "Sign in",
     "logout": "Sign out",
+    "editName": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
     "tabs": {
       "history": "Activity",
       "stats": "Statistics"

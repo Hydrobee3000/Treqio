@@ -49,6 +49,10 @@
     "defaultName": "Мечтатель",
     "login": "Войти",
     "logout": "Выйти",
+    "editName": {
+      "cancel": "Отмена",
+      "save": "Сохранить"
+    },
     "tabs": {
       "history": "Активность",
       "stats": "Статистика"
