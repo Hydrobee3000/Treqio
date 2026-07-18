@@ -93,6 +93,7 @@
       "DONE": "Read",
       "DROPPED": "Dropped"
     },
+    "ratingTooltip": "Rating {{rating}}/10",
     "fields": {
       "title": "Title",
       "titleRequired": "Title *",
@@ -117,6 +118,7 @@
       "deleting": "Deleting…",
       "edit": "Edit",
       "titlePlaceholder": "Enter title",
+      "titleRequiredError": "Enter title",
       "authorPlaceholder": "Book author",
       "authorUnknown": "Unknown author",
       "pagesSuffix": "pp.",

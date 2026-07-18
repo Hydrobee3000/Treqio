@@ -37,7 +37,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     control,
     formState: { isSubmitting, errors },
   } = useForm<CreateFormValues>({
-    resolver: zodResolver(createBookSchema),
+    resolver: zodResolver(createBookSchema(t)),
     defaultValues: {
       title: '',
       author: '',

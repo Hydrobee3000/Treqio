@@ -93,6 +93,7 @@
       "DONE": "Прочитано",
       "DROPPED": "Брошено"
     },
+    "ratingTooltip": "Оценка {{rating}}/10",
     "fields": {
       "title": "Название",
       "titleRequired": "Название *",
@@ -117,6 +118,7 @@
       "deleting": "Удаление…",
       "edit": "Редактировать",
       "titlePlaceholder": "Введите название",
+      "titleRequiredError": "Введите название",
       "authorPlaceholder": "Автор книги",
       "authorUnknown": "Автор неизвестен",
       "pagesSuffix": "стр.",
