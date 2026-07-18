@@ -1,6 +1,7 @@
 import type { MouseEvent, Ref } from 'react'
 import { Tooltip } from '@mui/material'
 import { Star } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { GOLD_COLOR, scoreColor } from '../../model/book.types'
 import styles from './ScoreBadge.module.scss'
 
@@ -39,6 +40,7 @@ const CONFIG = {
  * Круглый бейдж оценки: SVG-кольцо прогресса с числом или звездой в центре.
  */
 export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
+  const { t } = useTranslation()
   const rootClass = [styles['score-badge'], styles[`score-badge--${size}`], className]
     .filter(Boolean)
     .join(' ')
@@ -82,5 +84,5 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
     </div>
   )
 
-  return onClick ? <Tooltip title={`Оценка ${rating}/10`}>{badge}</Tooltip> : badge
+  return onClick ? <Tooltip title={t('book.ratingTooltip', { rating })}>{badge}</Tooltip> : badge
 }

@@ -87,7 +87,7 @@ export const BookEntryView = ({
     control,
     formState: { isSubmitting, dirtyFields, errors },
   } = useForm<EditFormValues>({
-    resolver: zodResolver(editBookSchema),
+    resolver: zodResolver(editBookSchema(t)),
     defaultValues: {
       title: entry.book.title,
       author: LEGACY_UNKNOWN_AUTHORS.has(entry.book.author) ? '' : entry.book.author,
