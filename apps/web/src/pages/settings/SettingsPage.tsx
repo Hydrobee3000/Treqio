@@ -7,6 +7,7 @@ import {
   Palette,
   SlidersHorizontal,
   LayoutGrid,
+  Languages,
   Sun,
   Moon,
   Monitor,
@@ -62,6 +63,13 @@ export function SettingsPage() {
       desc: t('settings.sections.appearance.desc'),
       icon: <Palette size={18} />,
       content: <AppearanceContent />,
+    },
+    {
+      id: 'language',
+      label: t('settings.sections.language.label'),
+      desc: t('settings.sections.language.desc'),
+      icon: <Languages size={18} />,
+      content: <LanguageContent />,
     },
   ]
 
@@ -141,6 +149,32 @@ export function SettingsPage() {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Содержимое раздела «Язык».
+ */
+function LanguageContent() {
+  const { t, i18n } = useTranslation()
+
+  const languages: { code: 'ru' | 'en'; label: string }[] = [
+    { code: 'ru', label: t('settings.language.ru') },
+    { code: 'en', label: t('settings.language.en') },
+  ]
+
+  return (
+    <div className={styles['language-picker']}>
+      {languages.map(({ code, label }) => (
+        <button
+          key={code}
+          className={`${styles['language-btn']} ${i18n.language === code ? styles['language-btn--active'] : ''}`}
+          onClick={() => void i18n.changeLanguage(code)}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   )
 }
