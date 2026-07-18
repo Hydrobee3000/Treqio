@@ -29,8 +29,6 @@ interface BookExpandModalProps {
   onDelete?: () => Promise<void>
   /** Быстрая смена статуса. */
   onStatusChange?: (status: BookStatus) => void
-  /** Есть ли в DOM источник layout-анимации (BookCoverCard). При false закрытие не ждёт анимацию. */
-  hasLayoutSource?: boolean
 }
 
 /**
@@ -45,13 +43,11 @@ export const BookExpandModal = ({
   onCreate,
   onDelete,
   onStatusChange,
-  hasLayoutSource = true,
 }: BookExpandModalProps) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { showCreate, handleClose, handleLayoutAnimationComplete, handleCreate } =
-    useBookExpandModal({ entry, creating, onClose, onCreate, hasLayoutSource })
+  const { showCreate, handleCreate } = useBookExpandModal({ entry, creating, onClose, onCreate })
 
   return (
     <AnimatePresence>
@@ -63,7 +59,7 @@ export const BookExpandModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          onClick={handleClose}
+          onClick={onClose}
         >
           <div
             className={`${styles['em__centering']} ${isMobile ? styles['em__centering--mobile'] : ''}`}
@@ -80,9 +76,6 @@ export const BookExpandModal = ({
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
                   onClose={onClose}
-                  handleClose={handleClose}
-                  onLayoutAnimationComplete={handleLayoutAnimationComplete}
-                  hasLayoutSource={hasLayoutSource}
                 />
               )}
               {showCreate && (

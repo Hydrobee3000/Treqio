@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { CSSProperties, MouseEvent } from 'react'
-import { motion } from 'framer-motion'
 import { Menu, MenuItem } from '@mui/material'
 import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -83,13 +82,7 @@ export const BookCoverCard = ({
   return (
     <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
-        <motion.div
-          layoutId={`book-cover-${entry.id}`}
-          data-card-id={entry.id}
-          className={styles['cover-card__cover']}
-          onClick={onExpand}
-          transition={{ layout: { duration: 0 } }}
-        >
+        <div data-card-id={entry.id} className={styles['cover-card__cover']} onClick={onExpand}>
           {status === 'DONE' && (
             <ScoreBadge
               ref={setScoreEl}
@@ -103,7 +96,7 @@ export const BookCoverCard = ({
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
           <div className={styles['cover-card__author']}>{book.author || '—'}</div>
-        </motion.div>
+        </div>
         {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>
 
