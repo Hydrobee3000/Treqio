@@ -140,6 +140,10 @@
       "appearance": {
         "label": "Appearance",
         "desc": "Theme and colors"
+      },
+      "language": {
+        "label": "Language",
+        "desc": "Interface language"
       }
     },
     "appearance": {
@@ -163,6 +167,10 @@
         "enable": "Enable animation",
         "disable": "Disable animation"
       }
+    },
+    "language": {
+      "ru": "Русский",
+      "en": "English"
     }
   },
   "home": {
