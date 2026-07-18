@@ -68,14 +68,14 @@ function RatingRing({ rating }: { rating: number }) {
   const color = rating === 10 ? GOLD_COLOR : scoreColor(rating)
   const pct = rating * 10
   return (
-    <div
+    <span
       className={styles['history__rating-ring']}
       style={{ background: `conic-gradient(${color} ${pct}%, var(--color-divider, #e0e0e0) 0)` }}
     >
       <span className={styles['history__rating-number']} style={{ color }}>
         {rating}
       </span>
-    </div>
+    </span>
   )
 }
 
