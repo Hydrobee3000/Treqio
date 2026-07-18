@@ -10,7 +10,6 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
-  Upload,
   X,
 } from 'lucide-react'
 import { useNavigate } from 'react-router'
@@ -479,14 +478,6 @@ export const LibraryPage = () => {
                 <Plus size={17} />
                 {t('library.empty.addBook')}
               </button>
-              <Tooltip title={t('nav.comingSoon')}>
-                <span>
-                  <button className={styles['library__cta-ghost']} disabled>
-                    <Upload size={16} />
-                    {t('library.empty.import')}
-                  </button>
-                </span>
-              </Tooltip>
             </div>
           </div>
         ) : isFilteredEmpty ? (
