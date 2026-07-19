@@ -28,3 +28,10 @@
     padding-bottom: calc(56px + env(safe-area-inset-bottom));
   }
 }
+
+.app-layout__page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}

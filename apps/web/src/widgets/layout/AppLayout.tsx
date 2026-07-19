@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material'
+import { Box, CircularProgress, Drawer, useMediaQuery, useTheme } from '@mui/material'
 import { Outlet } from 'react-router'
 import { useAppSelector } from '@/shared/lib/store'
 import { THEME_COLORS } from '@/shared/config/themes'
@@ -12,6 +12,18 @@ import styles from './AppLayout.module.scss'
 
 export const SIDEBAR_WIDTH = 220
 export const SIDEBAR_COLLAPSED_WIDTH = 64
+
+/**
+ * Заглушка на время загрузки лениво подгружаемой страницы внутри layout —
+ * сайдбар остаётся на месте, крутится только контентная область.
+ */
+function PageLoader() {
+  return (
+    <Box className={styles['app-layout__page-loader']}>
+      <CircularProgress />
+    </Box>
+  )
+}
 
 /**
  * Layout приложения: сайдбар слева + контент справа.
@@ -48,7 +60,9 @@ export const AppLayout = () => {
       >
         {showParticles && <ParticleCanvas type={particleType!} />}
         <GuestBanner />
-        <Outlet />
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
       </Box>
 
       {isMobile && <MobileNav />}

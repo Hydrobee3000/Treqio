@@ -1,14 +1,23 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router'
 import { Box, CircularProgress } from '@mui/material'
-import { AuthCallbackPage } from '@/pages/auth-callback'
-import { HomePage } from '@/pages/home'
-import { LibraryPage } from '@/pages/library'
-import { LoginPage } from '@/pages/login'
-import { ProfilePage } from '@/pages/profile'
-import { SettingsPage } from '@/pages/settings'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
+import { PageFallback } from '@/shared/ui'
 import { AppLayout } from '@/widgets/layout'
+
+// Каждая страница — отдельный чанк, подгружается только при переходе на неё,
+// а не единым бандлом со всеми страницами сразу (см. issue про code splitting).
+const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })))
+const LibraryPage = lazy(() => import('@/pages/library').then((m) => ({ default: m.LibraryPage })))
+const ProfilePage = lazy(() => import('@/pages/profile').then((m) => ({ default: m.ProfilePage })))
+const SettingsPage = lazy(() =>
+  import('@/pages/settings').then((m) => ({ default: m.SettingsPage })),
+)
+const LoginPage = lazy(() => import('@/pages/login').then((m) => ({ default: m.LoginPage })))
+const AuthCallbackPage = lazy(() =>
+  import('@/pages/auth-callback').then((m) => ({ default: m.AuthCallbackPage })),
+)
 
 /**
  * Пропускает авторизованных пользователей и гостей, остальных редиректит на /login.
@@ -40,9 +49,23 @@ function RequireAuth() {
  * Маршруты приложения.
  */
 export const router = createBrowserRouter([
-  // Публичные маршруты
-  { path: '/login', element: <LoginPage /> }, // Страница входа
-  { path: '/auth/callback', element: <AuthCallbackPage /> }, // Обработчик OAuth редиректа
+  // Публичные маршруты — своего общего каркаса нет, поэтому у каждого свой fallback
+  {
+    path: '/login',
+    element: (
+      <Suspense fallback={<PageFallback />}>
+        <LoginPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/auth/callback',
+    element: (
+      <Suspense fallback={<PageFallback />}>
+        <AuthCallbackPage />
+      </Suspense>
+    ),
+  },
 
   // Приватные маршруты
   {
