@@ -29,6 +29,12 @@
   }
 }
 
+.app-layout__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+}
+
 .app-layout__page-loader {
   display: flex;
   align-items: center;
