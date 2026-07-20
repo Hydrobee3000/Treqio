@@ -6,17 +6,22 @@ import { useAppSelector } from '@/shared/lib/store'
 import { PageFallback } from '@/shared/ui'
 import { AppLayout } from '@/widgets/layout'
 
-// Каждая страница — отдельный чанк, подгружается только при переходе на неё,
-// а не единым бандлом со всеми страницами сразу (см. issue про code splitting).
-const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })))
-const LibraryPage = lazy(() => import('@/pages/library').then((m) => ({ default: m.LibraryPage })))
-const ProfilePage = lazy(() => import('@/pages/profile').then((m) => ({ default: m.ProfilePage })))
-const SettingsPage = lazy(() =>
-  import('@/pages/settings').then((m) => ({ default: m.SettingsPage })),
+// Каждая страница — отдельный чанк, подгружается только при переходе на неё
+const HomePage = lazy(() => import('@/pages/home').then((module) => ({ default: module.HomePage })))
+const LibraryPage = lazy(() =>
+  import('@/pages/library').then((module) => ({ default: module.LibraryPage })),
 )
-const LoginPage = lazy(() => import('@/pages/login').then((m) => ({ default: m.LoginPage })))
+const ProfilePage = lazy(() =>
+  import('@/pages/profile').then((module) => ({ default: module.ProfilePage })),
+)
+const SettingsPage = lazy(() =>
+  import('@/pages/settings').then((module) => ({ default: module.SettingsPage })),
+)
+const LoginPage = lazy(() =>
+  import('@/pages/login').then((module) => ({ default: module.LoginPage })),
+)
 const AuthCallbackPage = lazy(() =>
-  import('@/pages/auth-callback').then((m) => ({ default: m.AuthCallbackPage })),
+  import('@/pages/auth-callback').then((module) => ({ default: module.AuthCallbackPage })),
 )
 
 /**

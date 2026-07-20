@@ -21,10 +21,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-
-  &--disabled {
-    cursor: not-allowed;
-  }
 }
 
 .mobile-nav__icon {
@@ -34,9 +30,5 @@
 
   &--active {
     color: var(--color-primary, #4e7b6a);
-  }
-
-  &--disabled {
-    opacity: 0.45;
   }
 }
