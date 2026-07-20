@@ -62,13 +62,45 @@ $breakpoint-medium: 900px;
 
 // ─── Логотип ──────────────────────────────────────────────────────────────────
 
+.login-page__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  animation: fade-slide-up 0.6s ease both;
+}
+
+.login-page__logo-icon {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  user-select: none;
+  background: linear-gradient(150deg, var(--logo-primary, #c97b5c), var(--logo-primary-dark, #b36a4d));
+
+  // Глиф наложен через mask — цвет тайла берётся из переменных темы, а не из файла.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    mask: url('../../widgets/layout/logo.svg') center / contain no-repeat;
+    -webkit-mask: url('../../widgets/layout/logo.svg') center / contain no-repeat;
+  }
+
+  @media (min-width: $breakpoint-medium) {
+    width: 52px;
+    height: 52px;
+  }
+}
+
 .login-page__logo {
   font-size: 40px;
   font-weight: 800;
-  letter-spacing: -0.05em;
+  letter-spacing: 0.04em;
   color: var(--login-hero-text);
-  margin-bottom: 16px;
-  animation: fade-slide-up 0.6s ease both;
+  margin: 0;
 
   @media (min-width: $breakpoint-medium) {
     font-size: 52px;
@@ -77,12 +109,25 @@ $breakpoint-medium: 900px;
 
 // ─── Описание ─────────────────────────────────────────────────────────────────
 
+.login-page__tagline {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--login-hero-text);
+  margin: 0 0 14px;
+  animation: fade-slide-up 0.6s ease 0.1s both;
+
+  @media (min-width: $breakpoint-medium) {
+    font-size: 22px;
+  }
+}
+
 .login-page__description {
   font-size: 15px;
   line-height: 1.6;
   color: var(--login-hero-muted);
   max-width: 420px;
-  margin-bottom: 32px;
+  margin: 0 0 44px;
   animation: fade-slide-up 0.6s ease 0.15s both;
 
   @media (min-width: $breakpoint-medium) {
@@ -118,6 +163,15 @@ $breakpoint-medium: 900px;
   padding-left: 28px;
   padding-right: 28px;
   width: 100%;
+  // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
+  // обратное: фон изначально тёмный вариант, на hover светлее (как у CTA в библиотеке).
+  background-color: var(--color-primary-dark) !important;
+  transition: filter 0.15s !important;
+
+  &:hover {
+    background-color: var(--color-primary-dark) !important;
+    filter: brightness(1.15);
+  }
 
   @media (min-width: $breakpoint-small) {
     width: auto;

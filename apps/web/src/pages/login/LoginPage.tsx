@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { Button, useMediaQuery } from '@mui/material'
-import { Activity, BarChart2, LibraryBig } from 'lucide-react'
+import { BarChart2, LibraryBig, Palette } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch } from '@/shared/lib/store'
@@ -29,7 +29,7 @@ const CARD_GRADIENTS = [
  */
 const FEATURE_ICONS = [
   <LibraryBig key="progress" size={18} color="#4E7B6A" />,
-  <Activity key="feed" size={18} color="#4E7B6A" />,
+  <Palette key="feed" size={18} color="#4E7B6A" />,
   <BarChart2 key="stats" size={18} color="#4E7B6A" />,
 ]
 
@@ -81,13 +81,13 @@ export function LoginPage() {
   return (
     <div className={styles['login-page']}>
       <div className={styles['login-page__hero']}>
-        <p className={styles['login-page__logo']}>Treqio</p>
+        <div className={styles['login-page__brand']}>
+          <span className={styles['login-page__logo-icon']} />
+          <p className={styles['login-page__logo']}>Treqio</p>
+        </div>
 
-        <p className={styles['login-page__description']}>
-          {t('login.description')}
-          <br />
-          {t('login.additionalDescription')}
-        </p>
+        <p className={styles['login-page__tagline']}>{t('login.description')}</p>
+        <p className={styles['login-page__description']}>{t('login.additionalDescription')}</p>
 
         <div className={styles['login-page__buttons']}>
           <Button
