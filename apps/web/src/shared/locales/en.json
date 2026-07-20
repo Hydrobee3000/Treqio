@@ -189,8 +189,8 @@
         "desc": "Change status, set a rating."
       },
       "language": {
-        "title": "Language",
-        "desc": "Change language"
+        "title": "Change language",
+        "desc": "Interface in Russian or English."
       },
       "login": {
         "title": "Sign in",

@@ -373,11 +373,16 @@ $breakpoint-medium: 900px;
     padding: 12px 14px;
   }
 
-  // Тёмная карточка
+  // Тёмная карточка — фон всегда тёмный вне зависимости от темы приложения,
+  // поэтому обычный цветной блик на нём почти не виден — берём белёсый.
   &--dark {
     background: var(--color-surface-variant, #243d35);
     border-color: transparent;
     color: var(--sidebar-text, #d8ebe4);
+
+    &::before {
+      background: radial-gradient(120% 80% at 100% 100%, rgba(255, 255, 255, 0.14), transparent 60%);
+    }
 
     .bento__cell-title {
       color: var(--sidebar-text, #d8ebe4);
