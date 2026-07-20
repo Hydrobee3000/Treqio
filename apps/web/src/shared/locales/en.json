@@ -207,8 +207,8 @@
     }
   },
   "login": {
-    "description": "Personal library for books and games.",
-    "additionalDescription": "Track progress, rate, share with friends.",
+    "description": "Personal library.",
+    "additionalDescription": "Add, track progress, rate.",
     "googleLogin": "Sign in with Google",
     "or": "or",
     "guestLogin": "Continue as a guest",
@@ -217,12 +217,12 @@
       "progress": {
         "label": "Progress and ratings",
         "mobileLabel": "Track progress, set ratings.",
-        "text": "Add books and games, track progress. Set ratings and leave notes."
+        "text": "Add books, track progress, set ratings and leave notes."
       },
       "feed": {
-        "label": "Friends feed",
-        "mobileLabel": "Follow your friends' activity.",
-        "text": "Follow your friends' activity in real time."
+        "label": "Customize theme",
+        "mobileLabel": "Pick a color palette and animations.",
+        "text": "Choose from a dozen color palettes, light or dark, with animated backgrounds."
       },
       "stats": {
         "label": "Stats and history",
