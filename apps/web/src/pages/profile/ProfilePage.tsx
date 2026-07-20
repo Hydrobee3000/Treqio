@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Button, Collapse, Skeleton, Tooltip } from '@mui/material'
+import { Button, Collapse, Skeleton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
@@ -16,7 +16,7 @@ import {
 import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { STATUS_TEXT_COLOR, GOLD_COLOR, scoreColor } from '@/entities/book'
+import { STATUS_TEXT_COLOR, scoreColor } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
@@ -65,7 +65,7 @@ const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: number }>> =
 
 /** Кольцо оценки в событии активности — только просмотр, без возможности изменить. */
 function RatingRing({ rating }: { rating: number }) {
-  const color = rating === 10 ? GOLD_COLOR : scoreColor(rating)
+  const color = scoreColor(rating)
   const pct = rating * 10
   return (
     <span
@@ -221,6 +221,8 @@ export const ProfilePage = () => {
   const { t, i18n } = useTranslation()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const guestDisplayName = useAppSelector((s) => s.guest.displayName)
   const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
@@ -390,6 +392,18 @@ export const ProfilePage = () => {
     yesterdayLabel,
   )
 
+  const authButton = (
+    <button
+      className={styles['header__auth-btn']}
+      onClick={isGuest ? () => navigate('/login') : handleLogout}
+    >
+      {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
+      <span className={styles['header__auth-btn-label']}>
+        {isGuest ? t('profile.login') : t('profile.logout')}
+      </span>
+    </button>
+  )
+
   return (
     <div className={styles['profile']}>
       <div className={styles['header']}>
@@ -453,17 +467,13 @@ export const ProfilePage = () => {
             </div>
             {user?.bio && <p className={styles['header__bio']}>{user.bio}</p>}
           </div>
-          <Tooltip title={isGuest ? t('profile.login') : t('profile.logout')}>
-            <button
-              className={styles['header__auth-btn']}
-              onClick={isGuest ? () => navigate('/login') : handleLogout}
-            >
-              {isGuest ? <LogIn size={15} /> : <LogOut size={15} />}
-              <span className={styles['header__auth-btn-label']}>
-                {isGuest ? t('profile.login') : t('profile.logout')}
-              </span>
-            </button>
-          </Tooltip>
+          {isMobile ? (
+            <Tooltip title={isGuest ? t('profile.login') : t('profile.logout')}>
+              {authButton}
+            </Tooltip>
+          ) : (
+            authButton
+          )}
         </div>
       </div>
 

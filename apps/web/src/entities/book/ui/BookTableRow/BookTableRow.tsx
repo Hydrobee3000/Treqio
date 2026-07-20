@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Box, Menu, MenuItem, Rating } from '@mui/material'
-import { Check, Star } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { STATUS_DOT_COLOR, STATUS_OPTIONS, GOLD_COLOR, scoreColor } from '../../model/book.types'
+import { STATUS_DOT_COLOR, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { RatingPicker } from '../RatingPicker/RatingPicker'
 import styles from './BookTableRow.module.scss'
@@ -107,7 +107,7 @@ export const BookTableRow = ({
               className={styles['table-row__rating-value']}
               style={{ color: scoreColor(rating) }}
             >
-              {rating === 10 ? <Star size={13} fill={GOLD_COLOR} stroke="none" /> : rating}
+              {rating}
             </span>
           </>
         ) : (
