@@ -59,9 +59,11 @@ export const AppLayout = () => {
       >
         {showParticles && <ParticleCanvas type={particleType!} />}
         <GuestBanner />
-        <Suspense fallback={<PageLoader />}>
-          <Outlet />
-        </Suspense>
+        <Box className={styles['app-layout__content']}>
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
+        </Box>
       </Box>
 
       {isMobile && <MobileNav />}
