@@ -222,7 +222,7 @@
       "feed": {
         "label": "Customize theme",
         "mobileLabel": "Pick a color palette and animations.",
-        "text": "Choose from a dozen color palettes, light or dark, with animated backgrounds."
+        "text": "Customize the palette and background animation."
       },
       "stats": {
         "label": "Stats and history",
