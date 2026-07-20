@@ -110,4 +110,13 @@
 .footer__btn-login {
   margin-left: auto;
   min-width: 120px !important;
+  // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
+  // обратное: фон изначально тёмный вариант, на hover светлее.
+  background-color: var(--color-primary-dark) !important;
+  transition: filter 0.15s !important;
+
+  &:hover {
+    background-color: var(--color-primary-dark) !important;
+    filter: brightness(1.15);
+  }
 }

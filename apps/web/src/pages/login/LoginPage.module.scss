@@ -66,7 +66,7 @@ $breakpoint-medium: 900px;
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 28px;
   animation: fade-slide-up 0.6s ease both;
 }
 
@@ -98,7 +98,7 @@ $breakpoint-medium: 900px;
 .login-page__logo {
   font-size: 40px;
   font-weight: 800;
-  letter-spacing: -0.05em;
+  letter-spacing: 0.04em;
   color: var(--login-hero-text);
   margin: 0;
 
@@ -109,12 +109,25 @@ $breakpoint-medium: 900px;
 
 // ─── Описание ─────────────────────────────────────────────────────────────────
 
+.login-page__tagline {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--login-hero-text);
+  margin: 0 0 14px;
+  animation: fade-slide-up 0.6s ease 0.1s both;
+
+  @media (min-width: $breakpoint-medium) {
+    font-size: 22px;
+  }
+}
+
 .login-page__description {
   font-size: 15px;
   line-height: 1.6;
   color: var(--login-hero-muted);
   max-width: 420px;
-  margin-bottom: 32px;
+  margin: 0 0 44px;
   animation: fade-slide-up 0.6s ease 0.15s both;
 
   @media (min-width: $breakpoint-medium) {
@@ -150,6 +163,15 @@ $breakpoint-medium: 900px;
   padding-left: 28px;
   padding-right: 28px;
   width: 100%;
+  // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
+  // обратное: фон изначально тёмный вариант, на hover светлее (как у CTA в библиотеке).
+  background-color: var(--color-primary-dark) !important;
+  transition: filter 0.15s !important;
+
+  &:hover {
+    background-color: var(--color-primary-dark) !important;
+    filter: brightness(1.15);
+  }
 
   @media (min-width: $breakpoint-small) {
     width: auto;

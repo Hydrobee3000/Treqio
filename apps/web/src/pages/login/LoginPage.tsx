@@ -86,11 +86,8 @@ export function LoginPage() {
           <p className={styles['login-page__logo']}>Treqio</p>
         </div>
 
-        <p className={styles['login-page__description']}>
-          {t('login.description')}
-          <br />
-          {t('login.additionalDescription')}
-        </p>
+        <p className={styles['login-page__tagline']}>{t('login.description')}</p>
+        <p className={styles['login-page__description']}>{t('login.additionalDescription')}</p>
 
         <div className={styles['login-page__buttons']}>
           <Button
