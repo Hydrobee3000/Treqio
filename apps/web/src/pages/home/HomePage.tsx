@@ -1,4 +1,14 @@
-import { BookOpen, Languages, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
+import type { ReactNode } from 'react'
+import {
+  ArrowRight,
+  BookOpen,
+  Languages,
+  LayoutGrid,
+  LogIn,
+  Palette,
+  PanelTop,
+  User,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
@@ -7,31 +17,54 @@ import type { LayoutVariant } from '@/shared/config/layout'
 import { SegmentedToggle } from '@/shared/ui'
 import styles from './HomePage.module.scss'
 
+/** Идентификатор плитки. */
+type TileKey = 'books' | 'theme' | 'profile' | 'language'
+
+/**
+ * Плитка быстрого действия на домашней странице.
+ */
+interface Tile {
+  /** Стабильный идентификатор — используется вместо индекса массива. */
+  key: TileKey
+  /** Иконка плитки. */
+  icon: ReactNode
+  /** Заголовок плитки. */
+  title: string
+  /** Описание плитки. */
+  desc: string
+  /** Путь для перехода при клике. */
+  href: string
+}
+
 /**
  * Плитки быстрых действий — зависят от переводов.
  */
-function useTiles() {
+function useTiles(): Tile[] {
   const { t } = useTranslation()
   return [
     {
+      key: 'books',
       icon: <BookOpen size={22} />,
       title: t('home.cards.addBook.title'),
       desc: t('home.cards.addBook.desc'),
       href: '/library',
     },
     {
+      key: 'theme',
       icon: <Palette size={22} />,
       title: t('home.cards.theme.title'),
       desc: t('home.cards.theme.desc'),
       href: '/settings/appearance',
     },
     {
+      key: 'profile',
       icon: <User size={22} />,
       title: t('home.cards.profile.title'),
       desc: t('home.cards.profile.desc'),
       href: '/profile',
     },
     {
+      key: 'language',
       icon: <Languages size={22} />,
       title: t('home.cards.language.title'),
       desc: t('home.cards.language.desc'),
@@ -40,23 +73,57 @@ function useTiles() {
   ]
 }
 
+/** Свойства кнопки-плитки. */
+interface TileButtonProps {
+  /** Иконка плитки. */
+  icon: ReactNode
+  /** Заголовок плитки. */
+  title: string
+  /** Описание плитки. */
+  desc: string
+  /** Колбэк клика по плитке. */
+  onClick: () => void
+}
+
 /**
- * Иконка стрелки для плитки.
+ * Кнопка-плитка для сетки 2×2 — иконка, заголовок с описанием и стрелка.
  */
-function ArrowIcon() {
+function GridTileButton({ icon, title, desc, onClick }: TileButtonProps) {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <button className={styles['grid__tile']} onClick={onClick}>
+      <div className={styles['grid__tile-icon']}>{icon}</div>
+      <div>
+        <p className={styles['grid__tile-title']}>{title}</p>
+        <p className={styles['grid__tile-desc']}>{desc}</p>
+      </div>
+      <span className={styles['grid__tile-arrow']}>
+        <ArrowRight size={16} strokeWidth={2} />
+      </span>
+    </button>
+  )
+}
+
+/**
+ * Кнопка-ячейка для bento-раскладки — иконка и заголовок с описанием.
+ */
+function BentoCellButton({
+  icon,
+  title,
+  desc,
+  onClick,
+  variant,
+}: TileButtonProps & { variant?: 'hero' | 'dark' }) {
+  return (
+    <button
+      className={`${styles['bento__cell']} ${variant ? styles[`bento__cell--${variant}`] : ''}`}
+      onClick={onClick}
     >
-      <path d="M5 12h14M13 5l7 7-7 7" />
-    </svg>
+      <div className={styles['bento__cell-icon']}>{icon}</div>
+      <div className={styles['bento__cell-content']}>
+        <p className={styles['bento__cell-title']}>{title}</p>
+        <p className={styles['bento__cell-desc']}>{desc}</p>
+      </div>
+    </button>
   )
 }
 
@@ -120,20 +187,13 @@ function GridLayout() {
   return (
     <div className={styles['grid']}>
       {tiles.map((tile) => (
-        <button
-          key={tile.title}
-          className={styles['grid__tile']}
+        <GridTileButton
+          key={tile.key}
+          icon={tile.icon}
+          title={tile.title}
+          desc={tile.desc}
           onClick={() => navigate(tile.href)}
-        >
-          <div className={styles['grid__tile-icon']}>{tile.icon}</div>
-          <div>
-            <p className={styles['grid__tile-title']}>{tile.title}</p>
-            <p className={styles['grid__tile-desc']}>{tile.desc}</p>
-          </div>
-          <span className={styles['grid__tile-arrow']}>
-            <ArrowIcon />
-          </span>
-        </button>
+        />
       ))}
     </div>
   )
@@ -146,65 +206,53 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const tiles = useTiles()
-  const books = tiles[0]!
-  const theme = tiles[1]!
-  const profile = tiles[2]!
-  const language = tiles[3]!
+  const getTile = (key: TileKey) => tiles.find((tile) => tile.key === key)!
+  const books = getTile('books')
+  const theme = getTile('theme')
+  const profile = getTile('profile')
+  const language = getTile('language')
 
   return (
     <div className={styles['bento']}>
-      <button
-        className={`${styles['bento__cell']} ${styles['bento__cell--hero']}`}
+      <BentoCellButton
+        variant="hero"
+        icon={books.icon}
+        title={books.title}
+        desc={books.desc}
         onClick={() => navigate(books.href)}
-      >
-        <div className={styles['bento__cell-icon']}>{books.icon}</div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{books.title}</p>
-          <p className={styles['bento__cell-desc']}>{books.desc}</p>
-        </div>
-      </button>
+      />
 
-      <button
-        className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+      <BentoCellButton
+        variant="dark"
+        icon={theme.icon}
+        title={theme.title}
+        desc={theme.desc}
         onClick={() => navigate(theme.href)}
-      >
-        <div className={styles['bento__cell-icon']}>{theme.icon}</div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{theme.title}</p>
-          <p className={styles['bento__cell-desc']}>{theme.desc}</p>
-        </div>
-      </button>
+      />
 
-      <button className={styles['bento__cell']} onClick={() => navigate(profile.href)}>
-        <div className={styles['bento__cell-icon']}>{profile.icon}</div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{profile.title}</p>
-          <p className={styles['bento__cell-desc']}>{profile.desc}</p>
-        </div>
-      </button>
+      <BentoCellButton
+        icon={profile.icon}
+        title={profile.title}
+        desc={profile.desc}
+        onClick={() => navigate(profile.href)}
+      />
 
-      <button className={styles['bento__cell']} onClick={() => navigate(language.href)}>
-        <div className={styles['bento__cell-icon']}>{language.icon}</div>
-        <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{language.title}</p>
-          <p className={styles['bento__cell-desc']}>{language.desc}</p>
-        </div>
-      </button>
+      <BentoCellButton
+        icon={language.icon}
+        title={language.title}
+        desc={language.desc}
+        onClick={() => navigate(language.href)}
+      />
 
       {/* Гостю в пятой ячейке bento предлагаем войти */}
       {isGuest && (
-        <button
-          className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
+        <BentoCellButton
+          variant="dark"
+          icon={<LogIn size={22} />}
+          title={t('home.cards.login.title')}
+          desc={t('home.cards.login.desc')}
           onClick={() => navigate('/login')}
-        >
-          <div className={styles['bento__cell-icon']}>
-            <LogIn size={22} />
-          </div>
-          <div className={styles['bento__cell-content']}>
-            <p className={styles['bento__cell-title']}>{t('home.cards.login.title')}</p>
-            <p className={styles['bento__cell-desc']}>{t('home.cards.login.desc')}</p>
-          </div>
-        </button>
+        />
       )}
     </div>
   )
@@ -229,7 +277,7 @@ function LoginStrip() {
         </div>
       </div>
       <span className={styles['login-strip__arrow']}>
-        <ArrowIcon />
+        <ArrowRight size={16} strokeWidth={2} />
       </span>
     </button>
   )
