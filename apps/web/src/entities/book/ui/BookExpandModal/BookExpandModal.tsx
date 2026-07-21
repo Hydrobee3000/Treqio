@@ -1,15 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material'
 import { useMediaQuery, useTheme } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { ConfirmCard } from '@/shared/ui'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { BookCreateForm } from './BookCreateForm'
 import { BookEntryView } from './BookEntryView'
@@ -141,26 +134,16 @@ export const BookExpandModal = ({
         </motion.div>
       )}
 
-      {discardDialogOpen && (
-        <Dialog
-          key="em-discard-dialog"
-          open={discardDialogOpen}
-          onClose={() => setDiscardDialogOpen(false)}
-        >
-          <DialogTitle>{t('book.modal.discardTitle')}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{t('book.modal.discardDesc')}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button variant="outlined" onClick={() => setDiscardDialogOpen(false)}>
-              {t('book.modal.keepEditing')}
-            </Button>
-            <Button variant="contained" color="error" onClick={handleDiscardConfirmed}>
-              {t('book.modal.discard')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
+      <ConfirmCard
+        open={discardDialogOpen}
+        title={t('book.modal.discardTitle')}
+        description={t('book.modal.discardDesc')}
+        cancelLabel={t('book.modal.keepEditing')}
+        confirmLabel={t('book.modal.discard')}
+        confirmColor="error"
+        onCancel={() => setDiscardDialogOpen(false)}
+        onConfirm={handleDiscardConfirmed}
+      />
     </AnimatePresence>
   )
 }
