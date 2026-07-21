@@ -4,8 +4,8 @@ A personal media tracker — books, games, movies and more. Track what you've re
 
 > # [**🚀 Open site**](https://treqio.online)
 >
-> <img width="1534" height="726" alt="home-desktop" src="https://github.com/user-attachments/assets/50aaef86-107c-4a41-9bcb-ef338fdeda92" />
-> <img width="361" height="642" alt="home-mobile" src="https://github.com/user-attachments/assets/590b19d6-5115-4c27-92cb-857cc7f9ecaa" />
+> <img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/02bc74c9-abe7-4af4-b0e6-4f51b098a80c" />
+> <img width="1918" height="906" alt="image" src="https://github.com/user-attachments/assets/58b232d0-dfc9-4118-a107-3f43700bfa73" />
 
 > **Status:** In active development. Core features are being built iteratively.
 
