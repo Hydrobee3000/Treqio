@@ -68,7 +68,11 @@ export const ThemeProvider = ({ children }: Props) => {
 
     root.style.setProperty('--header-title-color', isDark ? sidebar.text : sidebar.background)
 
-    const surfaceVariant = THEME_COLORS[activeVariant].surfaceVariant ?? sidebar.background
+    // В тёмной теме — совпадает с боковым меню (как раньше). В светлой —
+    // приглушённый цвет текста (--color-text-2)
+    const surfaceVariant = isDark
+      ? (THEME_COLORS[activeVariant].surfaceVariant ?? sidebar.background)
+      : text.secondary
     root.style.setProperty('--color-surface-variant', surfaceVariant)
 
     root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)
