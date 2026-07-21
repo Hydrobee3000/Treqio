@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
@@ -38,6 +38,8 @@ interface BookEntryViewProps {
   onStatusChange?: ((status: BookStatus) => void) | undefined
   /** Функция закрытия модалки. */
   onClose: () => void
+  /** Сообщает родителю о наличии несохранённых изменений в форме редактирования. */
+  onDirtyChange: (dirty: boolean) => void
 }
 
 // Legacy-строки «автор неизвестен», которые раньше сохранялись в БД вместо пустого поля.
@@ -63,6 +65,7 @@ export const BookEntryView = ({
   onDelete,
   onStatusChange,
   onClose,
+  onDirtyChange,
 }: BookEntryViewProps) => {
   const { t, i18n } = useTranslation()
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
@@ -85,7 +88,7 @@ export const BookEntryView = ({
     handleSubmit,
     reset,
     control,
-    formState: { isSubmitting, dirtyFields, errors },
+    formState: { isSubmitting, dirtyFields, errors, isDirty },
   } = useForm<EditFormValues>({
     resolver: zodResolver(editBookSchema(t)),
     defaultValues: {
@@ -100,6 +103,10 @@ export const BookEntryView = ({
   })
 
   const [ratingVal, progressVal] = useWatch({ control, name: ['rating', 'progress'] })
+
+  useEffect(() => {
+    onDirtyChange(isEditing && isDirty)
+  }, [isEditing, isDirty, onDirtyChange])
 
   const onEditSubmit = handleSubmit(async (values) => {
     setSaveError(null)

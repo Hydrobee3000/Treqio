@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
@@ -20,12 +20,19 @@ interface BookCreateFormProps {
   onCreate: (payload: CreateBookPayload) => Promise<void>
   /** Функция закрытия модалки. */
   onClose: () => void
+  /** Сообщает родителю о наличии несохранённых изменений в форме. */
+  onDirtyChange: (dirty: boolean) => void
 }
 
 /**
  * Модальная форма создания новой книги.
  */
-export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormProps) => {
+export const BookCreateForm = ({
+  isMobile,
+  onCreate,
+  onClose,
+  onDirtyChange,
+}: BookCreateFormProps) => {
   const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
@@ -35,7 +42,7 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
     handleSubmit,
     setValue,
     control,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isDirty },
   } = useForm<CreateFormValues>({
     resolver: zodResolver(createBookSchema(t)),
     defaultValues: {
@@ -56,6 +63,10 @@ export const BookCreateForm = ({ isMobile, onCreate, onClose }: BookCreateFormPr
   })
   const hasPageCount = !!(pageCountStr && Number(pageCountStr) > 0)
   const showProgress = (statusVal === 'READING' || statusVal === 'DROPPED') && hasPageCount
+
+  useEffect(() => {
+    onDirtyChange(isDirty)
+  }, [isDirty, onDirtyChange])
 
   const onSubmit = handleSubmit(async (values) => {
     const hasPageCountVal = !!(values.pageCount && Number(values.pageCount) > 0)

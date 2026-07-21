@@ -1,5 +1,15 @@
+import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@mui/material'
 import { useMediaQuery, useTheme } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { BookCreateForm } from './BookCreateForm'
 import { BookEntryView } from './BookEntryView'
@@ -44,10 +54,48 @@ export const BookExpandModal = ({
   onDelete,
   onStatusChange,
 }: BookExpandModalProps) => {
+  const { t } = useTranslation()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { showCreate, handleCreate } = useBookExpandModal({ entry, creating, onClose, onCreate })
+  const isOpen = !!entry || showCreate
+
+  // Есть ли несохранённые изменения в форме активного дочернего компонента —
+  // сообщается через onDirtyChange, чтобы закрытие могло спросить подтверждение.
+  const [isDirty, setIsDirty] = useState(false)
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false)
+
+  // Сброс isDirty при смене записи/режима — прямо во время рендера
+  const [prevKey, setPrevKey] = useState<string | boolean>(entry?.id ?? showCreate)
+  const currentKey = entry?.id ?? showCreate
+  if (currentKey !== prevKey) {
+    setPrevKey(currentKey)
+    setIsDirty(false)
+  }
+
+  /** Закрывает модалку сразу либо спрашивает подтверждение при несохранённых изменениях. */
+  const requestClose = useCallback(() => {
+    if (isDirty) {
+      setDiscardDialogOpen(true)
+    } else {
+      onClose()
+    }
+  }, [isDirty, onClose])
+
+  const handleDiscardConfirmed = () => {
+    setDiscardDialogOpen(false)
+    onClose()
+  }
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') requestClose()
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [isOpen, requestClose])
 
   return (
     <AnimatePresence>
@@ -59,7 +107,7 @@ export const BookExpandModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          onClick={onClose}
+          onClick={requestClose}
         >
           <div
             className={`${styles['em__centering']} ${isMobile ? styles['em__centering--mobile'] : ''}`}
@@ -75,7 +123,8 @@ export const BookExpandModal = ({
                   onSaveEntry={onSaveEntry}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
-                  onClose={onClose}
+                  onClose={requestClose}
+                  onDirtyChange={setIsDirty}
                 />
               )}
               {showCreate && (
@@ -83,12 +132,34 @@ export const BookExpandModal = ({
                   key="em-create"
                   isMobile={isMobile}
                   onCreate={handleCreate}
-                  onClose={onClose}
+                  onClose={requestClose}
+                  onDirtyChange={setIsDirty}
                 />
               )}
             </AnimatePresence>
           </div>
         </motion.div>
+      )}
+
+      {discardDialogOpen && (
+        <Dialog
+          key="em-discard-dialog"
+          open={discardDialogOpen}
+          onClose={() => setDiscardDialogOpen(false)}
+        >
+          <DialogTitle>{t('book.modal.discardTitle')}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{t('book.modal.discardDesc')}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="outlined" onClick={() => setDiscardDialogOpen(false)}>
+              {t('book.modal.keepEditing')}
+            </Button>
+            <Button variant="contained" color="error" onClick={handleDiscardConfirmed}>
+              {t('book.modal.discard')}
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
     </AnimatePresence>
   )
