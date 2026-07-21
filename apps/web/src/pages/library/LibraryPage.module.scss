@@ -338,7 +338,11 @@ $breakpoint-small: 600px;
   &--active {
     background: var(--color-paper, white);
     color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    // border вместо/вместе с тенью — в тёмных темах color-paper и color-paper-2
+    // слишком близки по яркости, одной только смены фона не видно.
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.1),
+      0 0 0 1px var(--color-divider, transparent);
   }
 }
 
