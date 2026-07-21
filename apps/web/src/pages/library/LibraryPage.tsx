@@ -38,6 +38,7 @@ import {
 } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
+import { SegmentedToggle } from '@/shared/ui'
 import { GuestLoginCard } from './ui/GuestLoginCard/GuestLoginCard'
 import styles from './LibraryPage.module.scss'
 
@@ -126,7 +127,7 @@ export const LibraryPage = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   // На мобильных выбор размера скрыт — всегда крупный (большие шрифты и
-  // бейдж оценки), ровно 2 колонки обеспечивает мобильный minmax в SCSS.
+  // бейдж оценки), ровно 2 колонки карточек.
   const effectiveCardSize: CardSize = isMobile ? 'large' : cardSize
   // На мобильных табличный вид недоступен — переключатель скрыт, всегда обложки.
   const effectiveCardStyle: CardStyle = isMobile ? 'cover' : cardStyle
@@ -430,25 +431,16 @@ export const LibraryPage = () => {
                   </Menu>
                 </>
               )}
+              {/* Переключатель представления (карточка/таблица) для больших экранов */}
               {!isMobile && (
-                <div className={styles['library__style-toggle']}>
-                  <Tooltip title={t('library.viewCovers')}>
-                    <button
-                      className={`${styles['library__style-btn']} ${cardStyle === 'cover' ? styles['library__style-btn--active'] : ''}`}
-                      onClick={() => setCardStyle('cover')}
-                    >
-                      <Image size={22} />
-                    </button>
-                  </Tooltip>
-                  <Tooltip title={t('library.viewTable')}>
-                    <button
-                      className={`${styles['library__style-btn']} ${cardStyle === 'table' ? styles['library__style-btn--active'] : ''}`}
-                      onClick={() => setCardStyle('table')}
-                    >
-                      <List size={22} />
-                    </button>
-                  </Tooltip>
-                </div>
+                <SegmentedToggle
+                  value={cardStyle}
+                  onChange={setCardStyle}
+                  options={[
+                    { value: 'cover', icon: <Image size={22} />, tooltip: t('library.viewCovers') },
+                    { value: 'table', icon: <List size={22} />, tooltip: t('library.viewTable') },
+                  ]}
+                />
               )}
             </div>
           </div>

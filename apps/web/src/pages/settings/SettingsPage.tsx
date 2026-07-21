@@ -22,6 +22,7 @@ import type { ThemeMode } from '@/features/theme'
 import { toggleParticles } from '@/features/animations'
 import { THEME_COLORS, LIGHT_THEMES, DARK_THEMES } from '@/shared/config/themes'
 import type { ThemeVariant } from '@/shared/config/themes'
+import { SegmentedToggle } from '@/shared/ui'
 import styles from './SettingsPage.module.scss'
 
 const THEME_MODE_KEY = 'treqio_theme_picker_mode'
@@ -245,26 +246,23 @@ function AppearanceContent() {
             </span>
           </span>
         </span>
-        <div className={styles['theme-mode-toggle']}>
-          <button
-            className={`${styles['theme-mode-btn']} ${!advancedMode ? styles['theme-mode-btn--active'] : ''}`}
-            onClick={() => handleModeChange('simple')}
-          >
-            <LayoutGrid size={13} />
-            <span className={styles['theme-mode-btn__text']}>
-              {t('settings.appearance.modeToggle.simple')}
-            </span>
-          </button>
-          <button
-            className={`${styles['theme-mode-btn']} ${advancedMode ? styles['theme-mode-btn--active'] : ''}`}
-            onClick={() => handleModeChange('advanced')}
-          >
-            <SlidersHorizontal size={13} />
-            <span className={styles['theme-mode-btn__text']}>
-              {t('settings.appearance.modeToggle.advanced')}
-            </span>
-          </button>
-        </div>
+        <SegmentedToggle
+          bordered
+          value={advancedMode ? 'advanced' : 'simple'}
+          onChange={handleModeChange}
+          options={[
+            {
+              value: 'simple',
+              icon: <LayoutGrid size={13} />,
+              label: t('settings.appearance.modeToggle.simple'),
+            },
+            {
+              value: 'advanced',
+              icon: <SlidersHorizontal size={13} />,
+              label: t('settings.appearance.modeToggle.advanced'),
+            },
+          ]}
+        />
       </div>
 
       {!advancedMode ? (

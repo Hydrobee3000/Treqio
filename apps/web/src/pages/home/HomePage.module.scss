@@ -61,48 +61,6 @@ $breakpoint-medium: 900px;
   }
 }
 
-// ─── Переключатель layout ─────────────────────────────────────────────────────
-
-.home__layout-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px;
-  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  border-radius: 11px;
-  flex-shrink: 0;
-}
-
-.home__layout-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--color-text-2, #666);
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.06);
-    color: var(--color-text, inherit);
-  }
-
-  &--active {
-    background: var(--color-paper, white);
-    color: var(--color-primary, #4e7b6a);
-    // border вместо/вместе с тенью — в тёмных темах color-paper и color-paper-2
-    // слишком близки по яркости, одной только смены фона не видно.
-    box-shadow:
-      0 1px 4px rgba(0, 0, 0, 0.1),
-      0 0 0 1px var(--color-divider, transparent);
-  }
-}
 
 // ─── Лейбл секции ─────────────────────────────────────────────────────────────
 
@@ -508,16 +466,13 @@ $breakpoint-medium: 900px;
   text-align: left;
   animation: rise 0.6s ease 0.25s both;
   transition: border-color 0.15s;
-
-  // На узкой доступной ширине/высоте (например при увеличенном масштабе
-  // страницы) не сжимаемся дальше — пусть лучше появится скролл, чем сломается вид
   min-height: 60px;
 
   @media (min-width: $breakpoint-small) {
     min-width: 320px;
   }
 
-  // Шиммер в цвет основного акцента темы — сам проходит раз в 4с
+  // Шиммер в цвет основного акцента темы - повторная анимация
   &::after {
     content: '';
     position: absolute;
