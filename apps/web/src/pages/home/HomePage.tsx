@@ -1,10 +1,10 @@
-import { Tooltip } from '@mui/material'
 import { BookOpen, Languages, LayoutGrid, LogIn, Palette, PanelTop, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setLayout } from '@/features/layout'
 import type { LayoutVariant } from '@/shared/config/layout'
+import { SegmentedToggle } from '@/shared/ui'
 import styles from './HomePage.module.scss'
 
 /**
@@ -86,24 +86,14 @@ export function HomePage() {
           <span className={styles['home__version']}>v{__APP_VERSION__}</span>
 
           {/* Переключатель вида */}
-          <div className={styles['home__layout-toggle']}>
-            <Tooltip title={t('home.layoutGrid')}>
-              <button
-                className={`${styles['home__layout-btn']} ${layout === 'grid' ? styles['home__layout-btn--active'] : ''}`}
-                onClick={() => handleLayoutChange('grid')}
-              >
-                <LayoutGrid size={16} />
-              </button>
-            </Tooltip>
-            <Tooltip title={t('home.layoutBento')}>
-              <button
-                className={`${styles['home__layout-btn']} ${layout === 'bento' ? styles['home__layout-btn--active'] : ''}`}
-                onClick={() => handleLayoutChange('bento')}
-              >
-                <PanelTop size={16} />
-              </button>
-            </Tooltip>
-          </div>
+          <SegmentedToggle
+            value={layout}
+            onChange={handleLayoutChange}
+            options={[
+              { value: 'grid', icon: <LayoutGrid size={16} />, tooltip: t('home.layoutGrid') },
+              { value: 'bento', icon: <PanelTop size={16} />, tooltip: t('home.layoutBento') },
+            ]}
+          />
         </div>
       </div>
 

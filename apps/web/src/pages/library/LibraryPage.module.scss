@@ -16,10 +16,7 @@ $breakpoint-small: 600px;
 .library {
   display: flex;
   flex-direction: column;
-  // Скроллит только родительский <main> в AppLayout
   min-height: 100%;
-  // Предотвращает визуальный overflow от transform-анимаций (rise),
-  // который вызывал кратковременный скролл при пустой библиотеке.
   overflow: clip;
 }
 
@@ -63,8 +60,7 @@ $breakpoint-small: 600px;
     transform: translateY(-1px);
   }
 
-  // На мобильных текст прячется — кнопка становится круглой, чтобы
-  // помещаться в один ряд с заголовком «Моя библиотека».
+  // На мобильных у кнопки отображается только иконка
   @media (max-width: $breakpoint-small) {
     width: 36px;
     height: 36px;
@@ -305,47 +301,6 @@ $breakpoint-small: 600px;
   opacity: 0.6;
 }
 
-.library__style-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px;
-  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  border-radius: 11px;
-  flex-shrink: 0;
-}
-
-.library__style-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--color-text-2, #666);
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.06);
-    color: var(--color-text, inherit);
-  }
-
-  &--active {
-    background: var(--color-paper, white);
-    color: var(--color-primary, #4e7b6a);
-    // border вместо/вместе с тенью — в тёмных темах color-paper и color-paper-2
-    // слишком близки по яркости, одной только смены фона не видно.
-    box-shadow:
-      0 1px 4px rgba(0, 0, 0, 0.1),
-      0 0 0 1px var(--color-divider, transparent);
-  }
-}
-
 // ─── Сетка карточек ───────────────────────────────────────────────────────────
 
 .library__grid {
@@ -407,8 +362,7 @@ $breakpoint-small: 600px;
   background: var(--color-paper, white);
 }
 
-// Строки таблицы (BookTableRow) разделены границей — задаём её здесь,
-// чтобы не дублировать в каждой строке внутри сущности.
+// разделение строк таблицы
 .library__table > :not(:last-child) {
   border-bottom: 1px solid var(--color-divider, #d5e4d8);
 }
