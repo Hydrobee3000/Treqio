@@ -176,12 +176,12 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
 
       <button
         className={`${styles['bento__cell']} ${styles['bento__cell--dark']}`}
-        onClick={() => navigate(language.href)}
+        onClick={() => navigate(theme.href)}
       >
-        <div className={styles['bento__cell-icon']}>{language.icon}</div>
+        <div className={styles['bento__cell-icon']}>{theme.icon}</div>
         <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{language.title}</p>
-          <p className={styles['bento__cell-desc']}>{language.desc}</p>
+          <p className={styles['bento__cell-title']}>{theme.title}</p>
+          <p className={styles['bento__cell-desc']}>{theme.desc}</p>
         </div>
       </button>
 
@@ -193,11 +193,11 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
         </div>
       </button>
 
-      <button className={styles['bento__cell']} onClick={() => navigate(theme.href)}>
-        <div className={styles['bento__cell-icon']}>{theme.icon}</div>
+      <button className={styles['bento__cell']} onClick={() => navigate(language.href)}>
+        <div className={styles['bento__cell-icon']}>{language.icon}</div>
         <div className={styles['bento__cell-content']}>
-          <p className={styles['bento__cell-title']}>{theme.title}</p>
-          <p className={styles['bento__cell-desc']}>{theme.desc}</p>
+          <p className={styles['bento__cell-title']}>{language.title}</p>
+          <p className={styles['bento__cell-desc']}>{language.desc}</p>
         </div>
       </button>
 
