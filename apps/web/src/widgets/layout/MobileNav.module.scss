@@ -18,17 +18,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2px 0 10px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-.mobile-nav__icon {
-  font-size: 24px;
-  color: var(--color-text-2, #666);
-  transition: color 0.15s;
+.mobile-nav__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--color-text-2, #999);
+  transition:
+    color 0.15s,
+    background 0.15s;
 
+  // Подложка под активной иконкой — надёжнее, чем полагаться только на смену
+  // цвета: в некоторых темах primary недостаточно контрастен с фоном сам по себе.
   &--active {
     color: var(--color-primary, #4e7b6a);
+    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, transparent);
   }
+}
+
+.mobile-nav__icon {
+  font-size: 24px;
+  color: inherit;
 }

@@ -42,9 +42,11 @@ export const MobileNav = () => {
               aria-label={label}
               className={styles['mobile-nav__item']}
             >
-              <Icon
-                className={`${styles['mobile-nav__icon']} ${isActive ? styles['mobile-nav__icon--active'] : ''}`}
-              />
+              <span
+                className={`${styles['mobile-nav__icon-wrap']} ${isActive ? styles['mobile-nav__icon-wrap--active'] : ''}`}
+              >
+                <Icon className={styles['mobile-nav__icon']} />
+              </span>
             </Box>
           )
         })}
