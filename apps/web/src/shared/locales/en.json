@@ -130,8 +130,8 @@
       "deleteDesc": "The book «{{title}}» will be removed from your library. This action cannot be undone.",
       "discardTitle": "Discard changes?",
       "discardDesc": "Your changes haven't been saved and will be lost.",
-      "discard": "Discard",
-      "keepEditing": "Keep editing",
+      "discard": "Close",
+      "keepEditing": "Go back",
       "saveError": "Failed to save",
       "deleteError": "Failed to delete. Please try again.",
       "createError": "Failed to add book. Please try again."

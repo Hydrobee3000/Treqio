@@ -48,6 +48,10 @@
   padding: 14px 48px 34px 16px;
   display: flex;
   align-items: flex-end;
+
+  &--error {
+    background: linear-gradient(150deg, #d05c5c, #a03e3e);
+  }
 }
 
 .hero__title {
@@ -92,6 +96,13 @@
   min-height: 75px;
 }
 
+.description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-2, #666);
+}
+
 // ─── Футер ────────────────────────────────────────────────────────────────────
 
 .footer {
@@ -107,7 +118,7 @@
   min-width: 90px !important;
 }
 
-.footer__btn-login {
+.footer__btn-confirm {
   margin-left: auto;
   min-width: 120px !important;
   // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
@@ -119,4 +130,9 @@
     background-color: var(--color-primary-dark) !important;
     filter: brightness(1.15);
   }
+}
+
+.footer__btn-confirm--error {
+  margin-left: auto;
+  min-width: 120px !important;
 }
