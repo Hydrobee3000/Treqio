@@ -20,10 +20,10 @@ function useTiles() {
       href: '/library',
     },
     {
-      icon: <Languages size={22} />,
-      title: t('home.cards.language.title'),
-      desc: t('home.cards.language.desc'),
-      href: '/settings/language',
+      icon: <Palette size={22} />,
+      title: t('home.cards.theme.title'),
+      desc: t('home.cards.theme.desc'),
+      href: '/settings/appearance',
     },
     {
       icon: <User size={22} />,
@@ -32,10 +32,10 @@ function useTiles() {
       href: '/profile',
     },
     {
-      icon: <Palette size={22} />,
-      title: t('home.cards.theme.title'),
-      desc: t('home.cards.theme.desc'),
-      href: '/settings/appearance',
+      icon: <Languages size={22} />,
+      title: t('home.cards.language.title'),
+      desc: t('home.cards.language.desc'),
+      href: '/settings/language',
     },
   ]
 }
@@ -157,9 +157,9 @@ function BentoLayout({ isGuest }: { isGuest: boolean }) {
   const { t } = useTranslation()
   const tiles = useTiles()
   const books = tiles[0]!
-  const language = tiles[1]!
+  const theme = tiles[1]!
   const profile = tiles[2]!
-  const theme = tiles[3]!
+  const language = tiles[3]!
 
   return (
     <div className={styles['bento']}>
