@@ -23,6 +23,10 @@ interface Props {
   confirmIcon?: ReactNode
   /** Цветовой вариант кнопки подтверждения — error для разрушительных действий. */
   confirmColor?: 'primary' | 'error'
+  /** Блокирует кнопки и закрытие (например во время запроса на сервер). */
+  disabled?: boolean
+  /** Текст ошибки под описанием — например при неудачном подтверждении. */
+  error?: string | undefined
   /** Колбэк закрытия без подтверждения (крестик, фон, Escape, кнопка отмены). */
   onCancel: () => void
   /** Колбэк подтверждения действия. */
@@ -41,18 +45,24 @@ export const ConfirmCard = ({
   confirmLabel,
   confirmIcon,
   confirmColor = 'primary',
+  disabled = false,
+  error,
   onCancel,
   onConfirm,
 }: Props) => {
+  const handleCancel = () => {
+    if (!disabled) onCancel()
+  }
+
   useEffect(() => {
     if (!open) return
 
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel()
+      if (e.key === 'Escape' && !disabled) onCancel()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [open, onCancel])
+  }, [open, disabled, onCancel])
 
   return (
     <AnimatePresence>
@@ -65,7 +75,7 @@ export const ConfirmCard = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={onCancel}
+            onClick={handleCancel}
           />
           <div className={styles.centering}>
             <motion.div
@@ -79,20 +89,27 @@ export const ConfirmCard = ({
               <div
                 className={`${styles.hero} ${confirmColor === 'error' ? styles['hero--error'] : ''}`}
               >
-                <button className={styles['hero__close']} onClick={onCancel} aria-label="close">
+                <button
+                  className={styles['hero__close']}
+                  onClick={handleCancel}
+                  disabled={disabled}
+                  aria-label="close"
+                >
                   <X size={15} />
                 </button>
                 <h2 className={styles['hero__title']}>{title}</h2>
               </div>
               <div className={styles.content}>
                 <p className={styles.description}>{description}</p>
+                {error && <p className={styles['content__error']}>{error}</p>}
               </div>
               <div className={styles.footer}>
                 <Button
                   variant="outlined"
                   size="small"
                   className={styles['footer__btn-cancel']}
-                  onClick={onCancel}
+                  onClick={handleCancel}
+                  disabled={disabled}
                 >
                   {cancelLabel}
                 </Button>
@@ -107,6 +124,7 @@ export const ConfirmCard = ({
                   }
                   startIcon={confirmIcon}
                   onClick={onConfirm}
+                  disabled={disabled}
                 >
                   {confirmLabel}
                 </Button>

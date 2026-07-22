@@ -82,6 +82,11 @@
   &:hover {
     background: rgba(0, 0, 0, 0.48);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 // ─── Контент (pill-эффект — белая область с закруглёнными верхними углами) ────
@@ -101,6 +106,13 @@
   font-size: 14px;
   line-height: 1.55;
   color: var(--color-text-2, #666);
+}
+
+.content__error {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #d05c5c;
 }
 
 // ─── Футер ────────────────────────────────────────────────────────────────────
