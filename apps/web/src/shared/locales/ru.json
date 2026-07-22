@@ -250,7 +250,9 @@
     "settings": "Настройки",
     "comingSoon": "Скоро",
     "lightTheme": "Светлая тема",
-    "darkTheme": "Тёмная тема"
+    "darkTheme": "Тёмная тема",
+    "collapseSidebar": "Свернуть меню",
+    "expandSidebar": "Развернуть меню"
   },
   "guestBanner": {
     "message": "Данные хранятся только в браузере",

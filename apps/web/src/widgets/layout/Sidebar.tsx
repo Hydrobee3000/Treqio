@@ -118,7 +118,11 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
             <span className={styles['sidebar__logo']}>Treqio</span>
           </div>
         )}
-        <button className={styles['sidebar__collapse-btn']} onClick={onToggle}>
+        <button
+          className={styles['sidebar__collapse-btn']}
+          onClick={onToggle}
+          aria-label={collapsed ? t('nav.expandSidebar') : t('nav.collapseSidebar')}
+        >
           {collapsed ? (
             <ChevronRightIcon style={{ fontSize: 20 }} />
           ) : (
@@ -139,6 +143,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
             <button
               className={`${styles['theme-toggle']} ${styles['theme-toggle--collapsed']}`}
               onClick={() => dispatch(toggleDark())}
+              aria-label={themeLabel}
             >
               {isDark ? <Sun size={22} /> : <Moon size={22} />}
             </button>
