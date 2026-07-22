@@ -63,7 +63,7 @@ const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: number }>> =
   STATUS: RefreshCw,
 }
 
-/** Кольцо оценки в событии активности — только просмотр, без возможности изменить. */
+/** Кольцо оценки в событии активности — только просмотр. */
 function RatingRing({ rating }: { rating: number }) {
   const color = scoreColor(rating)
   const pct = rating * 10

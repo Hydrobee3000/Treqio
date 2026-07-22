@@ -1,4 +1,9 @@
 {
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "desc": "Try reloading the page — that usually helps.",
+    "reload": "Reload page"
+  },
   "library": {
     "title": "My Library",
     "addBook": "Add book",
