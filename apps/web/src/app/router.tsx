@@ -5,6 +5,7 @@ import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
 import { PageFallback } from '@/shared/ui'
 import { AppLayout } from '@/widgets/layout'
+import { ErrorFallback } from './ErrorFallback/ErrorFallback'
 
 // Каждая страница — отдельный чанк, подгружается только при переходе на неё
 const HomePage = lazy(() => import('@/pages/home').then((module) => ({ default: module.HomePage })))
@@ -54,36 +55,43 @@ function RequireAuth() {
  * Маршруты приложения.
  */
 export const router = createBrowserRouter([
-  // Публичные маршруты — своего общего каркаса нет, поэтому у каждого свой fallback
   {
-    path: '/login',
-    element: (
-      <Suspense fallback={<PageFallback />}>
-        <LoginPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/auth/callback',
-    element: (
-      <Suspense fallback={<PageFallback />}>
-        <AuthCallbackPage />
-      </Suspense>
-    ),
-  },
-
-  // Приватные маршруты
-  {
-    element: <RequireAuth />,
+    // errorElement, общий для всех маршрутов
+    id: 'root',
+    element: <Outlet />,
+    errorElement: <ErrorFallback />,
     children: [
       {
-        element: <AppLayout />,
+        path: '/login',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <LoginPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/auth/callback',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <AuthCallbackPage />
+          </Suspense>
+        ),
+      },
+
+      // Приватные маршруты
+      {
+        element: <RequireAuth />,
         children: [
-          { path: '/', element: <HomePage /> }, // Домашняя страница
-          { path: '/library', element: <LibraryPage /> }, // Библиотека
-          { path: '/profile', element: <ProfilePage /> }, // Профиль пользователя
-          { path: '/settings', element: <SettingsPage /> }, // Настройки
-          { path: '/settings/:section', element: <SettingsPage /> }, // Раздел настроек
+          {
+            element: <AppLayout />,
+            children: [
+              { path: '/', element: <HomePage /> }, // Домашняя страница
+              { path: '/library', element: <LibraryPage /> }, // Библиотека
+              { path: '/profile', element: <ProfilePage /> }, // Профиль пользователя
+              { path: '/settings', element: <SettingsPage /> }, // Настройки
+              { path: '/settings/:section', element: <SettingsPage /> }, // Раздел настроек
+            ],
+          },
         ],
       },
     ],
