@@ -3,15 +3,8 @@ import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { Check, Pencil, Star, Trash2, X } from 'lucide-react'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { ConfirmCard } from '@/shared/ui'
 import { GOLD_COLOR, STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
@@ -162,7 +155,6 @@ export const BookEntryView = ({
   }
 
   const handleDeleteDialogClose = () => {
-    if (isDeleting) return
     setDeleteError(null)
     setDeleteDialogOpen(false)
   }
@@ -519,32 +511,18 @@ export const BookEntryView = ({
         )}
       </div>
 
-      <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-        <DialogTitle>{t('book.modal.deleteTitle')}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {t('book.modal.deleteDesc', { title: entry.book.title })}
-          </DialogContentText>
-          {deleteError && (
-            <DialogContentText color="error" sx={{ mt: 1 }}>
-              {deleteError}
-            </DialogContentText>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleDeleteDialogClose} disabled={isDeleting}>
-            {t('book.modal.cancel')}
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => void handleDeleteConfirmed()}
-            disabled={isDeleting}
-          >
-            {isDeleting ? t('book.modal.deleting') : t('book.modal.delete')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmCard
+        open={deleteDialogOpen}
+        title={t('book.modal.deleteTitle')}
+        description={t('book.modal.deleteDesc', { title: entry.book.title })}
+        cancelLabel={t('book.modal.cancel')}
+        confirmLabel={isDeleting ? t('book.modal.deleting') : t('book.modal.delete')}
+        confirmColor="error"
+        disabled={isDeleting}
+        error={deleteError ?? undefined}
+        onCancel={handleDeleteDialogClose}
+        onConfirm={() => void handleDeleteConfirmed()}
+      />
     </motion.div>
   )
 }
