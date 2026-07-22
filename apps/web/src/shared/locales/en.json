@@ -250,7 +250,9 @@
     "settings": "Settings",
     "comingSoon": "Coming soon",
     "lightTheme": "Light theme",
-    "darkTheme": "Dark theme"
+    "darkTheme": "Dark theme",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
   },
   "guestBanner": {
     "message": "Data is stored in the browser only",
