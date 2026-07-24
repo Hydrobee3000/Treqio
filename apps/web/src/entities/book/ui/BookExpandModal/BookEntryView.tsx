@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { Check, Pencil, Star, Trash2, X } from 'lucide-react'
+import { Check, Pencil, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ConfirmCard } from '@/shared/ui'
-import { GOLD_COLOR, STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
+import { STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import type { BookFieldUpdate, EntryFieldUpdate } from './BookExpandModal.types'
@@ -395,20 +395,7 @@ export const BookEntryView = ({
                     <label className={styles['em__field-label']}>{t('book.fields.rating')}</label>
                     <div className={styles['em__meta-value']} style={{ padding: '2px 0' }}>
                       {entry.rating !== null ? (
-                        <span
-                          style={entry.rating ? { color: scoreColor(entry.rating) } : undefined}
-                        >
-                          {entry.rating === 10 ? (
-                            <Star
-                              size={14}
-                              fill={GOLD_COLOR}
-                              stroke="none"
-                              style={{ verticalAlign: 'middle' }}
-                            />
-                          ) : (
-                            `${entry.rating} / 10`
-                          )}
-                        </span>
+                        <span style={{ color: scoreColor(entry.rating) }}>{entry.rating} / 10</span>
                       ) : (
                         '—'
                       )}
