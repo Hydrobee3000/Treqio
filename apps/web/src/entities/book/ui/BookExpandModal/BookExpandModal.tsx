@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMediaQuery, useTheme } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useBackdropClose } from '@/shared/lib/hooks/useBackdropClose'
 import { ConfirmCard } from '@/shared/ui'
 import type { BookEntry, BookStatus } from '../../model/book.types'
 import { BookCreateForm } from './BookCreateForm'
@@ -90,17 +91,22 @@ export const BookExpandModal = ({
     return () => document.removeEventListener('keydown', handleKey)
   }, [isOpen, requestClose])
 
+  const { backdropRef, isBackdropClick } = useBackdropClose(isOpen)
+
   return (
     <AnimatePresence>
       {(entry || showCreate) && (
         <motion.div
           key="em-backdrop"
+          ref={backdropRef}
           className={styles['em__backdrop']}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          onClick={requestClose}
+          onClick={() => {
+            if (isBackdropClick()) requestClose()
+          }}
         >
           <div
             className={`${styles['em__centering']} ${isMobile ? styles['em__centering--mobile'] : ''}`}

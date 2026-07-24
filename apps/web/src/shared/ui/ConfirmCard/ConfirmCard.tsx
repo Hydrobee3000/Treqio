@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
+import { useBackdropClose } from '@/shared/lib/hooks/useBackdropClose'
 import styles from './ConfirmCard.module.scss'
 
 /**
@@ -54,6 +55,8 @@ export const ConfirmCard = ({
     if (!disabled) onCancel()
   }
 
+  const { backdropRef, isBackdropClick } = useBackdropClose(open)
+
   useEffect(() => {
     if (!open) return
 
@@ -70,12 +73,15 @@ export const ConfirmCard = ({
         <>
           <motion.div
             key="confirm-card-backdrop"
+            ref={backdropRef}
             className={styles.backdrop}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={handleCancel}
+            onClick={() => {
+              if (isBackdropClick()) handleCancel()
+            }}
           />
           <div className={styles.centering}>
             <motion.div
