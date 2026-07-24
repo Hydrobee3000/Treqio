@@ -5,7 +5,12 @@ A personal media tracker — books, games, movies and more. Track what you've re
 > # [**🚀 Open site**](https://treqio.online)
 >
 > <img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/02bc74c9-abe7-4af4-b0e6-4f51b098a80c" />
-> <img width="1918" height="906" alt="image" src="https://github.com/user-attachments/assets/58b232d0-dfc9-4118-a107-3f43700bfa73" />
+> <img width="1917" height="907" alt="image" src="https://github.com/user-attachments/assets/a8bb2290-b3b9-468f-acf3-c0cc466c689b" />
+> <img width="445" height="801" alt="image" src="https://github.com/user-attachments/assets/0c4cddba-45de-4beb-9875-1474866bda9d" />
+
+
+
+
 
 > **Status:** In active development. Core features are being built iteratively.
 
