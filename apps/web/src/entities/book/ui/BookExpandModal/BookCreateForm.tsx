@@ -110,134 +110,143 @@ export const BookCreateForm = ({
       </div>
 
       <div className={styles['em__content']}>
-        <div className={styles['em__scroll']}>
-          <div className={styles['em__body']}>
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.titleRequired')}</label>
-              <input
-                className={styles['em__input']}
-                autoFocus
-                placeholder={t('book.modal.titlePlaceholder')}
-                {...register('title')}
-              />
-              {errors.title && <p className={styles['em__error']}>{errors.title.message}</p>}
-            </div>
-
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.author')}</label>
-              <input
-                className={styles['em__input']}
-                placeholder={t('book.modal.authorPlaceholder')}
-                {...register('author')}
-              />
-            </div>
-
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.status')}</label>
-              <div className={styles['em__chips']}>
-                {STATUS_OPTIONS.map((opt) => {
-                  const active = statusVal === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      className={`${styles['em__chip']} ${active ? styles['em__chip--active'] : ''}`}
-                      style={
-                        active
-                          ? {
-                              color: STATUS_TEXT_COLOR[opt.value],
-                              borderColor: STATUS_TEXT_COLOR[opt.value],
-                              background: `color-mix(in srgb, ${STATUS_TEXT_COLOR[opt.value]} 14%, transparent)`,
-                            }
-                          : undefined
-                      }
-                      onClick={() => setValue('status', opt.value)}
-                    >
-                      {t(`book.status.${opt.value}`)}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.pages')}</label>
-              <input
-                className={styles['em__input']}
-                style={{ width: 120 }}
-                type="number"
-                min={0}
-                placeholder="0"
-                {...register('pageCount')}
-              />
-            </div>
-
-            {statusVal === 'DONE' && (
+        <form className={styles['em__edit-form']} onSubmit={onSubmit}>
+          <div className={styles['em__scroll']}>
+            <div className={styles['em__body']}>
               <div className={styles['em__field']}>
                 <label className={styles['em__field-label']}>
-                  {t('book.fields.rating')}
-                  <span className={styles['em__field-label-val']}>{ratingVal} / 10</span>
+                  {t('book.fields.titleRequired')}
                 </label>
                 <input
-                  type="range"
-                  className={styles['em__range']}
-                  min={1}
-                  max={10}
-                  step={1}
-                  {...register('rating', { valueAsNumber: true })}
+                  className={styles['em__input']}
+                  autoFocus
+                  placeholder={t('book.modal.titlePlaceholder')}
+                  {...register('title')}
+                />
+                {errors.title && <p className={styles['em__error']}>{errors.title.message}</p>}
+              </div>
+
+              <div className={styles['em__field']}>
+                <label className={styles['em__field-label']}>{t('book.fields.author')}</label>
+                <input
+                  className={styles['em__input']}
+                  placeholder={t('book.modal.authorPlaceholder')}
+                  {...register('author')}
                 />
               </div>
-            )}
 
-            {showProgress && (
               <div className={styles['em__field']}>
-                <label className={styles['em__field-label']}>
-                  {t('book.fields.pagesRead')}
-                  <span className={styles['em__field-label-val']}>
-                    {progressVal} / {pageCountStr}
-                  </span>
-                </label>
+                <label className={styles['em__field-label']}>{t('book.fields.status')}</label>
+                <div className={styles['em__chips']}>
+                  {STATUS_OPTIONS.map((opt) => {
+                    const active = statusVal === opt.value
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={`${styles['em__chip']} ${active ? styles['em__chip--active'] : ''}`}
+                        style={
+                          active
+                            ? {
+                                color: STATUS_TEXT_COLOR[opt.value],
+                                borderColor: STATUS_TEXT_COLOR[opt.value],
+                                background: `color-mix(in srgb, ${STATUS_TEXT_COLOR[opt.value]} 14%, transparent)`,
+                              }
+                            : undefined
+                        }
+                        onClick={() => setValue('status', opt.value)}
+                      >
+                        {t(`book.status.${opt.value}`)}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className={styles['em__field']}>
+                <label className={styles['em__field-label']}>{t('book.fields.pages')}</label>
                 <input
-                  type="range"
-                  className={styles['em__range']}
+                  className={styles['em__input']}
+                  style={{ width: 120 }}
+                  type="number"
                   min={0}
-                  max={Number(pageCountStr)}
-                  step={1}
-                  {...register('progress', { valueAsNumber: true })}
+                  placeholder="0"
+                  {...register('pageCount')}
                 />
               </div>
-            )}
 
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.description')}</label>
-              <textarea className={styles['em__textarea']} rows={3} {...register('description')} />
+              {statusVal === 'DONE' && (
+                <div className={styles['em__field']}>
+                  <label className={styles['em__field-label']}>
+                    {t('book.fields.rating')}
+                    <span className={styles['em__field-label-val']}>{ratingVal} / 10</span>
+                  </label>
+                  <input
+                    type="range"
+                    className={styles['em__range']}
+                    min={1}
+                    max={10}
+                    step={1}
+                    {...register('rating', { valueAsNumber: true })}
+                  />
+                </div>
+              )}
+
+              {showProgress && (
+                <div className={styles['em__field']}>
+                  <label className={styles['em__field-label']}>
+                    {t('book.fields.pagesRead')}
+                    <span className={styles['em__field-label-val']}>
+                      {progressVal} / {pageCountStr}
+                    </span>
+                  </label>
+                  <input
+                    type="range"
+                    className={styles['em__range']}
+                    min={0}
+                    max={Number(pageCountStr)}
+                    step={1}
+                    {...register('progress', { valueAsNumber: true })}
+                  />
+                </div>
+              )}
+
+              <div className={styles['em__field']}>
+                <label className={styles['em__field-label']}>{t('book.fields.description')}</label>
+                <textarea
+                  className={styles['em__textarea']}
+                  rows={3}
+                  {...register('description')}
+                />
+              </div>
+
+              <div className={styles['em__field']}>
+                <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
+                <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
+              </div>
+
+              {error && <p className={styles['em__error']}>{error}</p>}
             </div>
-
-            <div className={styles['em__field']}>
-              <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
-              <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
-            </div>
-
-            {error && <p className={styles['em__error']}>{error}</p>}
           </div>
-        </div>
 
-        <div className={`${styles['em__footer']} ${styles['em__footer--create']}`}>
-          <button
-            className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
-            onClick={onClose}
-            disabled={isSubmitting || submitted}
-          >
-            {t('book.modal.cancel')}
-          </button>
-          <button
-            className={`${styles['em__btn']} ${styles['em__btn--save']}`}
-            onClick={() => void onSubmit()}
-            disabled={isSubmitting || submitted || !titleVal.trim()}
-          >
-            {isSubmitting ? t('book.modal.creatingAction') : t('book.modal.create')}
-          </button>
-        </div>
+          <div className={`${styles['em__footer']} ${styles['em__footer--create']}`}>
+            <button
+              type="button"
+              className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
+              onClick={onClose}
+              disabled={isSubmitting || submitted}
+            >
+              {t('book.modal.cancel')}
+            </button>
+            <button
+              type="submit"
+              className={`${styles['em__btn']} ${styles['em__btn--save']}`}
+              disabled={isSubmitting || submitted || !titleVal.trim()}
+            >
+              {isSubmitting ? t('book.modal.creatingAction') : t('book.modal.create')}
+            </button>
+          </div>
+        </form>
       </div>
     </motion.div>
   )
