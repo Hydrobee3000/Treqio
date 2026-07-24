@@ -185,11 +185,10 @@ export const BookEntryView = ({
       </div>
 
       <div className={styles['em__content']}>
-        <div className={styles['em__scroll']}>
-          <div className={styles['em__body']}>
-            {isEditing ? (
-              /* ── Режим редактирования ── */
-              <>
+        {isEditing ? (
+          <form className={styles['em__edit-form']} onSubmit={(e) => void onEditSubmit(e)}>
+            <div className={styles['em__scroll']}>
+              <div className={styles['em__body']}>
                 <div className={styles['em__field']}>
                   <label className={styles['em__field-label']}>{t('book.fields.title')}</label>
                   <input
@@ -213,6 +212,7 @@ export const BookEntryView = ({
                 {/* Статус — всегда немедленный, не через форму */}
                 <div className={styles['em__status-wrap']}>
                   <button
+                    type="button"
                     className={styles['em__status-btn']}
                     style={{
                       color: STATUS_TEXT_COLOR[displayStatus],
@@ -230,6 +230,7 @@ export const BookEntryView = ({
                       {STATUS_OPTIONS.map((opt) => (
                         <button
                           key={opt.value}
+                          type="button"
                           className={styles['em__status-option']}
                           style={
                             opt.value === displayStatus
@@ -317,10 +318,32 @@ export const BookEntryView = ({
                 </div>
 
                 {saveError && <p className={styles['em__error']}>{saveError}</p>}
-              </>
-            ) : (
-              /* ── Режим просмотра ── */
-              <>
+              </div>
+            </div>
+
+            <div className={`${styles['em__footer']} ${styles['em__footer--create']}`}>
+              <button
+                type="button"
+                className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
+                onClick={handleCancelEdit}
+                disabled={isSubmitting}
+              >
+                {t('book.modal.cancel')}
+              </button>
+              <button
+                type="submit"
+                className={`${styles['em__btn']} ${styles['em__btn--save']}`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? t('book.modal.saving') : t('book.modal.save')}
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* ── Режим просмотра ── */
+          <>
+            <div className={styles['em__scroll']}>
+              <div className={styles['em__body']}>
                 <div className={styles['em__head']}>
                   <h2 className={styles['em__book-title']}>{entry.book.title}</h2>
                   <p className={styles['em__book-author']}>{entry.book.author || '—'}</p>
@@ -461,53 +484,33 @@ export const BookEntryView = ({
                     <p className={styles['em__placeholder']}>{t('book.modal.noNotes')}</p>
                   )}
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* ── Футер ── */}
-        {isEditing ? (
-          <div className={`${styles['em__footer']} ${styles['em__footer--create']}`}>
-            <button
-              className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
-              onClick={handleCancelEdit}
-              disabled={isSubmitting}
-            >
-              {t('book.modal.cancel')}
-            </button>
-            <button
-              className={`${styles['em__btn']} ${styles['em__btn--save']}`}
-              onClick={() => void onEditSubmit()}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? t('book.modal.saving') : t('book.modal.save')}
-            </button>
-          </div>
-        ) : (
-          <div className={styles['em__footer']}>
-            <div className={styles['em__footer-actions']}>
-              <button
-                className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
-                  isMobile ? styles['em__btn--icon'] : ''
-                }`}
-                onClick={handleDeleteClick}
-              >
-                <Trash2 size={isMobile ? 18 : 14} />
-                {!isMobile && t('book.modal.delete')}
-              </button>
-              <span className={styles['em__date']}>
-                {t('book.modal.addedOn', { date: formatDate(entry.createdAt, i18n.language) })}
-              </span>
+              </div>
             </div>
-            <button
-              className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
-              onClick={() => setIsEditing(true)}
-            >
-              <Pencil size={isMobile ? 18 : 14} />
-              {!isMobile && t('book.modal.edit')}
-            </button>
-          </div>
+
+            <div className={styles['em__footer']}>
+              <div className={styles['em__footer-actions']}>
+                <button
+                  className={`${styles['em__btn']} ${styles['em__btn--delete']} ${
+                    isMobile ? styles['em__btn--icon'] : ''
+                  }`}
+                  onClick={handleDeleteClick}
+                >
+                  <Trash2 size={isMobile ? 18 : 14} />
+                  {!isMobile && t('book.modal.delete')}
+                </button>
+                <span className={styles['em__date']}>
+                  {t('book.modal.addedOn', { date: formatDate(entry.createdAt, i18n.language) })}
+                </span>
+              </div>
+              <button
+                className={`${styles['em__edit-btn']} ${isMobile ? styles['em__edit-btn--icon'] : ''}`}
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil size={isMobile ? 18 : 14} />
+                {!isMobile && t('book.modal.edit')}
+              </button>
+            </div>
+          </>
         )}
       </div>
 
