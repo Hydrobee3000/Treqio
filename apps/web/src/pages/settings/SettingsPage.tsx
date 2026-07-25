@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useMediaQuery, useTheme } from '@mui/material'
 import {
   ChevronLeft,
   ChevronRight,
@@ -26,6 +27,9 @@ import { SegmentedToggle } from '@/shared/ui'
 import styles from './SettingsPage.module.scss'
 
 const THEME_MODE_KEY = 'treqio_theme_picker_mode'
+
+/** Раздел, открываемый по умолчанию на десктопе при заходе на /settings без раздела. */
+const DEFAULT_SECTION_ID = 'appearance'
 
 function getSystemIcon() {
   if (/mobile|android|iphone/i.test(navigator.userAgent)) return <Smartphone size={20} />
@@ -56,6 +60,15 @@ export function SettingsPage() {
   const { section } = useParams<{ section: string }>()
   const navigate = useNavigate()
   const isGuest = useAppSelector((s) => s.auth.isGuest)
+  const theme = useTheme()
+  // На десктопе нет отдельного списка-в-список — правая панель иначе пустует,
+  // пока не кликнуть раздел. На мобилке /settings без раздела — это сам список
+  // (экран «назад» к нему), редиректить нельзя.
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+
+  useEffect(() => {
+    if (!section && isDesktop) navigate(`/settings/${DEFAULT_SECTION_ID}`, { replace: true })
+  }, [section, isDesktop, navigate])
 
   const sections: SettingsSection[] = [
     {
