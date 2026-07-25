@@ -1,8 +1,7 @@
 import type { MouseEvent, Ref } from 'react'
 import { Tooltip } from '@mui/material'
-import { Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { GOLD_COLOR, scoreColor } from '../../model/book.types'
+import { scoreColor } from '../../model/book.types'
 import styles from './ScoreBadge.module.scss'
 
 /**
@@ -21,23 +20,13 @@ interface ScoreBadgeProps {
   ref?: Ref<HTMLDivElement>
 }
 
-// md: кольцо и звезда для 10/10 — золотые; sm: scoreColor, CSS-кольцо обложки даёт золотой эффект.
 const CONFIG = {
-  sm: { dim: 34, r: 14, starSize: 14, ringColor: scoreColor, starFill: '#fff' },
-  md: {
-    dim: 42,
-    r: 18,
-    starSize: 13,
-    ringColor: (r: number) => (r === 10 ? GOLD_COLOR : scoreColor(r)),
-    starFill: GOLD_COLOR,
-  },
-} satisfies Record<
-  string,
-  { dim: number; r: number; starSize: number; ringColor: (r: number) => string; starFill: string }
->
+  sm: { dim: 34, r: 14 },
+  md: { dim: 42, r: 18 },
+} satisfies Record<string, { dim: number; r: number }>
 
 /**
- * Круглый бейдж оценки: SVG-кольцо прогресса с числом или звездой в центре.
+ * Круглый бейдж оценки: SVG-кольцо прогресса с числом в центре.
  */
 export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
   const { t } = useTranslation()
@@ -53,7 +42,7 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
     )
   }
 
-  const { dim, r, starSize, ringColor, starFill } = CONFIG[size]
+  const { dim, r } = CONFIG[size]
   const cx = dim / 2
   const circumference = 2 * Math.PI * r
   const offset = circumference * (1 - rating / 10)
@@ -67,7 +56,7 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
           cy={cx}
           r={r}
           fill="none"
-          stroke={ringColor(rating)}
+          stroke={scoreColor(rating)}
           strokeWidth="3"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -75,11 +64,7 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
         />
       </svg>
       <div className={styles['score-badge__content']}>
-        {rating === 10 ? (
-          <Star size={starSize} fill={starFill} stroke="none" />
-        ) : (
-          <span className={styles['score-badge__value']}>{rating}</span>
-        )}
+        <span className={styles['score-badge__value']}>{rating}</span>
       </div>
     </div>
   )

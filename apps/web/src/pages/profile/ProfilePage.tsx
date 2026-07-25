@@ -16,7 +16,7 @@ import {
 import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { STATUS_TEXT_COLOR, scoreColor } from '@/entities/book'
+import { STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
 import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
@@ -61,22 +61,6 @@ const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: number }>> =
   DROPPED: X,
   RATED: Star,
   STATUS: RefreshCw,
-}
-
-/** Кольцо оценки в событии активности — только просмотр. */
-function RatingRing({ rating }: { rating: number }) {
-  const color = scoreColor(rating)
-  const pct = rating * 10
-  return (
-    <span
-      className={styles['history__rating-ring']}
-      style={{ background: `conic-gradient(${color} ${pct}%, var(--color-divider, #e0e0e0) 0)` }}
-    >
-      <span className={styles['history__rating-number']} style={{ color }}>
-        {rating}
-      </span>
-    </span>
-  )
 }
 
 /** Пилюля статуса в тексте события. */
@@ -564,7 +548,11 @@ export const ProfilePage = () => {
                                     <span className={styles['history__filler']}>
                                       {t('profile.history.on')}
                                     </span>{' '}
-                                    <RatingRing rating={rating} />
+                                    <ScoreBadge
+                                      rating={rating}
+                                      size="sm"
+                                      className={styles['history__rating-badge']}
+                                    />
                                   </>
                                 )}
                               </p>
