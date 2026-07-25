@@ -42,13 +42,14 @@ export const AppLayout = () => {
   const showParticles = particlesEnabled && !!particleType
 
   return (
-    <Box className={styles['app-layout']}>
+    <Box
+      className={styles['app-layout']}
+      // На корне layout, а не только на Drawer — доступна остальному дереву
+      // (например модалкам, которым нужно центрироваться в области контента).
+      style={{ '--sidebar-width': isMobile ? '0px' : `${sidebarWidth}px` } as CSSProperties}
+    >
       {!isMobile && (
-        <Drawer
-          variant="permanent"
-          className={styles['app-layout__drawer']}
-          style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}
-        >
+        <Drawer variant="permanent" className={styles['app-layout__drawer']}>
           <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
         </Drawer>
       )}
