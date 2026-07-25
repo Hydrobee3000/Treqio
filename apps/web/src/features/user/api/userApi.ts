@@ -29,13 +29,13 @@ export interface UserProfile {
  */
 export interface UpdateProfileDto {
   /** Отображаемое имя. */
-  displayName?: string
+  displayName?: string | undefined
   /** Уникальный никнейм. */
-  username?: string
+  username?: string | undefined
   /** Краткое описание профиля. */
-  bio?: string
+  bio?: string | undefined
   /** Публичность профиля. */
-  isPublic?: boolean
+  isPublic?: boolean | undefined
 }
 
 /**

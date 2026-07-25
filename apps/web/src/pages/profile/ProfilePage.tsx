@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { Button, Collapse, Skeleton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
+import { useState } from 'react'
+import { Collapse, Skeleton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import {
   ArrowRight,
   BarChart3,
@@ -10,6 +10,7 @@ import {
   LogOut,
   Plus,
   RefreshCw,
+  Settings,
   Star,
   X,
 } from 'lucide-react'
@@ -18,13 +19,12 @@ import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
-import { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } from '@/features/user'
-import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
-import { setGuestDisplayName } from '@/features/guest'
+import { useGetMeQuery, useLogoutMutation } from '@/features/user'
 import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
 import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { EditProfileModal } from './ui/EditProfileModal/EditProfileModal'
 import styles from './ProfilePage.module.scss'
 
 /** Вкладка страницы профиля. */
@@ -210,7 +210,6 @@ export const ProfilePage = () => {
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const guestDisplayName = useAppSelector((s) => s.guest.displayName)
   const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
-  const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [logoutMutation] = useLogoutMutation()
   const { data: entries } = useGetMyEntriesQuery()
 
@@ -226,17 +225,8 @@ export const ProfilePage = () => {
     navigate('/login')
   }
   const [activeTab, setActiveTab] = useState<ProfileTab>('history')
-  const [editingName, setEditingName] = useState(false)
-  const [nameValue, setNameValue] = useState('')
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
   const [collapsedDays, setCollapsedDays] = useState<Set<string>>(new Set())
-  const nameInputRef = useRef<HTMLInputElement>(null)
-
-  /**
-   * Фокусировка поля ввода при открытии редактора имени.
-   */
-  useEffect(() => {
-    if (editingName) nameInputRef.current?.focus()
-  }, [editingName])
 
   if (isLoading) {
     return (
@@ -307,51 +297,6 @@ export const ProfilePage = () => {
   }
 
   /**
-   * Функция редактирования имени пользователя.
-   */
-  const handleEditName = () => {
-    const current = isGuest
-      ? guestDisplayName || defaultName
-      : user?.displayName || user?.username || ''
-    setNameValue(current)
-    setEditingName(true)
-  }
-
-  /**
-   * Функция сохранения имени пользователя.
-   */
-  const handleSaveName = async () => {
-    const trimmed = nameValue.trim()
-    const current = isGuest
-      ? guestDisplayName || defaultName
-      : user?.displayName || user?.username || ''
-    // Если пустое значение или имя не изменилось
-    if (!trimmed || trimmed === current) {
-      setEditingName(false)
-      return
-    }
-    // Если гость - сохраняем локально без запроса к API
-    if (isGuest) {
-      dispatch(setGuestDisplayName(trimmed))
-      setEditingName(false)
-      return
-    }
-    try {
-      await updateMe({ displayName: trimmed }).unwrap()
-      setEditingName(false)
-    } catch {
-      setEditingName(false)
-    }
-  }
-
-  /**
-   * Функция отмены редактирования имени.
-   */
-  const handleCancelName = () => {
-    setEditingName(false)
-  }
-
-  /**
    * Функция переключения состояния блока событий за указанный день.
    */
   const toggleDay = (label: string) =>
@@ -391,61 +336,17 @@ export const ProfilePage = () => {
   return (
     <div className={styles['profile']}>
       <div className={styles['header']}>
+        <button
+          className={styles['edit-profile-btn']}
+          onClick={() => setEditProfileOpen(true)}
+          aria-label={t('profile.editProfile.title')}
+        >
+          <Settings size={14} />
+        </button>
         <div className={styles['header__top']}>
           <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
           <div className={styles['header__info']}>
-            {editingName ? (
-              <div className={styles['name-field']}>
-                <div className={styles['name-field__input-row']}>
-                  <input
-                    ref={nameInputRef}
-                    className={styles['name-field__input']}
-                    value={nameValue}
-                    onChange={(e) => setNameValue(e.target.value)}
-                    maxLength={DISPLAY_NAME_MAX}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleSaveName()
-                      if (e.key === 'Escape') handleCancelName()
-                    }}
-                  />
-                  {nameValue.length >= DISPLAY_NAME_MAX - 5 && (
-                    <p
-                      className={[
-                        styles['name-counter'],
-                        nameValue.length >= DISPLAY_NAME_MAX
-                          ? styles['name-counter--max']
-                          : styles['name-counter--warn'],
-                      ].join(' ')}
-                    >
-                      {nameValue.length}/{DISPLAY_NAME_MAX}
-                    </p>
-                  )}
-                </div>
-                <div className={styles['name-field__actions']}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    className={styles['name-field__btn-cancel']}
-                    onClick={handleCancelName}
-                  >
-                    {t('profile.editName.cancel')}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    className={styles['name-field__btn-save']}
-                    onClick={handleSaveName}
-                    disabled={isSaving}
-                  >
-                    {t('profile.editName.save')}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <button className={styles['name-field__view']} onClick={handleEditName}>
-                <h1 className={styles['header__name']}>{displayName}</h1>
-              </button>
-            )}
+            <h1 className={styles['header__name']}>{displayName}</h1>
             <div className={styles['header__meta']}>
               {user?.username && <span>@{user.username}</span>}
             </div>
@@ -581,6 +482,14 @@ export const ProfilePage = () => {
           <p className={styles['empty-state__text']}>{t('profile.stats.empty')}</p>
         </div>
       )}
+
+      <EditProfileModal
+        open={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+        isGuest={isGuest}
+        displayName={displayName}
+        username={isGuest ? null : (user?.username ?? null)}
+      />
     </div>
   )
 }

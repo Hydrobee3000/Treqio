@@ -1,0 +1,78 @@
+$breakpoint-small: 600px;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  & + & {
+    margin-top: 14px;
+  }
+}
+
+.field__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-2, #666);
+}
+
+.field__input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-divider, #e0e0e0);
+  background: var(--color-paper-2, #f8f8f8);
+  color: var(--color-text, inherit);
+  font-size: 14px;
+  font-family: inherit;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  &:focus {
+    border-color: var(--color-primary, #4e7b6a);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 15%, transparent);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding-left: 14px;
+  }
+}
+
+.field__username-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field__username-prefix {
+  flex-shrink: 0;
+  color: var(--color-text-2, #666);
+  font-size: 14px;
+}
+
+.field__error {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #d05c5c;
+}
+
+.footer__btn-cancel {
+  min-width: 90px !important;
+}
+
+.footer__btn-save {
+  margin-left: auto;
+  min-width: 110px !important;
+  background-color: var(--color-primary-dark) !important;
+  transition: filter 0.15s !important;
+
+  &:hover {
+    background-color: var(--color-primary-dark) !important;
+    filter: brightness(1.15);
+  }
+}
