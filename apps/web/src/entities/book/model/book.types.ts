@@ -40,11 +40,6 @@ export const STATUS_OPTIONS: { value: BookStatus; label: string }[] = Object.ent
 ).map(([value, label]) => ({ value: value as BookStatus, label }))
 
 /**
- * Цвет звезды идеальной оценки 10/10.
- */
-export const GOLD_COLOR = '#ffd24a'
-
-/**
  * Цвет кольца и числа в бейдже оценки — зависит от диапазона.
  */
 export function scoreColor(rating: number): string {

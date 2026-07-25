@@ -459,36 +459,10 @@ $history-status-color: #8a6fc4;
   }
 }
 
-// Кольцо оценки — только просмотр (не как в библиотеке, там оно кликабельно).
-// Донат-форма через ::before с фоном страницы внутри — закрывает середину
-// conic-gradient, оставляя видимым только внешнее кольцо. inline-flex и
-// vertical-align — чтобы вписывалось в строку текста, не выходя за её пределы.
-.history__rating-ring {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin: 0 3px;
-  border-radius: 50%;
-  flex-shrink: 0;
+.history__rating-badge {
+  display: inline-grid;
   vertical-align: middle;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    background: var(--color-paper, white);
-  }
-}
-
-.history__rating-number {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
-  font-weight: 700;
+  margin: 0 3px;
 }
 
 .history__body {
