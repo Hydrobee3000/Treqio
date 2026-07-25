@@ -1,9 +1,6 @@
-import { useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@mui/material'
-import { X } from 'lucide-react'
-import { useBackdropClose } from '@/shared/lib/hooks/useBackdropClose'
+import { ModalShell } from '../ModalShell/ModalShell'
 import styles from './ConfirmCard.module.scss'
 
 /**
@@ -50,95 +47,43 @@ export const ConfirmCard = ({
   error,
   onCancel,
   onConfirm,
-}: Props) => {
-  const handleCancel = () => {
-    if (!disabled) onCancel()
-  }
-
-  const { backdropRef, isBackdropClick } = useBackdropClose(open)
-
-  useEffect(() => {
-    if (!open) return
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !disabled) onCancel()
+}: Props) => (
+  <ModalShell
+    open={open}
+    title={title}
+    variant={confirmColor}
+    disabled={disabled}
+    onClose={onCancel}
+    footer={
+      <>
+        <Button
+          variant="outlined"
+          size="small"
+          className={styles['footer__btn-cancel']}
+          onClick={onCancel}
+          disabled={disabled}
+        >
+          {cancelLabel}
+        </Button>
+        <Button
+          variant="contained"
+          color={confirmColor}
+          size="small"
+          className={
+            confirmColor === 'error'
+              ? styles['footer__btn-confirm--error']
+              : styles['footer__btn-confirm']
+          }
+          startIcon={confirmIcon}
+          onClick={onConfirm}
+          disabled={disabled}
+        >
+          {confirmLabel}
+        </Button>
+      </>
     }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [open, disabled, onCancel])
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            key="confirm-card-backdrop"
-            ref={backdropRef}
-            className={styles.backdrop}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => {
-              if (isBackdropClick()) handleCancel()
-            }}
-          />
-          <div className={styles.centering}>
-            <motion.div
-              key="confirm-card"
-              className={styles.card}
-              initial={{ opacity: 0, scale: 0.92, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            >
-              <div
-                className={`${styles.hero} ${confirmColor === 'error' ? styles['hero--error'] : ''}`}
-              >
-                <button
-                  className={styles['hero__close']}
-                  onClick={handleCancel}
-                  disabled={disabled}
-                  aria-label="close"
-                >
-                  <X size={15} />
-                </button>
-                <h2 className={styles['hero__title']}>{title}</h2>
-              </div>
-              <div className={styles.content}>
-                <p className={styles.description}>{description}</p>
-                {error && <p className={styles['content__error']}>{error}</p>}
-              </div>
-              <div className={styles.footer}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  className={styles['footer__btn-cancel']}
-                  onClick={handleCancel}
-                  disabled={disabled}
-                >
-                  {cancelLabel}
-                </Button>
-                <Button
-                  variant="contained"
-                  color={confirmColor}
-                  size="small"
-                  className={
-                    confirmColor === 'error'
-                      ? styles['footer__btn-confirm--error']
-                      : styles['footer__btn-confirm']
-                  }
-                  startIcon={confirmIcon}
-                  onClick={onConfirm}
-                  disabled={disabled}
-                >
-                  {confirmLabel}
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-        </>
-      )}
-    </AnimatePresence>
-  )
-}
+  >
+    <p className={styles.description}>{description}</p>
+    {error && <p className={styles['content__error']}>{error}</p>}
+  </ModalShell>
+)
