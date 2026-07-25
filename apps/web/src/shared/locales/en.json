@@ -54,9 +54,18 @@
     "defaultName": "Dreamer",
     "login": "Sign in",
     "logout": "Sign out",
-    "editName": {
+    "editProfile": {
+      "title": "Edit profile",
+      "displayName": "Name",
+      "username": "Username",
+      "nameRequiredError": "Enter a name",
+      "usernameMinError": "At least {{min}} characters",
+      "usernameFormatError": "Only lowercase letters, digits and _",
+      "usernameTaken": "Username is already taken",
+      "saveError": "Couldn't save. Please try again.",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "saving": "Saving…"
     },
     "tabs": {
       "history": "Activity",

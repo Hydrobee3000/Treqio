@@ -54,9 +54,18 @@
     "defaultName": "Мечтатель",
     "login": "Войти",
     "logout": "Выйти",
-    "editName": {
+    "editProfile": {
+      "title": "Редактировать профиль",
+      "displayName": "Имя",
+      "username": "Username",
+      "nameRequiredError": "Введите имя",
+      "usernameMinError": "Минимум {{min}} символов",
+      "usernameFormatError": "Только строчные буквы, цифры и символ _",
+      "usernameTaken": "Никнейм уже занят",
+      "saveError": "Не удалось сохранить. Попробуй ещё раз.",
       "cancel": "Отмена",
-      "save": "Сохранить"
+      "save": "Сохранить",
+      "saving": "Сохранение…"
     },
     "tabs": {
       "history": "Активность",
