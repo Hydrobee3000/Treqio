@@ -321,7 +321,11 @@ export const BookEntryView = ({
               </div>
             </div>
 
-            <div className={`${styles['em__footer']} ${styles['em__footer--create']}`}>
+            <div
+              className={`${styles['em__footer']} ${styles['em__footer--create']} ${
+                isMobile ? styles['em__footer--mobile'] : ''
+              }`}
+            >
               <button
                 type="button"
                 className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
@@ -474,7 +478,9 @@ export const BookEntryView = ({
               </div>
             </div>
 
-            <div className={styles['em__footer']}>
+            <div
+              className={`${styles['em__footer']} ${isMobile ? styles['em__footer--mobile'] : ''}`}
+            >
               <div className={styles['em__footer-actions']}>
                 <button
                   className={`${styles['em__btn']} ${styles['em__btn--delete']} ${

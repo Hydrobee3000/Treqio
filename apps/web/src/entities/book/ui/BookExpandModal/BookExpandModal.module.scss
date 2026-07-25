@@ -20,7 +20,9 @@
 
   &--mobile {
     align-items: flex-end;
-    padding: 0;
+    // Тот же отступ, что app-layout__content--mobile резервирует под MobileNav —
+    // иначе футер модалки заезжает в полосу нижней навигации.
+    padding: 0 0 calc(52px + env(safe-area-inset-bottom));
   }
 }
 
@@ -45,8 +47,8 @@
 
   &--mobile {
     max-width: 100%;
-    height: 92dvh;
-    max-height: 92dvh;
+    height: calc(85dvh - 52px - env(safe-area-inset-bottom));
+    max-height: calc(85dvh - 52px - env(safe-area-inset-bottom));
     border-radius: 20px 20px 0 0;
   }
 }
@@ -586,6 +588,10 @@
   &--create {
     justify-content: flex-end;
     gap: 8px;
+  }
+
+  &--mobile {
+    background: color-mix(in srgb, var(--color-paper, white), white 8%);
   }
 }
 
