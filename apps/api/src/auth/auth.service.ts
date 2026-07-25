@@ -1,7 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import type { User } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
+
+/** Максимум попыток подобрать свободный случайный username. */
+const USERNAME_GENERATION_MAX_ATTEMPTS = 10
 
 /**
  * Данные профиля пользователя, полученные от Google OAuth.
@@ -68,12 +71,13 @@ export class AuthService {
 
     if (existing) return existing
 
-    const username = await this.generateUniqueUsername(profile.email.split('@')[0])
+    const username = await this.generateUniqueUsername()
 
     return this.prisma.user.create({
       data: {
         email: profile.email,
         username,
+        displayName: profile.displayName,
         avatarUrl: profile.avatarUrl,
         provider: 'google',
         providerId: profile.googleId,
@@ -103,15 +107,16 @@ export class AuthService {
   }
 
   /**
-   * Генерация уникального username на основе email-префикса.
+   * Генерация случайного уникального username.
    */
-  private async generateUniqueUsername(base: string): Promise<string> {
-    const clean = base.toLowerCase().replace(/[^a-z0-9]/g, '_')
-    const existing = await this.prisma.user.findUnique({
-      where: { username: clean },
-    })
-    if (!existing) return clean
-    // Добавляем короткий случайный суффикс если username занят
-    return `${clean}_${Date.now().toString(36)}`
+  private async generateUniqueUsername(): Promise<string> {
+    for (let attempt = 0; attempt < USERNAME_GENERATION_MAX_ATTEMPTS; attempt++) {
+      const candidate = `user${Math.floor(Math.random() * 1_000_000_000)}`
+      const existing = await this.prisma.user.findUnique({
+        where: { username: candidate },
+      })
+      if (!existing) return candidate
+    }
+    throw new InternalServerErrorException('Не удалось сгенерировать уникальный username')
   }
 }
