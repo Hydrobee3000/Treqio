@@ -126,6 +126,7 @@ export const EditProfileModal = ({
         <input
           className={styles['field__input']}
           autoFocus
+          autoComplete="off"
           maxLength={DISPLAY_NAME_MAX}
           {...register('displayName')}
         />
@@ -139,7 +140,11 @@ export const EditProfileModal = ({
           <label className={styles['field__label']}>{t('profile.editProfile.username')}</label>
           <div className={styles['field__username-row']}>
             <span className={styles['field__username-prefix']}>@</span>
-            <input className={styles['field__input']} {...register('username')} />
+            <input
+              className={styles['field__input']}
+              autoComplete="off"
+              {...register('username')}
+            />
           </div>
           {errors.username && <p className={styles['field__error']}>{errors.username.message}</p>}
         </div>
