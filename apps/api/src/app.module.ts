@@ -5,12 +5,13 @@ import { PrismaModule } from './prisma/prisma.module'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { BooksModule } from './books/books.module'
+import { FriendsModule } from './friends/friends.module'
 
 /**
  * Корневой модуль приложения.
  */
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, BooksModule],
+  imports: [PrismaModule, AuthModule, UsersModule, BooksModule, FriendsModule],
   controllers: [AppController],
   providers: [AppService],
 })
