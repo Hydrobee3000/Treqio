@@ -35,6 +35,16 @@ export class BookEntriesController {
   }
 
   /**
+   * Возвращает записи пользователя по никнейму.
+   */
+  @ApiOperation({ summary: 'Получить записи пользователя по никнейму' })
+  @Get('user/:username')
+  findByUsername(@Req() req: Request, @Param('username') username: string) {
+    const { userId } = req.user as JwtUser
+    return this.booksService.findEntriesByUsername(userId, username)
+  }
+
+  /**
    * Создаёт запись о книге для текущего пользователя.
    */
   @ApiOperation({ summary: 'Добавить книгу в список' })

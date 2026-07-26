@@ -1,5 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsBoolean, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator'
+import {
+  IsBoolean,
+  IsNotIn,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator'
+import { RESERVED_USERNAMES } from '../reserved-usernames'
 
 /** Максимальная длина отображаемого имени. */
 export const DISPLAY_NAME_MAX = 25
@@ -35,6 +44,7 @@ export class UpdateProfileDto {
   @MinLength(USERNAME_MIN)
   @MaxLength(USERNAME_MAX)
   @Matches(/^[a-z0-9_]+$/, { message: 'Только строчные буквы, цифры и символ _' })
+  @IsNotIn(RESERVED_USERNAMES, { message: 'Этот никнейм зарезервирован' })
   username?: string
 
   /** Краткое описание профиля, заполняется пользователем. */
