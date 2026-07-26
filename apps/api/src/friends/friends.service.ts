@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import type { Friendship } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
+import { PUBLIC_USER_SELECT } from '../users/public-user'
 
 /**
  * Сервис управления заявками в друзья и списком друзей.
@@ -89,7 +90,10 @@ export class FriendsService {
         status: 'ACCEPTED',
         OR: [{ senderId: userId }, { receiverId: userId }],
       },
-      include: { sender: true, receiver: true },
+      include: {
+        sender: { select: PUBLIC_USER_SELECT },
+        receiver: { select: PUBLIC_USER_SELECT },
+      },
     })
 
     return rows.map((row) => (row.senderId === userId ? row.receiver : row.sender))
@@ -101,7 +105,7 @@ export class FriendsService {
   getIncomingRequests(userId: string) {
     return this.prisma.friendship.findMany({
       where: { receiverId: userId, status: 'PENDING' },
-      include: { sender: true },
+      include: { sender: { select: PUBLIC_USER_SELECT } },
     })
   }
 
@@ -111,7 +115,7 @@ export class FriendsService {
   getOutgoingRequests(userId: string) {
     return this.prisma.friendship.findMany({
       where: { senderId: userId, status: 'PENDING' },
-      include: { receiver: true },
+      include: { receiver: { select: PUBLIC_USER_SELECT } },
     })
   }
 }

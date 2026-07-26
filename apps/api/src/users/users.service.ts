@@ -1,11 +1,51 @@
-import { Injectable, ConflictException } from '@nestjs/common'
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Prisma } from '../generated/prisma/client'
 import type { User } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import type { UpdateProfileDto } from './dto/update-profile.dto'
+import { PUBLIC_USER_SELECT } from './public-user'
+import type { PublicUser } from './public-user'
 
 /** Код ошибки Prisma при нарушении unique-constraint. */
 const PRISMA_UNIQUE_CONSTRAINT_ERROR = 'P2002'
+
+/** Минимальная длина поискового запроса. */
+const SEARCH_QUERY_MIN_LENGTH = 2
+
+/** Максимальное количество пользователей в результатах поиска. */
+const SEARCH_RESULT_LIMIT = 20
+
+/**
+ * Состояние связи между просматривающим и просматриваемым пользователем.
+ */
+export type FriendshipState = 'NONE' | 'REQUEST_SENT' | 'REQUEST_RECEIVED' | 'FRIENDS'
+
+/**
+ * Связь между двумя пользователями с точки зрения просматривающего.
+ */
+interface FriendshipView {
+  /** Состояние связи. */
+  state: FriendshipState
+  /** Идентификатор заявки — null, если связи нет. */
+  friendshipId: string | null
+}
+
+/**
+ * Профиль другого пользователя вместе с состоянием связи с ним.
+ */
+export interface PublicProfile extends PublicUser {
+  /** Состояние связи с просматривающим. */
+  friendshipState: FriendshipState
+  /** Идентификатор заявки — null, если связи нет. */
+  friendshipId: string | null
+  /** Флаг доступности записей просматривающему. */
+  canViewEntries: boolean
+}
 
 /**
  * Сервис управления профилем пользователя.
@@ -50,6 +90,83 @@ export class UsersService {
         throw new ConflictException('Никнейм уже занят')
       }
       throw error
+    }
+  }
+
+  /**
+   * Получение профиля другого пользователя по никнейму.
+   */
+  async getPublicProfile(viewerId: string, username: string): Promise<PublicProfile> {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: PUBLIC_USER_SELECT,
+    })
+    if (!user) throw new NotFoundException('Пользователь не найден')
+
+    const { state, friendshipId } = await this.getFriendshipView(viewerId, user.id)
+
+    return {
+      ...user,
+      friendshipState: state,
+      friendshipId,
+      canViewEntries: user.id === viewerId || user.isPublic || state === 'FRIENDS',
+    }
+  }
+
+  /**
+   * Получение пользователя по никнейму при наличии доступа к его записям.
+   */
+  async getUserForEntries(viewerId: string, username: string): Promise<PublicProfile> {
+    const profile = await this.getPublicProfile(viewerId, username)
+    if (!profile.canViewEntries) {
+      throw new ForbiddenException('Профиль закрыт')
+    }
+    return profile
+  }
+
+  /**
+   * Поиск пользователей по никнейму и отображаемому имени.
+   */
+  async searchUsers(viewerId: string, query: string): Promise<PublicUser[]> {
+    const trimmed = query.trim()
+    if (trimmed.length < SEARCH_QUERY_MIN_LENGTH) return []
+
+    return this.prisma.user.findMany({
+      where: {
+        id: { not: viewerId },
+        OR: [
+          { username: { startsWith: trimmed, mode: 'insensitive' } },
+          { displayName: { contains: trimmed, mode: 'insensitive' } },
+        ],
+      },
+      select: PUBLIC_USER_SELECT,
+      take: SEARCH_RESULT_LIMIT,
+      orderBy: { username: 'asc' },
+    })
+  }
+
+  /**
+   * Определение состояния связи между двумя пользователями.
+   */
+  private async getFriendshipView(viewerId: string, targetId: string): Promise<FriendshipView> {
+    if (viewerId === targetId) return { state: 'NONE', friendshipId: null }
+
+    const friendship = await this.prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { senderId: viewerId, receiverId: targetId },
+          { senderId: targetId, receiverId: viewerId },
+        ],
+      },
+    })
+
+    if (!friendship) return { state: 'NONE', friendshipId: null }
+    if (friendship.status === 'ACCEPTED') {
+      return { state: 'FRIENDS', friendshipId: friendship.id }
+    }
+    return {
+      state: friendship.senderId === viewerId ? 'REQUEST_SENT' : 'REQUEST_RECEIVED',
+      friendshipId: friendship.id,
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { UsersService } from '../users/users.service'
 import { BookStatus } from '../generated/prisma/client'
 import type { CreateBookDto } from './dto/create-book.dto'
 import type { UpdateBookDto } from './dto/update-book.dto'
@@ -24,7 +25,10 @@ function autoStatusDates(
  */
 @Injectable()
 export class BooksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usersService: UsersService,
+  ) {}
 
   /**
    * Получение списка всех книг.
@@ -74,6 +78,14 @@ export class BooksService {
       include: { book: true },
       orderBy: { createdAt: 'desc' },
     })
+  }
+
+  /**
+   * Получение записей пользователя по никнейму при наличии доступа к ним.
+   */
+  async findEntriesByUsername(viewerId: string, username: string) {
+    const user = await this.usersService.getUserForEntries(viewerId, username)
+    return this.findUserEntries(user.id)
   }
 
   /**
