@@ -79,17 +79,25 @@ export const BookCoverCard = ({
     setRatingOpen(true)
   }
 
+  // Бейдж с пустой оценкой предлагает её проставить — в режиме просмотра
+  // показывать его нечем оправдать.
+  const showsScore = status === 'DONE' && (rating !== null || !!onRatingChange)
+
   return (
     <div className={`${styles['cover-card']} ${styles[`cover-card--${size}`] ?? ''}`}>
       <div className={styles['cover-card__cover-frame']}>
-        <div data-card-id={entry.id} className={styles['cover-card__cover']} onClick={onExpand}>
-          {status === 'DONE' && (
+        <div
+          data-card-id={entry.id}
+          className={`${styles['cover-card__cover']} ${onExpand ? '' : styles['cover-card__cover--static']}`}
+          onClick={onExpand}
+        >
+          {showsScore && (
             <ScoreBadge
               ref={setScoreEl}
               rating={rating}
               size="sm"
               className={styles['cover-card__score']}
-              onClick={handleRatingClick}
+              {...(onRatingChange && { onClick: handleRatingClick })}
             />
           )}
           <div className={styles['cover-card__title']}>
@@ -105,8 +113,8 @@ export const BookCoverCard = ({
           {showStatus && (
             <span
               ref={setStatusEl}
-              className={`${styles['cover-card__status']} ${STATUS_CLASS[status]}`}
-              onClick={handleStatusClick}
+              className={`${styles['cover-card__status']} ${STATUS_CLASS[status]} ${onStatusChange ? '' : styles['cover-card__status--static']}`}
+              {...(onStatusChange && { onClick: handleStatusClick })}
             >
               <span className={styles['cover-card__status-dot']} />
               {t(`book.status.${status}`)}

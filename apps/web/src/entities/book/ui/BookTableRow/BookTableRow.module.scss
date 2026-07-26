@@ -28,6 +28,10 @@
   cursor: pointer;
 }
 
+.table-row__cover-wrap--static {
+  cursor: default;
+}
+
 .table-row__cover {
   position: absolute;
   inset: 0;
@@ -75,6 +79,10 @@
   cursor: pointer;
 }
 
+.table-row__info--static {
+  cursor: default;
+}
+
 .table-row__title {
   font-size: 14px;
   font-weight: 600;
@@ -105,6 +113,10 @@
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.table-row__status--static {
+  cursor: default;
 }
 
 .table-row__status-dot {

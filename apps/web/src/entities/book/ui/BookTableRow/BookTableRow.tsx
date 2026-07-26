@@ -67,20 +67,26 @@ export const BookTableRow = ({
 
   return (
     <div className={styles['table-row']}>
-      <div className={styles['table-row__cover-wrap']} onClick={onEdit}>
+      <div
+        className={`${styles['table-row__cover-wrap']} ${onEdit ? '' : styles['table-row__cover-wrap--static']}`}
+        onClick={onEdit}
+      >
         <div className={styles['table-row__cover']} />
         {status === 'DONE' && rating === 10 && <div className={styles['table-row__gold-ring']} />}
       </div>
 
-      <div className={styles['table-row__info']} onClick={onEdit}>
+      <div
+        className={`${styles['table-row__info']} ${onEdit ? '' : styles['table-row__info--static']}`}
+        onClick={onEdit}
+      >
         <div className={styles['table-row__title']}>{book.title}</div>
         <div className={styles['table-row__author']}>{book.author || '—'}</div>
       </div>
 
       <span
         ref={setStatusEl}
-        className={`${styles['table-row__status']} ${STATUS_CLASS[status]}`}
-        onClick={handleStatusClick}
+        className={`${styles['table-row__status']} ${STATUS_CLASS[status]} ${onStatusChange ? '' : styles['table-row__status--static']}`}
+        {...(onStatusChange && { onClick: handleStatusClick })}
       >
         <span className={styles['table-row__status-dot']} />
         {t(`book.status.${status}`)}
@@ -88,8 +94,8 @@ export const BookTableRow = ({
 
       <div
         ref={setRatingEl}
-        className={`${styles['table-row__rating']} ${status !== 'DONE' ? styles['table-row__rating--disabled'] : ''}`}
-        onClick={status === 'DONE' ? handleRatingClick : undefined}
+        className={`${styles['table-row__rating']} ${status === 'DONE' && onRatingChange ? '' : styles['table-row__rating--disabled']}`}
+        onClick={status === 'DONE' && onRatingChange ? handleRatingClick : undefined}
       >
         {status === 'DONE' && rating !== null ? (
           <>
