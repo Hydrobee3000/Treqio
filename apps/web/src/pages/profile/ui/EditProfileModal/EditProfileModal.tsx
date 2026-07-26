@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@mui/material'
 import { Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateMeMutation } from '@/features/user'
-import { DISPLAY_NAME_MAX } from '@/features/user/api/constraints'
+import { DISPLAY_NAME_MAX, USERNAME_MAX } from '@/features/user/api/constraints'
 import { setGuestDisplayName } from '@/features/guest'
 import { useAppDispatch } from '@/shared/lib/store'
 import { ModalShell } from '@/shared/ui'
@@ -48,11 +48,16 @@ export const EditProfileModal = ({
     handleSubmit,
     reset,
     setError,
+    control,
     formState: { errors, isDirty },
   } = useForm<EditProfileFormValues>({
     resolver: zodResolver(editProfileSchema(t)),
     defaultValues: { displayName, username: username ?? undefined },
   })
+
+  const [displayNameVal, usernameVal] = useWatch({ control, name: ['displayName', 'username'] })
+  const displayNameLength = displayNameVal?.length ?? 0
+  const usernameLength = usernameVal?.length ?? 0
 
   // Подтягиваем актуальные значения при каждом открытии — форма могла
   // остаться с предыдущими значениями/ошибками с прошлого открытия.
@@ -123,13 +128,25 @@ export const EditProfileModal = ({
     >
       <div className={styles.field}>
         <label className={styles['field__label']}>{t('profile.editProfile.displayName')}</label>
-        <input
-          className={styles['field__input']}
-          autoFocus
-          autoComplete="off"
-          maxLength={DISPLAY_NAME_MAX}
-          {...register('displayName')}
-        />
+        <div className={styles['field__row']}>
+          <input
+            className={styles['field__input']}
+            autoFocus
+            autoComplete="off"
+            maxLength={DISPLAY_NAME_MAX}
+            {...register('displayName')}
+          />
+          <span
+            className={`${styles['field__counter']} ${
+              displayNameLength > DISPLAY_NAME_MAX
+                ? styles['field__counter--max']
+                : styles['field__counter--warn']
+            }`}
+            style={{ visibility: displayNameLength >= DISPLAY_NAME_MAX - 5 ? 'visible' : 'hidden' }}
+          >
+            {displayNameLength}/{DISPLAY_NAME_MAX}
+          </span>
+        </div>
         {errors.displayName && (
           <p className={styles['field__error']}>{errors.displayName.message}</p>
         )}
@@ -138,13 +155,24 @@ export const EditProfileModal = ({
       {!isGuest && (
         <div className={styles.field}>
           <label className={styles['field__label']}>{t('profile.editProfile.username')}</label>
-          <div className={styles['field__username-row']}>
+          <div className={styles['field__row']}>
             <span className={styles['field__username-prefix']}>@</span>
             <input
               className={styles['field__input']}
               autoComplete="off"
+              maxLength={USERNAME_MAX}
               {...register('username')}
             />
+            <span
+              className={`${styles['field__counter']} ${
+                usernameLength > USERNAME_MAX
+                  ? styles['field__counter--max']
+                  : styles['field__counter--warn']
+              }`}
+              style={{ visibility: usernameLength >= USERNAME_MAX - 5 ? 'visible' : 'hidden' }}
+            >
+              {usernameLength}/{USERNAME_MAX}
+            </span>
           </div>
           {errors.username && <p className={styles['field__error']}>{errors.username.message}</p>}
         </div>

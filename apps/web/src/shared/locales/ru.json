@@ -60,7 +60,7 @@
       "username": "Username",
       "nameRequiredError": "Введите имя",
       "usernameMinError": "Минимум {{min}} символов",
-      "usernameFormatError": "Только строчные буквы, цифры и символ _",
+      "usernameFormatError": "Только строчные латинские буквы, цифры и символ _",
       "usernameTaken": "Никнейм уже занят",
       "saveError": "Не удалось сохранить. Попробуй ещё раз.",
       "cancel": "Отмена",
