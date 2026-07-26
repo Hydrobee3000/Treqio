@@ -8,7 +8,7 @@ export const DISPLAY_NAME_MAX = 25
 export const USERNAME_MIN = 3
 
 /** Максимальная длина никнейма. */
-export const USERNAME_MAX = 30
+export const USERNAME_MAX = 20
 
 /** Максимальная длина bio. */
 export const BIO_MAX = 200

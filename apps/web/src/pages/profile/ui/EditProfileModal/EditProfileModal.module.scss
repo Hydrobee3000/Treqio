@@ -4,9 +4,15 @@ $breakpoint-small: 600px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-bottom: 6px;
 
   & + & {
-    margin-top: 14px;
+    margin-top: 12px;
+  }
+
+  // Доп. отступ перед футером с кнопками — только у последнего поля.
+  &:last-of-type {
+    margin-bottom: 16px;
   }
 }
 
@@ -14,6 +20,14 @@ $breakpoint-small: 600px;
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text-2, #666);
+}
+
+// Ряд «инпут + счётчик» (у username ещё и префикс @ первым элементом) —
+// инпут сжимается, счётчик занимает фиксированное место в конце строки.
+.field__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .field__input {
@@ -24,7 +38,7 @@ $breakpoint-small: 600px;
   color: var(--color-text, inherit);
   font-size: 14px;
   font-family: inherit;
-  width: 100%;
+  flex: 1;
   min-width: 0;
   box-sizing: border-box;
   outline: none;
@@ -42,22 +56,35 @@ $breakpoint-small: 600px;
   }
 }
 
-.field__username-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .field__username-prefix {
   flex-shrink: 0;
   color: var(--color-text-2, #666);
   font-size: 14px;
 }
 
+.field__counter {
+  flex-shrink: 0;
+  min-width: 34px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: right;
+  color: var(--color-text-2, #666);
+  white-space: nowrap;
+
+  &--warn {
+    color: #f59e0b;
+  }
+
+  &--max {
+    color: #e05252;
+  }
+}
+
 .field__error {
-  margin: 8px 0 0;
-  font-size: 13px;
-  line-height: 1.45;
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
   color: #d05c5c;
 }
 
