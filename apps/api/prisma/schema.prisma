@@ -38,6 +38,11 @@ model User {
 
   bookEntries BookEntry[]
 
+  /// Заявки в друзья, отправленные этим пользователем.
+  sentFriendRequests     Friendship[] @relation("SentFriendRequests")
+  /// Заявки в друзья, полученные этим пользователем.
+  receivedFriendRequests Friendship[] @relation("ReceivedFriendRequests")
+
   @@unique([provider, providerId])
 }
 
@@ -79,27 +84,27 @@ model Book {
 /// Запись пользователя по конкретной книге.
 model BookEntry {
   /// Уникальный идентификатор.
-  id         String     @id @default(cuid())
+  id              String     @id @default(cuid())
   /// Идентификатор пользователя.
-  userId     String
+  userId          String
   /// Идентификатор книги.
-  bookId     String
+  bookId          String
   /// Статус книги в списке пользователя.
-  status     BookStatus
+  status          BookStatus
   /// Оценка от 1 до 10.
-  rating     Int?
+  rating          Int?
   /// Текущая страница.
-  progress   Int?
+  progress        Int?
   /// Дата начала чтения.
-  startDate  DateTime?
+  startDate       DateTime?
   /// Дата завершения чтения.
-  finishDate DateTime?
+  finishDate      DateTime?
   /// Дата последнего изменения оценки.
   ratingUpdatedAt DateTime?
   /// Дата последнего изменения статуса.
   statusUpdatedAt DateTime?
   /// Заметки пользователя.
-  notes      String?
+  notes           String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -109,4 +114,35 @@ model BookEntry {
 
   /// Одна запись на пользователя на книгу.
   @@unique([userId, bookId])
+}
+
+/// Статус заявки в друзья.
+enum FriendshipStatus {
+  /// Заявка отправлена, ещё не рассмотрена.
+  PENDING
+  /// Заявка принята — пользователи друзья.
+  ACCEPTED
+}
+
+/// Заявка в друзья или уже принятая дружба между двумя пользователями.
+model Friendship {
+  /// Уникальный идентификатор.
+  id         String           @id @default(cuid())
+  /// Идентификатор отправителя заявки.
+  senderId   String
+  /// Идентификатор адресата заявки.
+  receiverId String
+  /// Статус заявки.
+  status     FriendshipStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Пользователь, отправивший заявку.
+  sender   User @relation("SentFriendRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  /// Пользователь, получивший заявку.
+  receiver User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  /// Одна заявка/дружба на пару отправитель-адресат в конкретном направлении.
+  @@unique([senderId, receiverId])
 }
