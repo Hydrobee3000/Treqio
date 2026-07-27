@@ -9,18 +9,23 @@ $breakpoint-small: 600px;
   overflow-y: auto;
 }
 
-// ─── Шапка профиля ────────────────────────────────────────────────────────────
-
-.header {
-  position: relative;
-  padding: 32px 40px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+// Зазор под шапкой: на своём профиле его создают вкладки, здесь их нет.
+.header-spacing {
+  padding-bottom: 18px;
 
   @media (max-width: $breakpoint-small) {
-    padding: 20px 18px 12px 22px;
-    gap: 16px;
+    padding-bottom: 12px;
+  }
+}
+
+// Место под кнопку возврата, когда профиль не найден и шапку рисовать нечем.
+.header-fallback {
+  position: relative;
+  height: 58px;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-small) {
+    height: 40px;
   }
 }
 
@@ -63,84 +68,6 @@ $breakpoint-small: 600px;
       width: 16px;
       height: 16px;
     }
-  }
-}
-
-.header__top {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-
-  @media (max-width: $breakpoint-small) {
-    gap: 14px;
-  }
-}
-
-.avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: var(--sidebar-text, #d8ebe4);
-  display: grid;
-  place-items: center;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-primary, #4e7b6a);
-  letter-spacing: -0.02em;
-
-  @media (max-width: $breakpoint-small) {
-    width: 56px;
-    height: 56px;
-    font-size: 20px;
-  }
-}
-
-.header__info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  flex: 1;
-  position: relative;
-}
-
-.header__name {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--color-text, inherit);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  @media (max-width: $breakpoint-small) {
-    font-size: 18px;
-  }
-}
-
-.header__meta {
-  font-size: 13px;
-  color: var(--color-text-2, #666);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  padding-left: 14px;
-  margin-top: 14px;
-}
-
-.header__bio {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--color-text-2, #666);
-  line-height: 1.5;
-  max-width: 520px;
-
-  @media (max-width: $breakpoint-small) {
-    display: none;
   }
 }
 
