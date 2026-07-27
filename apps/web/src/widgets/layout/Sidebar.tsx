@@ -3,9 +3,7 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
@@ -103,9 +101,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
     { to: '/', icon: HomeOutlinedIcon, label: t('nav.home') },
     { to: profilePath, icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
     { to: '/library', icon: AutoStoriesOutlinedIcon, label: t('nav.library') },
-    { to: '/search', icon: SearchOutlinedIcon, label: t('nav.search') },
     { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed'), disabled: true },
-    { to: '/friends', icon: PeopleOutlinedIcon, label: t('nav.friends'), disabled: true },
   ]
 
   const footerItems: NavItemConfig[] = [

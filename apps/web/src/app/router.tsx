@@ -19,9 +19,6 @@ const ProfilePage = lazy(() =>
 const UserProfilePage = lazy(() =>
   import('@/pages/user-profile').then((module) => ({ default: module.UserProfilePage })),
 )
-const SearchPage = lazy(() =>
-  import('@/pages/search').then((module) => ({ default: module.SearchPage })),
-)
 const SettingsPage = lazy(() =>
   import('@/pages/settings').then((module) => ({ default: module.SettingsPage })),
 )
@@ -122,7 +119,6 @@ export const router = createBrowserRouter([
             children: [
               { path: '/', element: <HomePage /> }, // Домашняя страница
               { path: '/library', element: <LibraryPage /> }, // Библиотека
-              { path: '/search', element: <SearchPage /> }, // Поиск людей
               { path: '/profile', element: <OwnProfileRedirect /> }, // Свой профиль
               { path: '/settings', element: <SettingsPage /> }, // Настройки
               { path: '/settings/:section', element: <SettingsPage /> }, // Раздел настроек

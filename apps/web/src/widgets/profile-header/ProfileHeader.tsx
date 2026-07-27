@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { Skeleton } from '@mui/material'
 import styles from './ProfileHeader.module.scss'
 
@@ -64,18 +64,17 @@ interface ProfileHeaderSkeletonProps {
 export const ProfileHeaderSkeleton = ({ actionWidth, className }: ProfileHeaderSkeletonProps) => (
   <div className={`${styles['profile-header']} ${className ?? ''}`}>
     <div className={styles['profile-header__top']}>
-      <Skeleton variant="circular" width={80} height={80} sx={{ flexShrink: 0 }} />
+      <Skeleton variant="circular" className={styles['profile-header__skeleton-avatar']} />
       <div className={styles['profile-header__info']}>
-        <Skeleton variant="rounded" width={160} height={36} sx={{ borderRadius: '8px' }} />
+        <Skeleton variant="rounded" className={styles['profile-header__skeleton-name']} />
         <div className={styles['profile-header__meta']}>
-          <Skeleton variant="text" width={100} sx={{ fontSize: '13px' }} />
+          <Skeleton variant="text" className={styles['profile-header__skeleton-meta']} />
         </div>
       </div>
       <Skeleton
         variant="rounded"
-        width={actionWidth}
-        height={32}
-        sx={{ borderRadius: '8px', marginLeft: 'auto', alignSelf: 'flex-start' }}
+        className={styles['profile-header__skeleton-action']}
+        style={{ '--action-width': `${actionWidth}px` } as CSSProperties}
       />
     </div>
   </div>

@@ -111,6 +111,24 @@ describe('FriendsService', () => {
     })
   })
 
+  describe('getFriends', () => {
+    it('returns the other side of each friendship together with its id', async () => {
+      const jane = { id: 'user-2', username: 'jane' }
+      const bob = { id: 'user-3', username: 'bob' }
+      prisma.friendship.findMany.mockResolvedValueOnce([
+        { id: 'f-1', senderId: 'user-1', receiverId: 'user-2', sender: {}, receiver: jane },
+        { id: 'f-2', senderId: 'user-3', receiverId: 'user-1', sender: bob, receiver: {} },
+      ])
+
+      const result = await service.getFriends('user-1')
+
+      expect(result).toEqual([
+        { friendshipId: 'f-1', user: jane },
+        { friendshipId: 'f-2', user: bob },
+      ])
+    })
+  })
+
   describe('acceptRequest', () => {
     it('throws when the request does not exist or does not belong to the user', async () => {
       prisma.friendship.findUnique.mockResolvedValueOnce(null)

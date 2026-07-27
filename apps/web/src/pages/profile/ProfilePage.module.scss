@@ -144,6 +144,21 @@ $history-status-color: #8a6fc4;
   }
 }
 
+// Счётчик входящих заявок на вкладке «Друзья»
+.tab__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-primary, #4e7b6a);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 // ─── Пустое состояние (история/статистика) ───────────────────────────────────
 
 .empty-state {
@@ -186,6 +201,38 @@ $history-status-color: #8a6fc4;
 
 .history__day {
   margin-bottom: 4px;
+}
+
+// Размеры заглушек заданы вложенно: собственные классы MUI имеют ту же
+// специфичность, и при плоской записи исход зависел бы от порядка стилей.
+.history {
+  .history__date-skeleton {
+    height: 30px;
+    border-radius: 10px;
+    margin: 10px 0 6px -6px;
+  }
+
+  // Повторяет положение точки таймлайна из .history__node.
+  .history__node-skeleton {
+    position: absolute;
+    left: -34px;
+    top: 50%;
+    width: 28px;
+    height: 28px;
+    transform: translateY(-50%);
+  }
+
+  // Ширина разная у каждой строки — иначе заглушка выглядит таблицей.
+  .history__text-skeleton {
+    width: var(--skeleton-width, 130px);
+    font-size: 14px;
+  }
+
+  .history__time-skeleton {
+    width: 36px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
 }
 
 .history__date {

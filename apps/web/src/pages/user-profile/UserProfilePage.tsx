@@ -43,9 +43,10 @@ export const UserProfilePage = ({ username }: Props) => {
   const busy = sending || accepting || removing
 
   // Профиль могли открыть по прямой ссылке — истории для возврата тогда нет,
-  // ключ начальной записи равен 'default'.
+  // ключ начальной записи равен 'default'. Уводим на свой профиль: там живут
+  // друзья и поиск людей.
   const handleBack = () => {
-    if (location.key === 'default') void navigate('/search')
+    if (location.key === 'default') void navigate('/profile')
     else void navigate(-1)
   }
 

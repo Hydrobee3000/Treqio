@@ -70,7 +70,8 @@
     },
     "tabs": {
       "history": "Activity",
-      "stats": "Statistics"
+      "stats": "Statistics",
+      "friends": "Friends"
     },
     "history": {
       "today": "Today",
@@ -256,7 +257,6 @@
     "library": "Library",
     "feed": "Feed",
     "friends": "Friends",
-    "search": "Search",
     "settings": "Settings",
     "comingSoon": "Coming soon",
     "lightTheme": "Light theme",
@@ -296,22 +296,27 @@
     },
     "back": "Back"
   },
-  "search": {
-    "title": "Find people",
-    "placeholder": "Username or name",
-    "clear": "Clear",
-    "hint": {
-      "title": "Find your friends",
-      "desc": "Enter at least {{min}} characters of a username or name"
+  "friends": {
+    "title": "Friends",
+    "incoming": "Friend requests",
+    "outgoing": "Sent requests",
+    "accept": "Accept",
+    "reject": "Decline",
+    "cancel": "Cancel request",
+    "searchPlaceholder": "Find people by username or name",
+    "clearSearch": "Clear",
+    "noResults": "Nobody found for \"{{query}}\"",
+    "empty": {
+      "title": "No friends yet",
+      "desc": "Find people using the search above"
     },
-    "noResults": {
-      "title": "Nobody found for \"{{query}}\"",
-      "desc": "Try a different username or name"
-    },
-    "guest": {
-      "title": "Sign in to find people",
-      "desc": "Friends are not available in guest mode",
-      "login": "Sign in"
+    "remove": "Remove friend",
+    "alreadyFriend": "Already friends",
+    "removeConfirm": {
+      "title": "Remove friend",
+      "desc": "You will no longer be friends with {{name}}. You can send a request again later.",
+      "cancel": "Cancel",
+      "confirm": "Remove"
     }
   }
 }

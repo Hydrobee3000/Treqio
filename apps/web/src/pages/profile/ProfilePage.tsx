@@ -12,13 +12,15 @@ import {
   RefreshCw,
   Settings,
   Star,
+  Users,
   X,
 } from 'lucide-react'
-import type { ComponentType } from 'react'
+import type { ComponentType, CSSProperties } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
 import type { BookEntry, BookStatus } from '@/entities/book'
+import { useGetIncomingRequestsQuery } from '@/features/friends'
 import { useGetMeQuery, useLogoutMutation } from '@/features/user'
 import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
@@ -26,10 +28,11 @@ import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
 import { EditProfileModal } from './ui/EditProfileModal/EditProfileModal'
+import { FriendsTab } from './ui/FriendsTab/FriendsTab'
 import styles from './ProfilePage.module.scss'
 
 /** Вкладка страницы профиля. */
-type ProfileTab = 'history' | 'stats'
+type ProfileTab = 'history' | 'stats' | 'friends'
 
 /** Тип события в истории — выводится из текущих полей записи, без отдельного журнала действий. */
 type HistoryEventType = 'ADDED' | 'READING' | 'DONE' | 'DROPPED' | 'RATED' | 'STATUS'
@@ -213,6 +216,8 @@ export const ProfilePage = () => {
   const { data: user, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
   const [logoutMutation] = useLogoutMutation()
   const { data: entries } = useGetMyEntriesQuery()
+  // Счётчик на вкладке — иначе о входящих заявках не узнать, не открыв её.
+  const { data: incomingRequests } = useGetIncomingRequestsQuery(undefined, { skip: isGuest })
 
   const defaultName = t('profile.defaultName')
 
@@ -248,29 +253,19 @@ export const ProfilePage = () => {
         <div className={styles['history']}>
           {[3, 2].map((count, gi) => (
             <div key={gi} className={styles['history__day']}>
-              <Skeleton
-                variant="rounded"
-                height={30}
-                sx={{ borderRadius: '10px', margin: '10px 0 6px -6px' }}
-              />
+              <Skeleton variant="rounded" className={styles['history__date-skeleton']} />
               <div className={styles['history__timeline']}>
                 {Array.from({ length: count }).map((_, i) => (
                   <div key={i} className={styles['history__event']}>
-                    <Skeleton
-                      variant="circular"
-                      width={28}
-                      height={28}
-                      sx={{
-                        position: 'absolute',
-                        left: -34,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                      }}
-                    />
+                    <Skeleton variant="circular" className={styles['history__node-skeleton']} />
                     <div className={styles['history__body']}>
-                      <Skeleton variant="text" width={130 + i * 30} sx={{ fontSize: '14px' }} />
+                      <Skeleton
+                        variant="text"
+                        className={styles['history__text-skeleton']}
+                        style={{ '--skeleton-width': `${130 + i * 30}px` } as CSSProperties}
+                      />
                     </div>
-                    <Skeleton variant="text" width={36} sx={{ fontSize: '12px', flexShrink: 0 }} />
+                    <Skeleton variant="text" className={styles['history__time-skeleton']} />
                   </div>
                 ))}
               </div>
@@ -295,6 +290,8 @@ export const ProfilePage = () => {
   const displayName = isGuest
     ? guestDisplayName || defaultName
     : user?.displayName || user?.username || defaultName
+
+  const incomingCount = incomingRequests?.length ?? 0
 
   const todayLabel = t('profile.history.today')
   const yesterdayLabel = t('profile.history.yesterday')
@@ -358,6 +355,17 @@ export const ProfilePage = () => {
           <BarChart3 size={17} />
           {t('profile.tabs.stats')}
         </button>
+        {/* У гостя нет учётной записи на сервере, а значит и друзей */}
+        {!isGuest && (
+          <button
+            className={`${styles['tab']} ${activeTab === 'friends' ? styles['tab--active'] : ''}`}
+            onClick={() => setActiveTab('friends')}
+          >
+            <Users size={17} />
+            {t('profile.tabs.friends')}
+            {incomingCount > 0 && <span className={styles['tab__badge']}>{incomingCount}</span>}
+          </button>
+        )}
       </div>
 
       {activeTab === 'history' ? (
@@ -455,6 +463,8 @@ export const ProfilePage = () => {
             })}
           </div>
         )
+      ) : activeTab === 'friends' ? (
+        <FriendsTab />
       ) : (
         <div className={styles['empty-state']}>
           <div className={styles['empty-state__icon']}>

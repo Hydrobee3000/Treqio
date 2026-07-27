@@ -96,7 +96,12 @@ export class FriendsService {
       },
     })
 
-    return rows.map((row) => (row.senderId === userId ? row.receiver : row.sender))
+    // Идентификатор связи отдаётся вместе с пользователем — без него клиент
+    // не может удалить дружбу, а второго запроса ради этого делать не нужно.
+    return rows.map((row) => ({
+      friendshipId: row.id,
+      user: row.senderId === userId ? row.receiver : row.sender,
+    }))
   }
 
   /**
