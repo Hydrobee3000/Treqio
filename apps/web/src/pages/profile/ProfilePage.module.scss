@@ -103,6 +103,24 @@ $history-status-color: #8a6fc4;
   margin: 28px 0 0;
   padding: 0 40px;
   border-bottom: 1px solid var(--color-divider, #e0e0e0);
+  // Табы не переносятся и не сжимаются — при нехватке ширины полоса
+  // прокручивается сама, а не раздвигает страницу горизонтально.
+  //
+  // flex-shrink: 0 обязателен: overflow-x: auto заставляет браузер
+  // вычислить overflow-y тоже как auto (одна ось не может остаться
+  // visible, если другая — нет), а это меняет автоматический минимальный
+  // размер флекс-элемента по главной оси с "по контенту" на 0 — без явного
+  // flex-shrink:0 .tabs схлопывался бы в ноль высоты, когда соседний блок
+  // с историей не помещается на экране.
+  flex-shrink: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @media (max-width: $breakpoint-small) {
     padding: 0 18px;
@@ -118,6 +136,8 @@ $history-status-color: #8a6fc4;
   font-weight: 600;
   color: var(--color-text-2, #666);
   position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
   border: none;
   background: transparent;
   font-family: inherit;
