@@ -8,6 +8,7 @@ import {
   SearchX,
   UserCheck,
   UserMinus,
+  UserPlus,
   Users,
   X,
 } from 'lucide-react'
@@ -20,6 +21,7 @@ import {
   useGetIncomingRequestsQuery,
   useGetOutgoingRequestsQuery,
   useRemoveFriendshipMutation,
+  useSendFriendRequestMutation,
 } from '@/features/friends'
 import type { Friend } from '@/features/friends'
 import { useSearchUsersQuery } from '@/features/user'
@@ -96,7 +98,20 @@ export const FriendsTab = () => {
 
   const [acceptRequest, { isLoading: accepting }] = useAcceptFriendRequestMutation()
   const [removeFriendship, { isLoading: removing }] = useRemoveFriendshipMutation()
+  const [sendRequest] = useSendFriendRequestMutation()
+  // Кнопка отправки нужна только своей строке — общий isLoading заблокировал
+  // бы весь список результатов на время одного запроса.
+  const [sendingTo, setSendingTo] = useState<string | null>(null)
   const busy = accepting || removing
+
+  const handleSend = async (username: string) => {
+    setSendingTo(username)
+    try {
+      await sendRequest(username).unwrap()
+    } finally {
+      setSendingTo(null)
+    }
+  }
 
   const friendList = friends ?? []
   const incomingList = incoming ?? []
@@ -140,11 +155,16 @@ export const FriendsTab = () => {
   )
 
   if (isSearching) {
+    // Скелетон только на самый первый запрос по новому вводу — data держит
+    // предыдущий успешный результат, пока грузится следующий, и подменять
+    // список на каждое изменение отложенного запроса не нужно.
+    const showSkeleton = searching && found === undefined
+
     return (
       <div className={styles['friends']}>
         {searchField}
         <div className={styles['friends__single']}>
-          {searching ? (
+          {showSkeleton ? (
             <div className={styles['friends__list']}>
               {[0, 1, 2].map((i) => (
                 <UserRowSkeleton key={i} />
@@ -161,31 +181,45 @@ export const FriendsTab = () => {
             </div>
           ) : (
             <div className={styles['friends__list']}>
-              {(found ?? []).map((user) => (
-                <UserRow
-                  key={user.id}
-                  displayName={nameOf(user.displayName, user.username)}
-                  username={user.username}
-                  to={`/${user.username}`}
-                  action={
-                    friendIds.has(user.id) ? (
-                      <Tooltip title={t('friends.alreadyFriend')}>
-                        <span className={styles['friends__badge']}>
-                          <UserCheck size={16} />
-                        </span>
-                      </Tooltip>
-                    ) : pendingIds.has(user.id) ? (
-                      <Tooltip title={t('friends.requestPending')}>
-                        <span
-                          className={`${styles['friends__badge']} ${styles['friends__badge--pending']}`}
-                        >
-                          <Clock size={16} />
-                        </span>
-                      </Tooltip>
-                    ) : undefined
-                  }
-                />
-              ))}
+              {(found ?? []).map((user) => {
+                const { username } = user
+                return (
+                  <UserRow
+                    key={user.id}
+                    displayName={nameOf(user.displayName, username)}
+                    username={username}
+                    to={`/${username}`}
+                    action={
+                      friendIds.has(user.id) ? (
+                        <Tooltip title={t('friends.alreadyFriend')}>
+                          <span className={styles['friends__badge']}>
+                            <UserCheck size={16} />
+                          </span>
+                        </Tooltip>
+                      ) : pendingIds.has(user.id) ? (
+                        <Tooltip title={t('friends.requestPending')}>
+                          <span
+                            className={`${styles['friends__badge']} ${styles['friends__badge--pending']}`}
+                          >
+                            <Clock size={16} />
+                          </span>
+                        </Tooltip>
+                      ) : username ? (
+                        <Tooltip title={t('friends.add')}>
+                          <button
+                            className={styles['friends__accept']}
+                            disabled={sendingTo === username}
+                            onClick={() => void handleSend(username)}
+                            aria-label={t('friends.add')}
+                          >
+                            <UserPlus size={16} />
+                          </button>
+                        </Tooltip>
+                      ) : undefined
+                    }
+                  />
+                )
+              })}
             </div>
           )}
         </div>

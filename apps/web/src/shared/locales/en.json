@@ -318,6 +318,7 @@
       "cancel": "Cancel",
       "confirm": "Remove"
     },
-    "requestPending": "Request sent"
+    "requestPending": "Request sent",
+    "add": "Add friend"
   }
 }
