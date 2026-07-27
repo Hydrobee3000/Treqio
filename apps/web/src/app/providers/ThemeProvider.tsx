@@ -75,6 +75,12 @@ export const ThemeProvider = ({ children }: Props) => {
       : text.secondary
     root.style.setProperty('--color-surface-variant', surfaceVariant)
 
+    root.style.setProperty('--color-row-bg', isDark ? 'rgba(255,255,255,.03)' : background.paper)
+    root.style.setProperty(
+      '--color-row-bg-hover',
+      isDark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.02)',
+    )
+
     root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)
     root.style.setProperty('--sidebar-btn-outlined-border', 'rgba(255,255,255,.25)')
     root.style.setProperty('--sidebar-btn-disabled-border', 'rgba(255,255,255,.15)')

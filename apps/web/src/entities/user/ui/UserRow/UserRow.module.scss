@@ -5,7 +5,7 @@
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid var(--color-divider, #d5e4d8);
-  background: var(--color-paper, white);
+  background: var(--color-row-bg, var(--color-paper, white));
   text-decoration: none;
   color: inherit;
   transition:
@@ -14,7 +14,7 @@
 
   &:hover {
     border-color: var(--color-primary, #4e7b6a);
-    background: var(--color-chip-bg, rgba(0, 0, 0, 0.03));
+    background: var(--color-row-bg-hover, rgba(0, 0, 0, 0.02));
   }
 }
 
