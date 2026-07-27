@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { ArrowLeft, BookOpen, Lock, UserX } from 'lucide-react'
-import { Skeleton } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useGetUserEntriesQuery } from '@/features/book'
@@ -12,6 +11,7 @@ import {
 import { useGetUserProfileQuery } from '@/features/user'
 import { ConfirmCard } from '@/shared/ui'
 import { BooksCollection } from '@/widgets/books-collection'
+import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
 import { FriendActionButton } from './ui/FriendActionButton/FriendActionButton'
 import styles from './UserProfilePage.module.scss'
 
@@ -82,24 +82,7 @@ export const UserProfilePage = ({ username }: Props) => {
   if (isLoading) {
     return (
       <div className={styles['profile']}>
-        <div className={styles['header']}>
-          {backButton}
-          <div className={styles['header__top']}>
-            <Skeleton variant="circular" width={80} height={80} sx={{ flexShrink: 0 }} />
-            <div className={styles['header__info']}>
-              <Skeleton variant="rounded" width={160} height={36} sx={{ borderRadius: '8px' }} />
-              <div className={styles['header__meta']}>
-                <Skeleton variant="text" width={100} sx={{ fontSize: '13px' }} />
-              </div>
-            </div>
-            <Skeleton
-              variant="rounded"
-              width={140}
-              height={32}
-              sx={{ borderRadius: '8px', marginLeft: 'auto', alignSelf: 'flex-start' }}
-            />
-          </div>
-        </div>
+        <ProfileHeaderSkeleton actionWidth={140} className={styles['header-spacing']} />
       </div>
     )
   }
@@ -107,7 +90,7 @@ export const UserProfilePage = ({ username }: Props) => {
   if (isError || !profile) {
     return (
       <div className={styles['profile']}>
-        <div className={styles['header']}>{backButton}</div>
+        <div className={styles['header-fallback']}>{backButton}</div>
         <div className={styles['empty-state']}>
           <div className={styles['empty-state__icon']}>
             <UserX size={48} />
@@ -120,22 +103,17 @@ export const UserProfilePage = ({ username }: Props) => {
   }
 
   const displayName = profile.displayName || profile.username || t('profile.defaultName')
-  const avatarLetter = displayName.charAt(0).toUpperCase()
   const userEntries = entries ?? []
 
   return (
     <div className={styles['profile']}>
-      <div className={styles['header']}>
-        {backButton}
-        <div className={styles['header__top']}>
-          <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
-          <div className={styles['header__info']}>
-            <h1 className={styles['header__name']}>{displayName}</h1>
-            <div className={styles['header__meta']}>
-              {profile.username && <span>@{profile.username}</span>}
-            </div>
-            {profile.bio && <p className={styles['header__bio']}>{profile.bio}</p>}
-          </div>
+      <ProfileHeader
+        displayName={displayName}
+        username={profile.username}
+        bio={profile.bio}
+        className={styles['header-spacing']}
+        cornerAction={backButton}
+        action={
           <FriendActionButton
             state={profile.friendshipState}
             busy={busy}
@@ -143,8 +121,8 @@ export const UserProfilePage = ({ username }: Props) => {
             onAccept={handleAccept}
             onRemove={handleRemove}
           />
-        </div>
-      </div>
+        }
+      />
 
       {!profile.canViewEntries ? (
         <div className={styles['empty-state']}>

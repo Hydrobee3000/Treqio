@@ -24,6 +24,7 @@ import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
 import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
 import { EditProfileModal } from './ui/EditProfileModal/EditProfileModal'
 import styles from './ProfilePage.module.scss'
 
@@ -231,23 +232,7 @@ export const ProfilePage = () => {
   if (isLoading) {
     return (
       <div className={styles['profile']}>
-        <div className={styles['header']}>
-          <div className={styles['header__top']}>
-            <Skeleton variant="circular" width={80} height={80} sx={{ flexShrink: 0 }} />
-            <div className={styles['header__info']}>
-              <Skeleton variant="rounded" width={160} height={36} sx={{ borderRadius: '8px' }} />
-              <div className={styles['header__meta']}>
-                <Skeleton variant="text" width={100} sx={{ fontSize: '13px' }} />
-              </div>
-            </div>
-            <Skeleton
-              variant="rounded"
-              width={76}
-              height={32}
-              sx={{ borderRadius: '8px', marginLeft: 'auto', alignSelf: 'flex-start' }}
-            />
-          </div>
-        </div>
+        <ProfileHeaderSkeleton actionWidth={76} />
 
         <div className={styles['tabs']}>
           <button className={`${styles['tab']} ${styles['tab--active']}`}>
@@ -310,7 +295,6 @@ export const ProfilePage = () => {
   const displayName = isGuest
     ? guestDisplayName || defaultName
     : user?.displayName || user?.username || defaultName
-  const avatarLetter = displayName.charAt(0).toUpperCase()
 
   const todayLabel = t('profile.history.today')
   const yesterdayLabel = t('profile.history.yesterday')
@@ -335,32 +319,29 @@ export const ProfilePage = () => {
 
   return (
     <div className={styles['profile']}>
-      <div className={styles['header']}>
-        <button
-          className={styles['edit-profile-btn']}
-          onClick={() => setEditProfileOpen(true)}
-          aria-label={t('profile.editProfile.title')}
-        >
-          <Settings size={14} />
-        </button>
-        <div className={styles['header__top']}>
-          <div className={styles['avatar-placeholder']}>{avatarLetter}</div>
-          <div className={styles['header__info']}>
-            <h1 className={styles['header__name']}>{displayName}</h1>
-            <div className={styles['header__meta']}>
-              {user?.username && <span>@{user.username}</span>}
-            </div>
-            {user?.bio && <p className={styles['header__bio']}>{user.bio}</p>}
-          </div>
-          {isMobile ? (
+      <ProfileHeader
+        displayName={displayName}
+        username={isGuest ? null : user?.username}
+        bio={isGuest ? null : user?.bio}
+        cornerAction={
+          <button
+            className={styles['edit-profile-btn']}
+            onClick={() => setEditProfileOpen(true)}
+            aria-label={t('profile.editProfile.title')}
+          >
+            <Settings size={14} />
+          </button>
+        }
+        action={
+          isMobile ? (
             <Tooltip title={isGuest ? t('profile.login') : t('profile.logout')}>
               {authButton}
             </Tooltip>
           ) : (
             authButton
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
 
       <div className={styles['tabs']}>
         <button
