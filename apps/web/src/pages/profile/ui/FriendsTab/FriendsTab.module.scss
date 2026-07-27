@@ -258,7 +258,7 @@ $requests-width: 400px;
   }
 }
 
-// Отметка «уже в друзьях» в результатах поиска — не кнопка, действия нет.
+// Отметки состояния в результатах поиска — не кнопки, действия нет.
 .friends__badge {
   display: grid;
   place-items: center;
@@ -268,6 +268,11 @@ $requests-width: 400px;
   border-radius: 8px;
   background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, transparent);
   color: var(--color-primary, #4e7b6a);
+}
+
+.friends__badge--pending {
+  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
+  color: var(--color-text-2, #666);
 }
 
 // ─── Пустые состояния ─────────────────────────────────────────────────────────

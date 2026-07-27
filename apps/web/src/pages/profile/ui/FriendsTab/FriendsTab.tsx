@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { Check, ChevronDown, Search, SearchX, UserCheck, UserMinus, Users, X } from 'lucide-react'
+import {
+  Check,
+  ChevronDown,
+  Clock,
+  Search,
+  SearchX,
+  UserCheck,
+  UserMinus,
+  Users,
+  X,
+} from 'lucide-react'
 import { Collapse, Tooltip } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { UserRow, UserRowSkeleton } from '@/entities/user'
@@ -93,9 +103,10 @@ export const FriendsTab = () => {
   const outgoingList = outgoing ?? []
   const hasRequests = incomingList.length > 0 || outgoingList.length > 0
 
-  // Отметка «уже в друзьях» в результатах поиска считается по загруженному
-  // списку друзей — ручка поиска состояние связи не возвращает.
+  // Отметки в результатах поиска считаются по уже загруженным спискам —
+  // ручка поиска состояние связи не возвращает.
   const friendIds = new Set(friendList.map((friend) => friend.user.id))
+  const pendingIds = new Set(outgoingList.map((request) => request.receiver.id))
 
   /** Имя для отображения с запасным вариантом. */
   const nameOf = (displayName: string | null, username: string | null) =>
@@ -161,6 +172,14 @@ export const FriendsTab = () => {
                       <Tooltip title={t('friends.alreadyFriend')}>
                         <span className={styles['friends__badge']}>
                           <UserCheck size={16} />
+                        </span>
+                      </Tooltip>
+                    ) : pendingIds.has(user.id) ? (
+                      <Tooltip title={t('friends.requestPending')}>
+                        <span
+                          className={`${styles['friends__badge']} ${styles['friends__badge--pending']}`}
+                        >
+                          <Clock size={16} />
                         </span>
                       </Tooltip>
                     ) : undefined
