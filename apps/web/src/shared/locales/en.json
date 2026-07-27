@@ -65,7 +65,8 @@
       "saveError": "Couldn't save. Please try again.",
       "cancel": "Cancel",
       "save": "Save",
-      "saving": "Saving…"
+      "saving": "Saving…",
+      "usernameReservedError": "This username is reserved"
     },
     "tabs": {
       "history": "Activity",
@@ -267,5 +268,50 @@
     "message": "Data is stored in the browser only",
     "login": "Sign in",
     "close": "Close"
+  },
+  "userProfile": {
+    "notFound": {
+      "title": "User not found",
+      "desc": "Check the username — it may have changed"
+    },
+    "private": {
+      "title": "Private profile",
+      "desc": "Entries are visible to friends only"
+    },
+    "empty": {
+      "title": "{{name}} has no books yet"
+    },
+    "friendship": {
+      "add": "Add friend",
+      "requestSent": "Request sent",
+      "accept": "Accept",
+      "reject": "Decline",
+      "friends": "Friends"
+    },
+    "removeConfirm": {
+      "title": "Remove friend",
+      "desc": "You will no longer be friends with {{name}}. You can send a request again later.",
+      "cancel": "Cancel",
+      "confirm": "Remove"
+    },
+    "back": "Back"
+  },
+  "search": {
+    "title": "Find people",
+    "placeholder": "Username or name",
+    "clear": "Clear",
+    "hint": {
+      "title": "Find your friends",
+      "desc": "Enter at least {{min}} characters of a username or name"
+    },
+    "noResults": {
+      "title": "Nobody found for \"{{query}}\"",
+      "desc": "Try a different username or name"
+    },
+    "guest": {
+      "title": "Sign in to find people",
+      "desc": "Friends are not available in guest mode",
+      "login": "Sign in"
+    }
   }
 }

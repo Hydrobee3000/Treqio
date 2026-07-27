@@ -25,6 +25,43 @@ export interface UserProfile {
 }
 
 /**
+ * Состояние связи между текущим и просматриваемым пользователем.
+ */
+export type FriendshipState = 'NONE' | 'REQUEST_SENT' | 'REQUEST_RECEIVED' | 'FRIENDS'
+
+/**
+ * Публичные данные пользователя — без email и данных OAuth-провайдера.
+ */
+export interface PublicUser {
+  /** Уникальный идентификатор пользователя. */
+  id: string
+  /** Уникальный никнейм. */
+  username: string | null
+  /** Отображаемое имя. */
+  displayName: string | null
+  /** URL аватара. */
+  avatarUrl: string | null
+  /** Краткое описание профиля. */
+  bio: string | null
+  /** Публичность профиля. */
+  isPublic: boolean
+  /** Дата регистрации. */
+  createdAt: string
+}
+
+/**
+ * Профиль другого пользователя вместе с состоянием связи с ним.
+ */
+export interface PublicProfile extends PublicUser {
+  /** Состояние связи с текущим пользователем. */
+  friendshipState: FriendshipState
+  /** Идентификатор заявки — null, если связи нет. */
+  friendshipId: string | null
+  /** Флаг доступности записей текущему пользователю. */
+  canViewEntries: boolean
+}
+
+/**
  * Данные для обновления профиля пользователя.
  */
 export interface UpdateProfileDto {
@@ -58,6 +95,20 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ['User'],
     }),
     /**
+     * Получение профиля другого пользователя по никнейму.
+     */
+    getUserProfile: build.query<PublicProfile, string>({
+      query: (username) => `/users/${username}`,
+      // Тег Friend — действия с заявками меняют состояние связи в этом же ответе.
+      providesTags: ['Friend'],
+    }),
+    /**
+     * Поиск пользователей по никнейму и отображаемому имени.
+     */
+    searchUsers: build.query<PublicUser[], string>({
+      query: (q) => ({ url: '/users/search', params: { q } }),
+    }),
+    /**
      * Выход из системы.
      */
     logout: build.mutation<void, void>({
@@ -66,4 +117,10 @@ export const userApi = baseApi.injectEndpoints({
   }),
 })
 
-export const { useGetMeQuery, useUpdateMeMutation, useLogoutMutation } = userApi
+export const {
+  useGetMeQuery,
+  useUpdateMeMutation,
+  useGetUserProfileQuery,
+  useSearchUsersQuery,
+  useLogoutMutation,
+} = userApi

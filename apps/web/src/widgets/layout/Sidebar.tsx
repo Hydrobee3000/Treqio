@@ -14,6 +14,7 @@ import { Link, useMatch } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { toggleDark } from '@/features/theme'
+import { useGetMeQuery } from '@/features/user'
 import styles from './Sidebar.module.scss'
 
 /**
@@ -91,14 +92,20 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const isDark = useAppSelector((s) => s.theme.isDark)
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
+  const { data: me } = useGetMeQuery(undefined, { skip: isGuest })
+
+  // Свой профиль живёт по адресу с никнеймом — ведём сразу туда, иначе после
+  // редиректа с /profile пункт меню перестаёт подсвечиваться активным.
+  const profilePath = me?.username ? `/${me.username}` : '/profile'
 
   const navItems: NavItemConfig[] = [
     { to: '/', icon: HomeOutlinedIcon, label: t('nav.home') },
-    { to: '/profile', icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
+    { to: profilePath, icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
     { to: '/library', icon: AutoStoriesOutlinedIcon, label: t('nav.library') },
+    { to: '/search', icon: SearchOutlinedIcon, label: t('nav.search') },
     { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed'), disabled: true },
     { to: '/friends', icon: PeopleOutlinedIcon, label: t('nav.friends'), disabled: true },
-    { to: '/search', icon: SearchOutlinedIcon, label: t('nav.search'), disabled: true },
   ]
 
   const footerItems: NavItemConfig[] = [

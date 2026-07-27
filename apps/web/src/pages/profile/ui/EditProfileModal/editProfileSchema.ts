@@ -1,6 +1,11 @@
 import { z } from 'zod'
 import type { TFunction } from 'i18next'
-import { DISPLAY_NAME_MAX, USERNAME_MAX, USERNAME_MIN } from '@/features/user/api/constraints'
+import {
+  DISPLAY_NAME_MAX,
+  RESERVED_USERNAMES,
+  USERNAME_MAX,
+  USERNAME_MIN,
+} from '@/features/user/api/constraints'
 
 /**
  * Схема валидации формы редактирования профиля. Username опционален —
@@ -19,6 +24,10 @@ export const editProfileSchema = (t: TFunction) =>
       .min(USERNAME_MIN, t('profile.editProfile.usernameMinError', { min: USERNAME_MIN }))
       .max(USERNAME_MAX)
       .regex(/^[a-z0-9_]+$/, t('profile.editProfile.usernameFormatError'))
+      .refine(
+        (value) => !RESERVED_USERNAMES.includes(value),
+        t('profile.editProfile.usernameReservedError'),
+      )
       .optional(),
   })
 

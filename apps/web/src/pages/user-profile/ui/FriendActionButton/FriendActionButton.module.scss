@@ -1,0 +1,109 @@
+$breakpoint-small: 600px;
+
+.friend-actions {
+  margin-left: auto;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.friend-btn {
+  margin-left: auto;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    filter 0.15s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  // На мобильных текст прячется — кнопка становится круглой с одной иконкой.
+  @media (max-width: $breakpoint-small) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+}
+
+// Внутри группы кнопок отступ задаёт контейнер.
+.friend-actions .friend-btn {
+  margin-left: 0;
+}
+
+.friend-btn--primary {
+  background: var(--color-primary, #4e7b6a);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.friend-btn--muted {
+  background: var(--color-paper);
+  color: var(--color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background: var(--color-chip-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.friend-btn__label {
+  @media (max-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.friend-btn__reject {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-paper);
+  color: var(--color-text-2, #666);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--color-chip-bg);
+    color: #d05c5c;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  @media (max-width: $breakpoint-small) {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+}
