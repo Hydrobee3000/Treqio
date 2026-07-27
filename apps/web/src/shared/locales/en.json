@@ -317,6 +317,7 @@
       "desc": "You will no longer be friends with {{name}}. You can send a request again later.",
       "cancel": "Cancel",
       "confirm": "Remove"
-    }
+    },
+    "requestPending": "Request sent"
   }
 }
