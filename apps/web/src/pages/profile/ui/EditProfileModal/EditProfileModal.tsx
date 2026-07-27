@@ -3,6 +3,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@mui/material'
 import { Settings } from 'lucide-react'
+import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useUpdateMeMutation } from '@/features/user'
 import { DISPLAY_NAME_MAX, USERNAME_MAX } from '@/features/user/api/constraints'
@@ -41,6 +42,7 @@ export const EditProfileModal = ({
 }: EditProfileModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
 
   const {
@@ -78,8 +80,16 @@ export const EditProfileModal = ({
     }
 
     try {
-      await updateMe({ displayName: values.displayName, username: values.username }).unwrap()
+      const updated = await updateMe({
+        displayName: values.displayName,
+        username: values.username,
+      }).unwrap()
       onClose()
+      // Профиль открыт по адресу с никнеймом — после переименования старый
+      // адрес указывает на несуществующего пользователя.
+      if (updated.username && updated.username !== username) {
+        void navigate(`/${updated.username}`, { replace: true })
+      }
     } catch (error) {
       if (
         typeof error === 'object' &&

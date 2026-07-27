@@ -74,6 +74,14 @@ export const booksApi = baseApi.injectEndpoints({
     }),
 
     /**
+     * Записи другого пользователя по никнейму.
+     */
+    getUserEntries: build.query<BookEntry[], string>({
+      query: (username) => `/books/entries/user/${username}`,
+      providesTags: ['Book'],
+    }),
+
+    /**
      * Добавление книги в общий каталог.
      */
     createBook: build.mutation<Book, CreateBookDto>({
@@ -143,6 +151,7 @@ export const booksApi = baseApi.injectEndpoints({
 export const {
   useGetBooksQuery,
   useGetMyEntriesQuery,
+  useGetUserEntriesQuery,
   useCreateBookMutation,
   useUpdateBookMutation,
   useDeleteBookMutation,

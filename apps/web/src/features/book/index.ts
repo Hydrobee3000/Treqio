@@ -1,6 +1,7 @@
 export {
   useGetBooksQuery,
   useGetMyEntriesQuery,
+  useGetUserEntriesQuery,
   useCreateBookMutation,
   useUpdateBookMutation,
   useDeleteBookMutation,
