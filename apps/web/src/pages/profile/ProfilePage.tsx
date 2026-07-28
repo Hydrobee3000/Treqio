@@ -348,17 +348,14 @@ export const ProfilePage = () => {
           <History size={17} />
           {t('profile.tabs.history')}
         </button>
-        {/* У гостя нет учётной записи на сервере, а значит и друзей */}
-        {!isGuest && (
-          <button
-            className={`${styles['tab']} ${activeTab === 'friends' ? styles['tab--active'] : ''}`}
-            onClick={() => setActiveTab('friends')}
-          >
-            <Users size={17} />
-            {t('profile.tabs.friends')}
-            {incomingCount > 0 && <span className={styles['tab__badge']}>{incomingCount}</span>}
-          </button>
-        )}
+        <button
+          className={`${styles['tab']} ${activeTab === 'friends' ? styles['tab--active'] : ''}`}
+          onClick={() => setActiveTab('friends')}
+        >
+          <Users size={17} />
+          {t('profile.tabs.friends')}
+          {incomingCount > 0 && <span className={styles['tab__badge']}>{incomingCount}</span>}
+        </button>
         <button
           className={`${styles['tab']} ${activeTab === 'stats' ? styles['tab--active'] : ''}`}
           onClick={() => setActiveTab('stats')}

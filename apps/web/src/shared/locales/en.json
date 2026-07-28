@@ -319,6 +319,11 @@
       "confirm": "Remove"
     },
     "requestPending": "Request sent",
-    "add": "Add friend"
+    "add": "Add friend",
+    "guest": {
+      "title": "Sign in to add friends",
+      "desc": "Friends are not available in guest mode",
+      "login": "Sign in"
+    }
   }
 }

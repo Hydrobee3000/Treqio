@@ -4,6 +4,7 @@ import {
   Check,
   ChevronDown,
   Clock,
+  LogIn,
   Search,
   SearchX,
   UserCheck,
@@ -13,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { Collapse, Tooltip } from '@mui/material'
+import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { UserRow, UserRowSkeleton } from '@/entities/user'
 import {
@@ -27,6 +29,8 @@ import type { Friend } from '@/features/friends'
 import { useSearchUsersQuery } from '@/features/user'
 import { USERNAME_MAX } from '@/features/user/api/constraints'
 import { useDebouncedValue } from '@/shared/lib/hooks/useDebouncedValue'
+import { saveRedirectPath } from '@/shared/lib/redirectPath'
+import { useAppSelector } from '@/shared/lib/store'
 import { ConfirmCard } from '@/shared/ui'
 import styles from './FriendsTab.module.scss'
 
@@ -84,16 +88,20 @@ const CollapsibleSection = ({
  */
 export const FriendsTab = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const isGuest = useAppSelector((s) => s.auth.isGuest)
   const [query, setQuery] = useState('')
   const [pendingRemoval, setPendingRemoval] = useState<Friend | null>(null)
   const debouncedQuery = useDebouncedValue(query.trim(), SEARCH_DEBOUNCE_MS)
   const isSearching = debouncedQuery.length >= QUERY_MIN_LENGTH
 
-  const { data: friends, isLoading: friendsLoading } = useGetFriendsQuery()
-  const { data: incoming } = useGetIncomingRequestsQuery()
-  const { data: outgoing } = useGetOutgoingRequestsQuery()
+  const { data: friends, isLoading: friendsLoading } = useGetFriendsQuery(undefined, {
+    skip: isGuest,
+  })
+  const { data: incoming } = useGetIncomingRequestsQuery(undefined, { skip: isGuest })
+  const { data: outgoing } = useGetOutgoingRequestsQuery(undefined, { skip: isGuest })
   const { data: found, isFetching: searching } = useSearchUsersQuery(debouncedQuery, {
-    skip: !isSearching,
+    skip: !isSearching || isGuest,
   })
 
   const [acceptRequest, { isLoading: accepting }] = useAcceptFriendRequestMutation()
@@ -131,6 +139,32 @@ export const FriendsTab = () => {
     if (!pendingRemoval) return
     await removeFriendship(pendingRemoval.friendshipId).unwrap()
     setPendingRemoval(null)
+  }
+
+  /** Сохраняет текущий путь и ведёт на страницу входа. */
+  const handleGoToLogin = () => {
+    saveRedirectPath('/profile')
+    void navigate('/login')
+  }
+
+  // У гостя нет учётной записи на сервере — вместо списков и поиска
+  // показываем призыв войти, без единого запроса к /friends или /users/search.
+  if (isGuest) {
+    return (
+      <div className={`${styles['friends']} ${styles['friends--guest']}`}>
+        <div className={styles['empty-state']}>
+          <div className={styles['empty-state__icon']}>
+            <Users size={40} />
+          </div>
+          <p className={styles['empty-state__text']}>{t('friends.guest.title')}</p>
+          <p className={styles['empty-state__sub']}>{t('friends.guest.desc')}</p>
+          <button className={styles['friends__login-btn']} onClick={handleGoToLogin}>
+            <LogIn size={16} />
+            {t('friends.guest.login')}
+          </button>
+        </div>
+      </div>
+    )
   }
 
   const searchField = (
