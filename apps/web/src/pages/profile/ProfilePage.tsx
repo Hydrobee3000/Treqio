@@ -26,6 +26,7 @@ import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
 import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { EmptyState } from '@/shared/ui'
 import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
 import { EditProfileModal } from './ui/EditProfileModal/EditProfileModal'
 import { FriendsTab } from './ui/FriendsTab/FriendsTab'
@@ -367,13 +368,12 @@ export const ProfilePage = () => {
 
       {activeTab === 'history' ? (
         dayGroups.length === 0 ? (
-          <div className={styles['empty-state']}>
-            <div className={styles['empty-state__icon']}>
-              <History size={48} />
-            </div>
-            <p className={styles['empty-state__text']}>{t('profile.history.empty.title')}</p>
-            <p className={styles['empty-state__sub']}>{t('profile.history.empty.desc')}</p>
-          </div>
+          <EmptyState
+            fullHeight
+            icon={<History size={48} />}
+            title={t('profile.history.empty.title')}
+            description={t('profile.history.empty.desc')}
+          />
         ) : (
           <div className={styles['history']}>
             {dayGroups.map((group) => {
@@ -463,12 +463,7 @@ export const ProfilePage = () => {
       ) : activeTab === 'friends' ? (
         <FriendsTab />
       ) : (
-        <div className={styles['empty-state']}>
-          <div className={styles['empty-state__icon']}>
-            <BarChart3 size={48} />
-          </div>
-          <p className={styles['empty-state__text']}>{t('profile.stats.empty')}</p>
-        </div>
+        <EmptyState fullHeight icon={<BarChart3 size={48} />} title={t('profile.stats.empty')} />
       )}
 
       <EditProfileModal
