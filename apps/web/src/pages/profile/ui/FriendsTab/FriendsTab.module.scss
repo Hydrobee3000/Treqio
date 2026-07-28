@@ -283,34 +283,7 @@ $requests-width: 400px;
   color: var(--color-text-2, #666);
 }
 
-// ─── Пустые состояния ─────────────────────────────────────────────────────────
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 40px 20px;
-  color: var(--color-text-2, #666);
-  text-align: center;
-}
-
-.empty-state__icon {
-  opacity: 0.3;
-}
-
-.empty-state__text {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 500;
-  overflow-wrap: break-word;
-}
-
-.empty-state__sub {
-  margin: 0;
-  font-size: 13px;
-  opacity: 0.7;
-}
+// ─── Кнопка входа в гостевом состоянии ────────────────────────────────────────
 
 .friends__login-btn {
   display: inline-flex;

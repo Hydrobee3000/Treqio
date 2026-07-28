@@ -1,4 +1,5 @@
 export { PageFallback } from './PageFallback/PageFallback'
+export { EmptyState } from './EmptyState/EmptyState'
 export { ModalShell } from './ModalShell/ModalShell'
 export { ConfirmCard } from './ConfirmCard/ConfirmCard'
 export { SegmentedToggle } from './SegmentedToggle/SegmentedToggle'

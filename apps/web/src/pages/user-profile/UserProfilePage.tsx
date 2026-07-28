@@ -9,7 +9,7 @@ import {
   useSendFriendRequestMutation,
 } from '@/features/friends'
 import { useGetUserProfileQuery } from '@/features/user'
-import { ConfirmCard } from '@/shared/ui'
+import { ConfirmCard, EmptyState } from '@/shared/ui'
 import { BooksCollection } from '@/widgets/books-collection'
 import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
 import { FriendActionButton } from './ui/FriendActionButton/FriendActionButton'
@@ -92,13 +92,12 @@ export const UserProfilePage = ({ username }: Props) => {
     return (
       <div className={styles['profile']}>
         <div className={styles['header-fallback']}>{backButton}</div>
-        <div className={styles['empty-state']}>
-          <div className={styles['empty-state__icon']}>
-            <UserX size={48} />
-          </div>
-          <p className={styles['empty-state__text']}>{t('userProfile.notFound.title')}</p>
-          <p className={styles['empty-state__sub']}>{t('userProfile.notFound.desc')}</p>
-        </div>
+        <EmptyState
+          fullHeight
+          icon={<UserX size={48} />}
+          title={t('userProfile.notFound.title')}
+          description={t('userProfile.notFound.desc')}
+        />
       </div>
     )
   }
@@ -126,24 +125,20 @@ export const UserProfilePage = ({ username }: Props) => {
       />
 
       {!profile.canViewEntries ? (
-        <div className={styles['empty-state']}>
-          <div className={styles['empty-state__icon']}>
-            <Lock size={48} />
-          </div>
-          <p className={styles['empty-state__text']}>{t('userProfile.private.title')}</p>
-          <p className={styles['empty-state__sub']}>{t('userProfile.private.desc')}</p>
-        </div>
+        <EmptyState
+          fullHeight
+          icon={<Lock size={48} />}
+          title={t('userProfile.private.title')}
+          description={t('userProfile.private.desc')}
+        />
       ) : entriesLoading ? (
         <BooksCollection entries={[]} loading />
       ) : userEntries.length === 0 ? (
-        <div className={styles['empty-state']}>
-          <div className={styles['empty-state__icon']}>
-            <BookOpen size={48} />
-          </div>
-          <p className={styles['empty-state__text']}>
-            {t('userProfile.empty.title', { name: displayName })}
-          </p>
-        </div>
+        <EmptyState
+          fullHeight
+          icon={<BookOpen size={48} />}
+          title={t('userProfile.empty.title', { name: displayName })}
+        />
       ) : (
         <BooksCollection entries={userEntries} />
       )}

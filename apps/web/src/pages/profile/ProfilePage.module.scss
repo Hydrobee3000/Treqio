@@ -179,34 +179,6 @@ $history-status-color: #8a6fc4;
   line-height: 1;
 }
 
-// ─── Пустое состояние (история/статистика) ───────────────────────────────────
-
-.empty-state {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--color-text-2, #666);
-  text-align: center;
-}
-
-.empty-state__icon {
-  opacity: 0.3;
-}
-
-.empty-state__text {
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.empty-state__sub {
-  font-size: 13px;
-  opacity: 0.7;
-}
-
 // ─── История (таймлайн) ──────────────────────────────────────────────────────
 
 .history {

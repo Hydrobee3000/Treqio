@@ -31,7 +31,7 @@ import { USERNAME_MAX } from '@/features/user/api/constraints'
 import { useDebouncedValue } from '@/shared/lib/hooks/useDebouncedValue'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
-import { ConfirmCard } from '@/shared/ui'
+import { ConfirmCard, EmptyState } from '@/shared/ui'
 import styles from './FriendsTab.module.scss'
 
 /** Минимальная длина поискового запроса — совпадает с ограничением на backend. */
@@ -152,17 +152,17 @@ export const FriendsTab = () => {
   if (isGuest) {
     return (
       <div className={`${styles['friends']} ${styles['friends--guest']}`}>
-        <div className={styles['empty-state']}>
-          <div className={styles['empty-state__icon']}>
-            <Users size={40} />
-          </div>
-          <p className={styles['empty-state__text']}>{t('friends.guest.title')}</p>
-          <p className={styles['empty-state__sub']}>{t('friends.guest.desc')}</p>
-          <button className={styles['friends__login-btn']} onClick={handleGoToLogin}>
-            <LogIn size={16} />
-            {t('friends.guest.login')}
-          </button>
-        </div>
+        <EmptyState
+          icon={<Users size={40} />}
+          title={t('friends.guest.title')}
+          description={t('friends.guest.desc')}
+          action={
+            <button className={styles['friends__login-btn']} onClick={handleGoToLogin}>
+              <LogIn size={16} />
+              {t('friends.guest.login')}
+            </button>
+          }
+        />
       </div>
     )
   }
@@ -205,14 +205,10 @@ export const FriendsTab = () => {
               ))}
             </div>
           ) : (found ?? []).length === 0 ? (
-            <div className={styles['empty-state']}>
-              <div className={styles['empty-state__icon']}>
-                <SearchX size={40} />
-              </div>
-              <p className={styles['empty-state__text']}>
-                {t('friends.noResults', { query: debouncedQuery })}
-              </p>
-            </div>
+            <EmptyState
+              icon={<SearchX size={40} />}
+              title={t('friends.noResults', { query: debouncedQuery })}
+            />
           ) : (
             <div className={styles['friends__list']}>
               {(found ?? []).map((user) => {
@@ -283,13 +279,11 @@ export const FriendsTab = () => {
               ))}
             </div>
           ) : friendList.length === 0 ? (
-            <div className={styles['empty-state']}>
-              <div className={styles['empty-state__icon']}>
-                <Users size={40} />
-              </div>
-              <p className={styles['empty-state__text']}>{t('friends.empty.title')}</p>
-              <p className={styles['empty-state__sub']}>{t('friends.empty.desc')}</p>
-            </div>
+            <EmptyState
+              icon={<Users size={40} />}
+              title={t('friends.empty.title')}
+              description={t('friends.empty.desc')}
+            />
           ) : (
             <div className={styles['friends__list']}>
               {friendList.map((friend) => (
