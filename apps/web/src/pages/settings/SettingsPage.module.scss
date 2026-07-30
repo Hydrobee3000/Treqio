@@ -403,13 +403,19 @@ $breakpoint-medium: 900px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 480px;
+  max-width: 600px;
 }
 
+// flex: 1 — расширяется вслед за родителем .user-row__actions, когда тот
+// становится единственным элементом на своей строке (см. UserRow.module.scss);
+// justify-content: space-evenly тогда распределяет кнопки равными промежутками
+// между собой и до краёв.
 .creators__links {
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
   gap: 8px;
+  flex: 1;
 }
 
 // Крупнее, чем кнопки действий в списке друзей — здесь это единственное

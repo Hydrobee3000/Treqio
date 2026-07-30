@@ -1,5 +1,6 @@
 .user-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
@@ -18,13 +19,17 @@
   }
 }
 
-// Кликабельная часть строки — растягивается, чтобы действия ушли вправо.
+// Кликабельная часть строки. flex-grow: 999 — на общей строке с действиями
+// имя забирает почти всю свободную ширину, действия остаются по размеру
+// содержимого; min-width — порог, ниже которого имя перестаёт сжиматься,
+// после чего блок действий (flex-grow: 1 у .user-row__actions) переносится
+// на следующую строку — flex-wrap на .user-row.
 .user-row__link {
   display: flex;
   align-items: center;
   gap: 14px;
-  flex: 1;
-  min-width: 0;
+  flex: 999 1 160px;
+  min-width: 160px;
   text-decoration: none;
   color: inherit;
 }
@@ -63,11 +68,16 @@
   color: var(--color-text-2, #666);
 }
 
+// flex-grow: 1 — на общей строке с именем (см. .user-row__link) достаётся
+// незначительный остаток пространства, блок остаётся по размеру содержимого
+// у правого края. Когда переносится и остаётся один на строке — становится
+// единственным элементом этой строки и растягивается на всю её ширину.
 .user-row__actions {
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
   gap: 6px;
-  flex-shrink: 0;
+  flex: 1 0 auto;
 }
 
 // Размеры заглушек заданы вложенно: собственные классы MUI имеют ту же
