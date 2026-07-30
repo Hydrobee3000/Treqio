@@ -406,6 +406,21 @@ $breakpoint-medium: 900px;
   max-width: 600px;
 }
 
+.creators__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.creators__role {
+  margin: 0;
+  padding: 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text-2, #666);
+}
+
 // flex: 1 — расширяется вслед за родителем .user-row__actions, когда тот
 // становится единственным элементом на своей строке (см. UserRow.module.scss);
 // justify-content: space-evenly тогда распределяет кнопки равными промежутками
@@ -426,8 +441,8 @@ $breakpoint-medium: 900px;
   width: 46px;
   height: 46px;
   border-radius: 13px;
-  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  background: var(--color-chip-bg, #dff0e5);
+  color: var(--color-chip-text, #3d6a55);
   text-decoration: none;
   transition:
     background 0.15s,

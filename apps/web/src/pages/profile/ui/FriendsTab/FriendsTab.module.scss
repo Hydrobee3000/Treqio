@@ -258,8 +258,8 @@ $requests-width: 400px;
 
 .friends__reject,
 .friends__remove {
-  background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  background: var(--color-chip-bg, #dff0e5);
+  color: var(--color-chip-text, #3d6a55);
 
   &:hover:not(:disabled) {
     color: #d05c5c;
