@@ -57,7 +57,7 @@
     "editProfile": {
       "title": "Редактировать профиль",
       "displayName": "Имя",
-      "username": "Username",
+      "username": "Никнейм",
       "nameRequiredError": "Введите имя",
       "usernameMinError": "Минимум {{min}} символов",
       "usernameFormatError": "Только строчные латинские буквы, цифры и символ _",
@@ -171,8 +171,13 @@
         "desc": "Язык интерфейса"
       },
       "creators": {
-        "label": "Creators",
-        "desc": "Создатели приложения"
+        "label": "Создатели",
+        "desc": "Разработчики приложения",
+        "roles": {
+          "frontend": "Frontend-разработчик",
+          "backend": "Backend-разработчик",
+          "designer": "Дизайнер"
+        }
       }
     },
     "appearance": {

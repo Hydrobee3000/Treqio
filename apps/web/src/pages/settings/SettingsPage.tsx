@@ -222,10 +222,13 @@ interface CreatorSocialLink {
   url: string
 }
 
+/** Ключ роли — соответствует `settings.sections.creators.roles.<roleKey>` в локали. */
+type CreatorRoleKey = 'frontend' | 'backend' | 'designer'
+
 /** Один человек в списке создателей. */
 interface Creator {
-  /** Роль — выводится текстом над карточкой. */
-  role: string
+  /** Ключ роли — переводится в `CreatorsContent`, выводится текстом над карточкой. */
+  roleKey: CreatorRoleKey
   /** Отображаемое имя. */
   displayName: string
   /** Ссылки на соцсети. */
@@ -245,9 +248,9 @@ const CREATOR_LINKS: CreatorSocialLink[] = [
 ]
 
 const CREATORS: Creator[] = [
-  { role: 'Frontend-developer', displayName: 'Alexey', links: CREATOR_LINKS },
-  { role: 'Backend-developer', displayName: 'Aleksei', links: CREATOR_LINKS },
-  { role: 'Designer', displayName: 'Alex', links: CREATOR_LINKS },
+  { roleKey: 'frontend', displayName: 'Alexey', links: CREATOR_LINKS },
+  { roleKey: 'backend', displayName: 'Aleksei', links: CREATOR_LINKS },
+  { roleKey: 'designer', displayName: 'Alex', links: CREATOR_LINKS },
 ]
 
 /**
@@ -256,12 +259,18 @@ const CREATORS: Creator[] = [
 function CreatorsContent() {
   const { t } = useTranslation()
 
+  const roleLabels: Record<CreatorRoleKey, string> = {
+    frontend: t('settings.sections.creators.roles.frontend'),
+    backend: t('settings.sections.creators.roles.backend'),
+    designer: t('settings.sections.creators.roles.designer'),
+  }
+
   return (
     <div className={styles['creators']}>
-      <p className={styles['settings-block-label']}>{t('settings.sections.creators.label')}</p>
+      <p className={styles['settings-block-label']}>{t('settings.sections.creators.desc')}</p>
       {CREATORS.map((creator) => (
-        <div key={creator.role} className={styles['creators__group']}>
-          <p className={styles['creators__role']}>{creator.role}</p>
+        <div key={creator.roleKey} className={styles['creators__group']}>
+          <p className={styles['creators__role']}>{roleLabels[creator.roleKey]}</p>
           <UserRow
             displayName={creator.displayName}
             action={
