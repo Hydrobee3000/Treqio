@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Skeleton } from '@mui/material'
 import { Link } from 'react-router'
@@ -11,6 +12,8 @@ interface UserRowProps {
   displayName: string
   /** Никнейм — отсутствует, если не задан. */
   username?: string | null | undefined
+  /** Адрес аватара — без него или при ошибке загрузки показывается инициал. */
+  avatarUrl?: string | undefined
   /** Адрес профиля — строка становится ссылкой. */
   to?: string | undefined
   /** Кнопки действий справа. */
@@ -18,12 +21,38 @@ interface UserRowProps {
 }
 
 /**
+ * Кружок аватара — картинка при наличии рабочей ссылки, иначе инициал имени.
+ */
+function Avatar({
+  displayName,
+  avatarUrl,
+}: {
+  displayName: string
+  avatarUrl?: string | undefined
+}) {
+  const [failed, setFailed] = useState(false)
+
+  if (avatarUrl && !failed) {
+    return (
+      <img
+        src={avatarUrl}
+        alt=""
+        className={styles['user-row__avatar']}
+        onError={() => setFailed(true)}
+      />
+    )
+  }
+
+  return <div className={styles['user-row__avatar']}>{displayName.charAt(0).toUpperCase()}</div>
+}
+
+/**
  * Строка пользователя: аватар, имя и никнейм.
  */
-export const UserRow = ({ displayName, username, to, action }: UserRowProps) => {
+export const UserRow = ({ displayName, username, avatarUrl, to, action }: UserRowProps) => {
   const content = (
     <>
-      <div className={styles['user-row__avatar']}>{displayName.charAt(0).toUpperCase()}</div>
+      <Avatar displayName={displayName} avatarUrl={avatarUrl} />
       <div className={styles['user-row__info']}>
         <span className={styles['user-row__name']}>{displayName}</span>
         {username && <span className={styles['user-row__username']}>@{username}</span>}
