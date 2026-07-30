@@ -14,6 +14,7 @@ import {
   Monitor,
   Smartphone,
   Info,
+  UserRound,
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
@@ -50,6 +51,9 @@ interface SettingsSection {
   icon: React.ReactNode
   /** Содержимое раздела. */
   content: React.ReactNode
+  /** Прижимается к низу списка, если есть место — иначе идёт сразу за
+   * остальными пунктами без дополнительного отступа. */
+  pinnedToBottom?: boolean
 }
 
 /**
@@ -85,6 +89,14 @@ export function SettingsPage() {
       icon: <Languages size={18} />,
       content: <LanguageContent />,
     },
+    {
+      id: 'creators',
+      label: t('settings.sections.creators.label'),
+      desc: t('settings.sections.creators.desc'),
+      icon: <UserRound size={18} />,
+      content: <CreatorsContent />,
+      pinnedToBottom: true,
+    },
   ]
 
   const active = sections.find((s) => s.id === section)
@@ -119,7 +131,7 @@ export function SettingsPage() {
           {sections.map((s) => (
             <button
               key={s.id}
-              className={`${styles['settings__nav-item']} ${section === s.id ? styles['settings__nav-item--active'] : ''}`}
+              className={`${styles['settings__nav-item']} ${section === s.id ? styles['settings__nav-item--active'] : ''} ${s.pinnedToBottom ? styles['settings__nav-item--pinned'] : ''}`}
               onClick={() => navigate(`/settings/${s.id}`)}
             >
               <div className={styles['settings__nav-icon']}>{s.icon}</div>
@@ -191,6 +203,14 @@ function LanguageContent() {
       ))}
     </div>
   )
+}
+
+/**
+ * Содержимое раздела «Creators».
+ */
+function CreatorsContent() {
+  // Имена и ссылки на соцсети добавляются отдельным шагом.
+  return <div className={styles['creators']} />
 }
 
 /**

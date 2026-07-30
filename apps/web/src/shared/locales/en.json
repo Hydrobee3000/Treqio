@@ -169,6 +169,10 @@
       "language": {
         "label": "Language",
         "desc": "Interface language"
+      },
+      "creators": {
+        "label": "Creators",
+        "desc": "The people behind the app"
       }
     },
     "appearance": {

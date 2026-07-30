@@ -169,6 +169,10 @@
       "language": {
         "label": "Язык",
         "desc": "Язык интерфейса"
+      },
+      "creators": {
+        "label": "Creators",
+        "desc": "Создатели приложения"
       }
     },
     "appearance": {
