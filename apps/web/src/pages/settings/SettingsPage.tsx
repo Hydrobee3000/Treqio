@@ -235,6 +235,10 @@ interface Creator {
   links: CreatorSocialLink[]
 }
 
+const GITHUB_USERNAME = 'Hydrobee3000'
+// GitHub отдаёт аватар по прямой ссылке — не нужен ни API, ни хранение файла.
+const CREATOR_AVATAR_URL = `https://github.com/${GITHUB_USERNAME}.png`
+
 const CREATOR_LINKS: CreatorSocialLink[] = [
   {
     icon: LinkedInIcon,
@@ -242,7 +246,7 @@ const CREATOR_LINKS: CreatorSocialLink[] = [
     url: 'https://www.linkedin.com/in/aleksei-zaikin-891343255/',
   },
   { icon: TelegramIcon, label: 'Telegram', url: 'https://t.me/hydrombee' },
-  { icon: GitHubIcon, label: 'GitHub', url: 'https://github.com/Hydrobee3000' },
+  { icon: GitHubIcon, label: 'GitHub', url: `https://github.com/${GITHUB_USERNAME}` },
   { icon: InstagramIcon, label: 'Instagram', url: 'https://www.instagram.com/le_schat/' },
   { icon: EmailIcon, label: 'Email', url: 'mailto:hydrombee@gmail.com' },
 ]
@@ -267,12 +271,12 @@ function CreatorsContent() {
 
   return (
     <div className={styles['creators']}>
-      <p className={styles['settings-block-label']}>{t('settings.sections.creators.desc')}</p>
       {CREATORS.map((creator) => (
         <div key={creator.roleKey} className={styles['creators__group']}>
           <p className={styles['creators__role']}>{roleLabels[creator.roleKey]}</p>
           <UserRow
             displayName={creator.displayName}
+            avatarUrl={CREATOR_AVATAR_URL}
             action={
               <div className={styles['creators__links']}>
                 {creator.links.map(({ icon: Icon, label, url }) => (
