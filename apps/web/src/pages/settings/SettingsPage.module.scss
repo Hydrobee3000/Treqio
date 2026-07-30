@@ -106,7 +106,9 @@ $breakpoint-medium: 900px;
 }
 
 .settings__breadcrumb-current {
-  color: var(--color-text-2, #666);
+  // Тот же цвет, что у «Settings» слева (--header-title-color через
+  // .settings__title) — раньше был приглушённый серый.
+  color: inherit;
   font-weight: 500;
 }
 
@@ -156,8 +158,11 @@ $breakpoint-medium: 900px;
   gap: 12px;
   padding: 11px 14px;
   border-radius: 12px;
-  border: 1.5px solid color-mix(in srgb, var(--color-divider, #e0e0e0) 55%, transparent);
-  background: var(--color-paper, white);
+  border: 1.5px solid var(--color-divider, #e0e0e0);
+  // Тот же токен, что решает точно такую же проблему у строк в UserRow —
+  // фон пунктов сливался с полупрозрачной панелью .settings__nav, в которую
+  // они вложены (у обеих был один и тот же --color-paper).
+  background: var(--color-row-bg, var(--color-paper, white));
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   color: var(--color-text, inherit);
   font-family: inherit;
@@ -174,7 +179,7 @@ $breakpoint-medium: 900px;
     color 0.15s;
 
   &:hover {
-    border-color: var(--color-divider, #e0e0e0);
+    border-color: var(--color-primary, #4e7b6a);
     transform: translateY(-1px);
     box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.18);
   }
@@ -182,7 +187,8 @@ $breakpoint-medium: 900px;
   &--active {
     background: var(--color-chip-bg, #dff0e5);
     border-color: var(--color-primary, #4e7b6a);
-    color: var(--color-primary, #4e7b6a);
+    // Цвет заголовка (.settings__nav-label наследует отсюда) остаётся
+    // прежним — активность и так видна по фону, рамке и жирности.
     font-weight: 600;
 
     &:hover {
