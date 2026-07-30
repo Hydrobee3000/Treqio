@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useMediaQuery, useTheme } from '@mui/material'
+import { Tooltip, useMediaQuery, useTheme } from '@mui/material'
+import EmailIcon from '@mui/icons-material/Email'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import InstagramIcon from '@mui/icons-material/Instagram'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import TelegramIcon from '@mui/icons-material/Telegram'
+import type { SvgIconComponent } from '@mui/icons-material'
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,6 +30,7 @@ import type { ThemeMode } from '@/features/theme'
 import { toggleParticles } from '@/features/animations'
 import { THEME_COLORS, LIGHT_THEMES, DARK_THEMES } from '@/shared/config/themes'
 import type { ThemeVariant } from '@/shared/config/themes'
+import { UserRow } from '@/entities/user'
 import { SegmentedToggle } from '@/shared/ui'
 import styles from './SettingsPage.module.scss'
 
@@ -205,12 +212,72 @@ function LanguageContent() {
   )
 }
 
+/** Ссылка на соцсеть в карточке создателя. */
+interface CreatorSocialLink {
+  /** Иконка платформы. */
+  icon: SvgIconComponent
+  /** Подпись для читалок экрана и подсказки при наведении. */
+  label: string
+  /** Адрес профиля. */
+  url: string
+}
+
+/** Один человек в списке создателей. */
+interface Creator {
+  /** Отображаемое имя. */
+  displayName: string
+  /** Ссылки на соцсети. */
+  links: CreatorSocialLink[]
+}
+
+// Ссылки — заглушки: настоящие адреса впишутся отдельным шагом.
+const CREATORS: Creator[] = [
+  {
+    displayName: 'Alexey',
+    links: [
+      { icon: LinkedInIcon, label: 'LinkedIn', url: '#' },
+      { icon: TelegramIcon, label: 'Telegram', url: '#' },
+      { icon: GitHubIcon, label: 'GitHub', url: '#' },
+      { icon: EmailIcon, label: 'Email', url: '#' },
+      { icon: InstagramIcon, label: 'Instagram', url: '#' },
+    ],
+  },
+]
+
 /**
  * Содержимое раздела «Creators».
  */
 function CreatorsContent() {
-  // Имена и ссылки на соцсети добавляются отдельным шагом.
-  return <div className={styles['creators']} />
+  const { t } = useTranslation()
+
+  return (
+    <div className={styles['creators']}>
+      <p className={styles['settings-block-label']}>{t('settings.sections.creators.label')}</p>
+      {CREATORS.map((creator) => (
+        <UserRow
+          key={creator.displayName}
+          displayName={creator.displayName}
+          action={
+            <div className={styles['creators__links']}>
+              {creator.links.map(({ icon: Icon, label, url }) => (
+                <Tooltip key={label} title={label}>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles['creators__link']}
+                    aria-label={label}
+                  >
+                    <Icon />
+                  </a>
+                </Tooltip>
+              ))}
+            </div>
+          }
+        />
+      ))}
+    </div>
+  )
 }
 
 /**
