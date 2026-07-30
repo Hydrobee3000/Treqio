@@ -172,7 +172,12 @@
       },
       "creators": {
         "label": "Creators",
-        "desc": "The people behind the app"
+        "desc": "The people behind the app",
+        "roles": {
+          "frontend": "Frontend-developer",
+          "backend": "Backend-developer",
+          "designer": "Designer"
+        }
       }
     },
     "appearance": {
