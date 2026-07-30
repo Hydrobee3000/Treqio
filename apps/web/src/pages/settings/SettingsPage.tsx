@@ -224,24 +224,30 @@ interface CreatorSocialLink {
 
 /** Один человек в списке создателей. */
 interface Creator {
+  /** Роль — выводится текстом над карточкой. */
+  role: string
   /** Отображаемое имя. */
   displayName: string
   /** Ссылки на соцсети. */
   links: CreatorSocialLink[]
 }
 
-// Ссылки — заглушки: настоящие адреса впишутся отдельным шагом.
-const CREATORS: Creator[] = [
+const CREATOR_LINKS: CreatorSocialLink[] = [
   {
-    displayName: 'Alexey',
-    links: [
-      { icon: LinkedInIcon, label: 'LinkedIn', url: '#' },
-      { icon: TelegramIcon, label: 'Telegram', url: '#' },
-      { icon: GitHubIcon, label: 'GitHub', url: '#' },
-      { icon: EmailIcon, label: 'Email', url: '#' },
-      { icon: InstagramIcon, label: 'Instagram', url: '#' },
-    ],
+    icon: LinkedInIcon,
+    label: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/aleksei-zaikin-891343255/',
   },
+  { icon: TelegramIcon, label: 'Telegram', url: 'https://t.me/hydrombee' },
+  { icon: GitHubIcon, label: 'GitHub', url: 'https://github.com/Hydrobee3000' },
+  { icon: InstagramIcon, label: 'Instagram', url: 'https://www.instagram.com/le_schat/' },
+  { icon: EmailIcon, label: 'Email', url: 'mailto:hydrombee@gmail.com' },
+]
+
+const CREATORS: Creator[] = [
+  { role: 'Frontend-developer', displayName: 'Alexey', links: CREATOR_LINKS },
+  { role: 'Backend-developer', displayName: 'Aleksei', links: CREATOR_LINKS },
+  { role: 'Designer', displayName: 'Alex', links: CREATOR_LINKS },
 ]
 
 /**
@@ -254,27 +260,29 @@ function CreatorsContent() {
     <div className={styles['creators']}>
       <p className={styles['settings-block-label']}>{t('settings.sections.creators.label')}</p>
       {CREATORS.map((creator) => (
-        <UserRow
-          key={creator.displayName}
-          displayName={creator.displayName}
-          action={
-            <div className={styles['creators__links']}>
-              {creator.links.map(({ icon: Icon, label, url }) => (
-                <Tooltip key={label} title={label}>
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={styles['creators__link']}
-                    aria-label={label}
-                  >
-                    <Icon />
-                  </a>
-                </Tooltip>
-              ))}
-            </div>
-          }
-        />
+        <div key={creator.role} className={styles['creators__group']}>
+          <p className={styles['creators__role']}>{creator.role}</p>
+          <UserRow
+            displayName={creator.displayName}
+            action={
+              <div className={styles['creators__links']}>
+                {creator.links.map(({ icon: Icon, label, url }) => (
+                  <Tooltip key={label} title={label}>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles['creators__link']}
+                      aria-label={label}
+                    >
+                      <Icon />
+                    </a>
+                  </Tooltip>
+                ))}
+              </div>
+            }
+          />
+        </div>
       ))}
     </div>
   )
