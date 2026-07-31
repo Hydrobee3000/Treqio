@@ -3,7 +3,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import { useNavigate, useLocation } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useAppSelector } from '@/shared/lib/store'
@@ -15,7 +15,6 @@ import styles from './MobileNav.module.scss'
  */
 export const MobileNav = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const isGuest = useAppSelector((s) => s.auth.isGuest)
   const { data: me } = useGetMeQuery(undefined, { skip: isGuest })
@@ -47,18 +46,13 @@ export const MobileNav = () => {
             to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(`${to}/`)
 
           return (
-            <Box
-              key={to}
-              onClick={() => navigate(to)}
-              aria-label={label}
-              className={styles['mobile-nav__item']}
-            >
+            <Link key={to} to={to} aria-label={label} className={styles['mobile-nav__item']}>
               <span
                 className={`${styles['mobile-nav__icon-wrap']} ${isActive ? styles['mobile-nav__icon-wrap--active'] : ''}`}
               >
                 <Icon className={styles['mobile-nav__icon']} />
               </span>
-            </Box>
+            </Link>
           )
         })}
       </Box>
