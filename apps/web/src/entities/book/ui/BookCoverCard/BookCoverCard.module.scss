@@ -1,3 +1,5 @@
+@use '@/shared/styles/variables' as *;
+
 .cover-card {
   display: flex;
   flex-direction: column;
@@ -246,10 +248,10 @@
 
 .cover-card__status--reading {
   background: rgba(90, 160, 200, 0.16);
-  color: #4a92bd;
+  color: $entry-status-reading-text-color;
 
   .cover-card__status-dot {
-    background: #5aa0c8;
+    background: $entry-status-reading-color;
   }
 }
 
@@ -258,7 +260,7 @@
   color: #3d8a5c;
 
   .cover-card__status-dot {
-    background: #4caf6e;
+    background: $entry-status-done-color;
   }
 }
 
@@ -274,10 +276,10 @@
 
 .cover-card__status--dropped {
   background: rgba(185, 64, 64, 0.14);
-  color: #b94040;
+  color: $entry-status-dropped-color;
 
   .cover-card__status-dot {
-    background: #b94040;
+    background: $entry-status-dropped-color;
   }
 }
 
@@ -295,7 +297,7 @@
   height: 100%;
   width: var(--progress-pct);
   border-radius: 999px;
-  background: #5aa0c8;
+  background: $entry-status-reading-color;
 }
 
 // ─── Меню статуса ─────────────────────────────────────────────────────────────

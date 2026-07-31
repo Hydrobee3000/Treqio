@@ -1,3 +1,5 @@
+@use '@/shared/styles/variables' as *;
+
 .table-row {
   display: grid;
   grid-template-columns: 36px 1fr 150px 130px;
@@ -127,9 +129,9 @@
 
 .table-row__status--reading {
   background: rgba(90, 160, 200, 0.16);
-  color: #4a92bd;
+  color: $entry-status-reading-text-color;
 
-  .table-row__status-dot { background: #5aa0c8; }
+  .table-row__status-dot { background: $entry-status-reading-color; }
 }
 
 // Зелёный фиксирован (не из токенов темы) — статус «Прочитано» должен
@@ -139,7 +141,7 @@
   background: rgba(76, 175, 110, 0.16);
   color: #3d8a5c;
 
-  .table-row__status-dot { background: #4caf6e; }
+  .table-row__status-dot { background: $entry-status-done-color; }
 }
 
 // Нейтральный, но отличимый от обычного цвета текста темы.
@@ -152,9 +154,9 @@
 
 .table-row__status--dropped {
   background: rgba(185, 64, 64, 0.14);
-  color: #b94040;
+  color: $entry-status-dropped-color;
 
-  .table-row__status-dot { background: #b94040; }
+  .table-row__status-dot { background: $entry-status-dropped-color; }
 }
 
 // ─── Оценка ───────────────────────────────────────────────────────────────────
