@@ -1,14 +1,13 @@
-import type { OnModuleInit } from '@nestjs/common'
+import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { Injectable } from '@nestjs/common'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../generated/prisma/client'
 
 /**
  * Сервис для работы с базой данных через Prisma.
- * Prisma 7 требует явного адаптера для подключения к БД.
  */
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL'] })
     super({ adapter })
@@ -16,5 +15,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async onModuleInit() {
     await this.$connect()
+  }
+
+  // Без явного отключения при hot-reload старые соединения к Postgres не закрываются
+  async onModuleDestroy() {
+    await this.$disconnect()
   }
 }
