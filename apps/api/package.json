@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nest start --watch",
+    "dev": "docker compose -f ../../docker-compose.yml up -d --wait db && nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
     "lint": "eslint src",
