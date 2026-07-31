@@ -48,7 +48,6 @@ $history-status-color: #8a6fc4;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
-  // На мобильных текст прячется — кнопка становится круглой с одной иконкой.
   @media (max-width: $breakpoint-small) {
     width: 32px;
     height: 32px;
@@ -103,15 +102,7 @@ $history-status-color: #8a6fc4;
   margin: 28px 0 0;
   padding: 0 40px;
   border-bottom: 1px solid var(--color-divider, #e0e0e0);
-  // Табы не переносятся и не сжимаются — при нехватке ширины полоса
-  // прокручивается сама, а не раздвигает страницу горизонтально.
-  //
-  // flex-shrink: 0 обязателен: overflow-x: auto заставляет браузер
-  // вычислить overflow-y тоже как auto (одна ось не может остаться
-  // visible, если другая — нет), а это меняет автоматический минимальный
-  // размер флекс-элемента по главной оси с "по контенту" на 0 — без явного
-  // flex-shrink:0 .tabs схлопывался бы в ноль высоты, когда соседний блок
-  // с историей не помещается на экране.
+  // При нехватке ширины - полоса табов прокручивается
   flex-shrink: 0;
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -195,8 +186,6 @@ $history-status-color: #8a6fc4;
   margin-bottom: 4px;
 }
 
-// Размеры заглушек заданы вложенно: собственные классы MUI имеют ту же
-// специфичность, и при плоской записи исход зависел бы от порядка стилей.
 .history {
   .history__date-skeleton {
     height: 30px;
@@ -204,7 +193,6 @@ $history-status-color: #8a6fc4;
     margin: 10px 0 6px -6px;
   }
 
-  // Повторяет положение точки таймлайна из .history__node.
   .history__node-skeleton {
     position: absolute;
     left: -34px;
@@ -214,7 +202,6 @@ $history-status-color: #8a6fc4;
     transform: translateY(-50%);
   }
 
-  // Ширина разная у каждой строки — иначе заглушка выглядит таблицей.
   .history__text-skeleton {
     width: var(--skeleton-width, 130px);
     font-size: 14px;
@@ -234,9 +221,6 @@ $history-status-color: #8a6fc4;
   text-transform: uppercase;
   color: var(--color-text-3, #999);
   padding: 8px 14px;
-  // Отрицательный margin-left — точки таймлайна сидят у самого левого края
-  // .history__day (left: -34px у узла), а скруглённый угол строки даты иначе
-  // оказывается правее их и кружок чуть высовывается из-под строки.
   margin: 10px 0 6px -6px;
   border-radius: 10px;
   background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, var(--color-paper, white));
@@ -287,9 +271,6 @@ $history-status-color: #8a6fc4;
   display: flex;
   align-items: center;
   gap: 14px;
-  // Точка на линии таймлайна (.history__node) — absolute с left:-34px,
-  // её положение считается от padding-box этого элемента и не зависит
-  // от величины padding, поэтому отступ можно увеличивать без сдвига точки.
   padding: 10px 16px;
 }
 
@@ -368,6 +349,20 @@ $history-status-color: #8a6fc4;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+// Та же формула фона, что у .history__status-chip (color-mix 16%), но цвет
+// фиксированный — акцент темы, а не по статусу записи.
+.history__entry-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-primary, #4e7b6a);
+  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 16%, transparent);
 }
 
 // Нейтральные слова-связки («начал», «новую книгу», «со статусом», «книги»,
