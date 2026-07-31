@@ -22,6 +22,10 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  // Настоящая ссылка вместо div с onClick — фокус и клавиатура работают сами,
+  // но нужно снять браузерные стили ссылки по умолчанию.
+  text-decoration: none;
+  color: inherit;
 }
 
 .mobile-nav__icon-wrap {
