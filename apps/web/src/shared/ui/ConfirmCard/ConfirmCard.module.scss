@@ -1,3 +1,5 @@
+@use '@/shared/styles/variables' as *;
+
 .description {
   margin: 0;
   font-size: 14px;
@@ -9,7 +11,7 @@
   margin: 8px 0 0;
   font-size: 13px;
   line-height: 1.45;
-  color: #d05c5c;
+  color: $color-danger;
 }
 
 // min-width переопределяет дефолт MUI (64px) — нужен !important из-за специфичности emotion
@@ -23,7 +25,7 @@
   // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
   // обратное: фон изначально тёмный вариант, на hover светлее.
   background-color: var(--color-primary-dark) !important;
-  transition: filter 0.15s !important;
+  transition: filter $transition-fast !important;
 
   &:hover {
     background-color: var(--color-primary-dark) !important;

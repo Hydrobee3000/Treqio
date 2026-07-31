@@ -28,19 +28,19 @@ $history-status-color: #8a6fc4;
   border-radius: 8px;
   background: var(--color-paper);
   color: var(--color-primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-resting;
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
   transition:
-    background 0.15s,
-    box-shadow 0.15s;
+    background $transition-fast,
+    box-shadow $transition-fast;
 
   &:hover {
     background: var(--color-chip-bg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: $shadow-hover;
   }
 
   @media (max-width: $breakpoint-small) {
@@ -73,8 +73,8 @@ $history-status-color: #8a6fc4;
   place-items: center;
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background: var(--color-primary);
@@ -128,7 +128,7 @@ $history-status-color: #8a6fc4;
   background: transparent;
   font-family: inherit;
   cursor: pointer;
-  transition: color 0.15s;
+  transition: color $transition-fast;
 
   &:hover {
     color: var(--color-text, inherit);
@@ -219,7 +219,7 @@ $history-status-color: #8a6fc4;
   margin: 10px 0 6px -6px;
   border-radius: 10px;
   background: color-mix(in srgb, var(--color-primary) 14%, var(--color-paper, white));
-  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  border: 1px solid $color-primary-mix-15;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -228,7 +228,7 @@ $history-status-color: #8a6fc4;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  transition: background 0.15s;
+  transition: background $transition-fast;
 
   &:hover {
     background: color-mix(in srgb, var(--color-primary) 22%, var(--color-paper, white));

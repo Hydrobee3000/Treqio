@@ -98,7 +98,7 @@
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background $transition-fast;
 
   &:hover {
     background: rgba(0, 0, 0, 0.55);
@@ -236,8 +236,8 @@
   font-family: inherit;
   cursor: pointer;
   transition:
-    background 0.15s,
-    filter 0.15s;
+    background $transition-fast,
+    filter $transition-fast;
   text-align: left;
 
   &:hover {
@@ -456,12 +456,12 @@
   box-sizing: border-box;
   outline: none;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    box-shadow: $focus-ring-shadow;
   }
 
   &[type='number']::-webkit-inner-spin-button,
@@ -484,12 +484,12 @@
   resize: none;
   line-height: 1.5;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    box-shadow: $focus-ring-shadow;
   }
 }
 
@@ -510,9 +510,9 @@
   color: var(--color-text-2);
   cursor: pointer;
   transition:
-    background 0.15s,
-    border-color 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast;
 
   &:hover:not(.em__chip--active) {
     background: var(--color-paper-2);
@@ -626,7 +626,7 @@
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: filter 0.15s;
+  transition: filter $transition-fast;
 
   &:hover {
     filter: brightness(1.1);
@@ -647,10 +647,10 @@
   font-family: inherit;
   cursor: pointer;
   transition:
-    background 0.15s,
-    border-color 0.15s,
-    color 0.15s,
-    filter 0.15s;
+    background $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    filter $transition-fast;
 
   &:disabled {
     opacity: 0.5;

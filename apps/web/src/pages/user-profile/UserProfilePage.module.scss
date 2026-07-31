@@ -45,8 +45,8 @@
   place-items: center;
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   svg {
     width: 20px;

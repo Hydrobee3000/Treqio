@@ -52,8 +52,8 @@
   cursor: pointer;
   flex-shrink: 0;
   transition:
-    filter 0.15s,
-    transform 0.15s;
+    filter $transition-fast,
+    transform $transition-fast;
 
   &:hover {
     filter: brightness(1.08);
@@ -263,8 +263,8 @@
   font-family: inherit;
   cursor: pointer;
   transition:
-    filter 0.15s,
-    transform 0.15s;
+    filter $transition-fast,
+    transform $transition-fast;
 
   &:hover {
     filter: brightness(1.08);

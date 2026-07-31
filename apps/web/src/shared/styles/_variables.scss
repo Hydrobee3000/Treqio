@@ -6,3 +6,20 @@ $entry-status-reading-color: #5aa0c8;
 $entry-status-reading-text-color: #4a92bd;
 $entry-status-done-color: #4caf6e;
 $entry-status-dropped-color: #b94040;
+
+// Цвет опасного действия/ошибки.
+$color-danger: #d05c5c;
+
+// Тени карточек — пара «в покое / при hover».
+$shadow-resting: 0 1px 4px rgba(0, 0, 0, 0.1);
+$shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+// Акцентный цвет темы с прозрачностью 15% — единая величина для всех
+// «лёгких» акцентных подсветок (фокус-кольца, рамки).
+$color-primary-mix-15: color-mix(in srgb, var(--color-primary) 15%, transparent);
+
+// Тень фокус-кольца полей ввода.
+$focus-ring-shadow: 0 0 0 3px $color-primary-mix-15;
+
+// Стандартная длительность transition.
+$transition-fast: 0.15s;

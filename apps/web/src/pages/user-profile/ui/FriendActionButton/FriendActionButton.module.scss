@@ -23,9 +23,9 @@
   cursor: pointer;
   white-space: nowrap;
   transition:
-    background 0.15s,
-    box-shadow 0.15s,
-    filter 0.15s;
+    background $transition-fast,
+    box-shadow $transition-fast,
+    filter $transition-fast;
 
   &:disabled {
     opacity: 0.6;
@@ -50,22 +50,22 @@
 .friend-btn--primary {
   background: var(--color-primary);
   color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-resting;
 
   &:hover:not(:disabled) {
     filter: brightness(1.08);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: $shadow-hover;
   }
 }
 
 .friend-btn--muted {
   background: var(--color-paper);
   color: var(--color-primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-resting;
 
   &:hover:not(:disabled) {
     background: var(--color-chip-bg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: $shadow-hover;
   }
 }
 
@@ -85,15 +85,15 @@
   border-radius: 8px;
   background: var(--color-paper);
   color: var(--color-text-2);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-resting;
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover:not(:disabled) {
     background: var(--color-chip-bg);
-    color: #d05c5c;
+    color: $color-danger;
   }
 
   &:disabled {

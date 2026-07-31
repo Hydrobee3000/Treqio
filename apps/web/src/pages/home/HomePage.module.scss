@@ -228,7 +228,7 @@
   color: var(--color-text-2);
   transition:
     transform 0.2s,
-    color 0.15s;
+    color $transition-fast;
 
   .grid__tile:hover & {
     transform: translate(3px, -2px);
@@ -464,7 +464,7 @@
   font-family: inherit;
   text-align: left;
   animation: rise 0.6s ease 0.25s both;
-  transition: border-color 0.15s;
+  transition: border-color $transition-fast;
   min-height: 60px;
 
   @media (min-width: $breakpoint-small) {
@@ -532,7 +532,7 @@
   color: var(--color-text-2);
   transition:
     transform 0.2s,
-    color 0.15s;
+    color $transition-fast;
 
   .login-strip:hover & {
     transform: translate(3px, -2px);
