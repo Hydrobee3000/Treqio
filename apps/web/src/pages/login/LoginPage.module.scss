@@ -76,7 +76,7 @@
   border-radius: 50%;
   flex-shrink: 0;
   user-select: none;
-  background: linear-gradient(150deg, var(--logo-primary, #c97b5c), var(--logo-primary-dark, #b36a4d));
+  background: linear-gradient(150deg, var(--logo-primary), var(--logo-primary-dark));
 
   // Глиф наложен через mask — цвет тайла берётся из переменных темы, а не из файла.
   &::after {

@@ -42,8 +42,8 @@
   position: relative;
   background: linear-gradient(
     150deg,
-    var(--color-primary, #4e7b6a),
-    var(--color-primary-dark, #3a5c4f)
+    var(--color-primary),
+    var(--color-primary-dark)
   );
   padding: 14px 48px 34px 16px;
   display: flex;

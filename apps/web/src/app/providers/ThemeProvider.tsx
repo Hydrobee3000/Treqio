@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import {
   CssBaseline,
   GlobalStyles,
@@ -40,7 +40,10 @@ export const ThemeProvider = ({ children }: Props) => {
     return () => mq.removeEventListener('change', handler)
   }, [themeMode, dispatch])
 
-  useEffect(() => {
+  // useLayoutEffect (не useEffect) — переменные должны попасть в DOM до того,
+  // как браузер покажет кадр, иначе на долю секунды элементы отрисуются без
+  // цветов темы (var() без фолбэка).
+  useLayoutEffect(() => {
     const root = document.documentElement
     const { sidebar, primary, warning, divider, text, background } = theme.palette
 
