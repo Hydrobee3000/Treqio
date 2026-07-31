@@ -1,6 +1,6 @@
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-paper-2);
 }
 
@@ -19,7 +19,7 @@
 
 .app-layout__main {
   flex-grow: 1;
-  height: 100vh;
+  height: 100dvh;
   overflow: auto;
   min-width: 0;
   position: relative;
