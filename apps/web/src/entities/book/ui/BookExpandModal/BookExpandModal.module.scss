@@ -1,3 +1,5 @@
+@use '@/shared/styles/variables' as *;
+
 .em__backdrop {
   position: fixed;
   inset: 0;
@@ -323,7 +325,7 @@
 
 .em__progress-pct {
   font-weight: 600;
-  color: #4a92bd;
+  color: $entry-status-reading-text-color;
   font-size: 13px;
 }
 
@@ -338,7 +340,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-primary, #4e7b6a), #4a92bd);
+  background: linear-gradient(90deg, var(--color-primary, #4e7b6a), $entry-status-reading-text-color);
   transition: width 0.3s;
 }
 
@@ -680,20 +682,20 @@
 
   &--delete {
     background: transparent;
-    color: #b94040;
+    color: $entry-status-dropped-color;
     border-color: transparent;
 
     &:not(:disabled):hover {
-      background: color-mix(in srgb, #b94040 10%, transparent);
+      background: color-mix(in srgb, $entry-status-dropped-color 10%, transparent);
     }
   }
 
   &--delete-confirm {
-    background: color-mix(in srgb, #b94040 14%, transparent);
-    border-color: #b94040;
+    background: color-mix(in srgb, $entry-status-dropped-color 14%, transparent);
+    border-color: $entry-status-dropped-color;
 
     &:not(:disabled):hover {
-      background: color-mix(in srgb, #b94040 22%, transparent);
+      background: color-mix(in srgb, $entry-status-dropped-color 22%, transparent);
     }
   }
 

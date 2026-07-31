@@ -1,5 +1,4 @@
-$breakpoint-small: 600px;
-$breakpoint-medium: 900px;
+@use '@/shared/styles/variables' as *;
 
 @keyframes rise {
   from {

@@ -1,13 +1,8 @@
-$breakpoint-small: 600px;
-$breakpoint-medium: 900px;
+@use '@/shared/styles/variables' as *;
 
-// ─── Цвета событий в истории (node + verb используют одни и те же) ──────────────
+// ─── Цвета типов события в истории (не связаны со статусом записи) ──────────────
 $history-added-color: #7b8694;
 $history-added-text-color: #3f9d91;
-$history-reading-color: #5aa0c8;
-$history-reading-text-color: #4a92bd;
-$history-done-color: #4caf6e;
-$history-dropped-color: #b94040;
 $history-rated-color: #c49a3a;
 $history-status-color: #8a6fc4;
 
@@ -294,20 +289,18 @@ $history-status-color: #8a6fc4;
   }
 
   &--reading {
-    border-color: $history-reading-color;
-    color: $history-reading-color;
+    border-color: $entry-status-reading-color;
+    color: $entry-status-reading-color;
   }
 
-  // Зелёный фиксирован (не из токенов темы) — см. STATUS_DONE_COLOR
-  // в BookCoverCard/BookTableRow, тот же цвет для согласованности.
   &--done {
-    border-color: $history-done-color;
-    color: $history-done-color;
+    border-color: $entry-status-done-color;
+    color: $entry-status-done-color;
   }
 
   &--dropped {
-    border-color: $history-dropped-color;
-    color: $history-dropped-color;
+    border-color: $entry-status-dropped-color;
+    color: $entry-status-dropped-color;
   }
 
   &--rated {
@@ -379,17 +372,17 @@ $history-status-color: #8a6fc4;
 }
 
 .history__verb--reading {
-  color: $history-reading-text-color;
+  color: $entry-status-reading-text-color;
   font-weight: 600;
 }
 
 .history__verb--done {
-  color: $history-done-color;
+  color: $entry-status-done-color;
   font-weight: 600;
 }
 
 .history__verb--dropped {
-  color: $history-dropped-color;
+  color: $entry-status-dropped-color;
   font-weight: 600;
 }
 
