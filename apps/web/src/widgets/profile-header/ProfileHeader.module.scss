@@ -34,12 +34,12 @@
   height: 80px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: var(--sidebar-text, #d8ebe4);
+  background: var(--sidebar-text);
   display: grid;
   place-items: center;
   font-size: 28px;
   font-weight: 700;
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
   letter-spacing: -0.02em;
 
   @media (max-width: $breakpoint-small) {
@@ -76,7 +76,7 @@
 
 .profile-header__meta {
   font-size: 13px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -87,7 +87,7 @@
 .profile-header__bio {
   margin: 4px 0 0;
   font-size: 13px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   line-height: 1.5;
   max-width: 520px;
 

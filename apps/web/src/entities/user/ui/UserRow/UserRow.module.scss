@@ -5,7 +5,7 @@
   gap: 14px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   background: var(--color-row-bg, var(--color-paper, white));
   text-decoration: none;
   color: inherit;
@@ -14,7 +14,7 @@
     background 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
     background: var(--color-row-bg-hover, rgba(0, 0, 0, 0.02));
   }
 }
@@ -39,12 +39,12 @@
   height: 44px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: var(--sidebar-text, #d8ebe4);
+  background: var(--sidebar-text);
   display: grid;
   place-items: center;
   font-size: 17px;
   font-weight: 700;
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
   // Актуально только для <img> — кружок с инициалом эти свойства игнорирует.
   object-fit: cover;
 }
@@ -67,7 +67,7 @@
 
 .user-row__username {
   font-size: 13px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 // flex-grow: 1 — на общей строке с именем (см. .user-row__link) достаётся
@@ -90,7 +90,7 @@
   gap: 14px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
 
   .user-row-skeleton__avatar {
     width: 44px;

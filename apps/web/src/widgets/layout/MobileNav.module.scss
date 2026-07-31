@@ -3,7 +3,7 @@
   bottom: -5px;
   left: 0;
   right: 0;
-  border-top: 1px solid var(--color-divider, #d5e4d8);
+  border-top: 1px solid var(--color-divider);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -35,7 +35,7 @@
   width: 44px;
   height: 32px;
   border-radius: 10px;
-  color: var(--color-text-2, #999);
+  color: var(--color-text-2);
   transition:
     color 0.15s,
     background 0.15s;
@@ -43,8 +43,8 @@
   // Подложка под активной иконкой — надёжнее, чем полагаться только на смену
   // цвета: в некоторых темах primary недостаточно контрастен с фоном сам по себе.
   &--active {
-    color: var(--color-primary, #4e7b6a);
-    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, transparent);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
   }
 }
 

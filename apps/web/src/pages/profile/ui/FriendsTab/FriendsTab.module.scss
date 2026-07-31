@@ -36,21 +36,21 @@ $requests-width: 400px;
   padding: 0 12px;
   height: 40px;
   border-radius: 10px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
 
   &:focus-within {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
 }
 
 .friends__search-icon--active {
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
 }
 
 .friends__search-input {
@@ -65,7 +65,7 @@ $requests-width: 400px;
   font-family: inherit;
 
   &::placeholder {
-    color: var(--color-text-2, #666);
+    color: var(--color-text-2);
   }
 }
 
@@ -80,7 +80,7 @@ $requests-width: 400px;
   border-radius: 50%;
   padding: 0;
   background: transparent;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   transition:
     background 0.15s,
@@ -130,7 +130,7 @@ $requests-width: 400px;
     gap: 28px;
     grid-column: 2;
     padding-left: 28px;
-    border-left: 1px solid var(--color-divider, #d5e4d8);
+    border-left: 1px solid var(--color-divider);
   }
 }
 
@@ -172,7 +172,7 @@ $requests-width: 400px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-family: inherit;
 }
 
@@ -194,7 +194,7 @@ $requests-width: 400px;
 
 .friends__chevron {
   flex-shrink: 0;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   transition: transform 0.2s ease;
 
   &--collapsed {
@@ -210,7 +210,7 @@ $requests-width: 400px;
   padding: 0 6px;
   border-radius: 999px;
   background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
@@ -249,7 +249,7 @@ $requests-width: 400px;
 }
 
 .friends__accept {
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: #fff;
 
   &:hover:not(:disabled) {
@@ -259,8 +259,8 @@ $requests-width: 400px;
 
 .friends__reject,
 .friends__remove {
-  background: var(--color-chip-bg, #dff0e5);
-  color: var(--color-chip-text, #3d6a55);
+  background: var(--color-chip-bg);
+  color: var(--color-chip-text);
 
   &:hover:not(:disabled) {
     color: #d05c5c;
@@ -275,13 +275,13 @@ $requests-width: 400px;
   height: 32px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--color-primary, #4e7b6a) 14%, transparent);
-  color: var(--color-primary, #4e7b6a);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
 }
 
 .friends__badge--pending {
   background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 // ─── Кнопка входа в гостевом состоянии ────────────────────────────────────────
@@ -294,7 +294,7 @@ $requests-width: 400px;
   padding: 11px 20px;
   border: none;
   border-radius: 11px;
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: white;
   font-size: 14px;
   font-weight: 600;

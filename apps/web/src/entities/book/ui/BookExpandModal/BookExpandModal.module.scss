@@ -44,8 +44,8 @@
   // Тот же градиент что у .cover-card__cover — анимация раскрывается из карточки
   background: linear-gradient(
     150deg,
-    var(--color-primary, #4e7b6a),
-    var(--color-primary-dark, #3a5c4f)
+    var(--color-primary),
+    var(--color-primary-dark)
   );
   box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.55);
 
@@ -186,7 +186,7 @@
   cursor: text;
 
   &:hover {
-    background: var(--color-paper-2, #f5f5f5);
+    background: var(--color-paper-2);
   }
 
   &--pointer {
@@ -214,7 +214,7 @@
 .em__book-author {
   margin: 0;
   font-size: 13px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 // ─── Большая кнопка статуса ───────────────────────────────────────────────────
@@ -263,7 +263,7 @@
   right: 0;
   z-index: 10;
   border-radius: 12px;
-  border: 1px solid var(--color-divider, #e0e0e0);
+  border: 1px solid var(--color-divider);
   background: var(--color-paper, white);
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
@@ -287,11 +287,11 @@
   transition: background 0.12s;
 
   &:hover {
-    background: var(--color-paper-2, #f5f5f5);
+    background: var(--color-paper-2);
   }
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--color-divider, #e8e8e8);
+    border-bottom: 1px solid var(--color-divider);
   }
 }
 
@@ -320,7 +320,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 .em__progress-pct {
@@ -332,7 +332,7 @@
 .em__progress-track {
   height: 5px;
   border-radius: 999px;
-  background: var(--color-paper-2, #f0f0f0);
+  background: var(--color-paper-2);
   overflow: hidden;
 }
 
@@ -340,20 +340,20 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-primary, #4e7b6a), $entry-status-reading-text-color);
+  background: linear-gradient(90deg, var(--color-primary), $entry-status-reading-text-color);
   transition: width 0.3s;
 }
 
 .em__progress-pages {
   font-size: 12px;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
 }
 
 // ─── Разделитель, мета, описание, заметки, дата, placeholder ──────────────────
 
 .em__divider {
   height: 1px;
-  background: var(--color-divider, #e0e0e0);
+  background: var(--color-divider);
   margin: 2px 0;
 }
 
@@ -367,7 +367,7 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
   font-weight: 600;
 }
 
@@ -382,7 +382,7 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -391,27 +391,27 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 .em__notes-text {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-style: italic;
 }
 
 .em__placeholder {
   margin: 0;
   font-size: 14px;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
   font-style: italic;
 }
 
 .em__date {
   font-size: 12px;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
 }
 
 // ─── Режим редактирования ─────────────────────────────────────────────────────
@@ -431,7 +431,7 @@
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--color-text-3, #999);
+  color: var(--color-text-3);
 }
 
 .em__field-label-val {
@@ -439,7 +439,7 @@
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   margin-right: auto;
   margin-left: 4px;
 }
@@ -447,8 +447,8 @@
 .em__input {
   padding: 9px 12px;
   border-radius: 8px;
-  border: 1.5px solid var(--color-divider, #e0e0e0);
-  background: var(--color-paper-2, #f8f8f8);
+  border: 1.5px solid var(--color-divider);
+  background: var(--color-paper-2);
   color: var(--color-text, inherit);
   font-size: 14px;
   font-family: inherit;
@@ -460,8 +460,8 @@
     box-shadow 0.15s;
 
   &:focus {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 15%, transparent);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
   }
 
   &[type='number']::-webkit-inner-spin-button,
@@ -473,8 +473,8 @@
 .em__textarea {
   padding: 9px 12px;
   border-radius: 8px;
-  border: 1.5px solid var(--color-divider, #e0e0e0);
-  background: var(--color-paper-2, #f8f8f8);
+  border: 1.5px solid var(--color-divider);
+  background: var(--color-paper-2);
   color: var(--color-text, inherit);
   font-size: 14px;
   font-family: inherit;
@@ -488,8 +488,8 @@
     box-shadow 0.15s;
 
   &:focus {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 15%, transparent);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
   }
 }
 
@@ -502,12 +502,12 @@
 .em__chip {
   padding: 5px 14px;
   border-radius: 999px;
-  border: 1.5px solid var(--color-divider, #e0e0e0);
+  border: 1.5px solid var(--color-divider);
   background: transparent;
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   transition:
     background 0.15s,
@@ -515,13 +515,13 @@
     color 0.15s;
 
   &:hover:not(.em__chip--active) {
-    background: var(--color-paper-2, #f0f0f0);
+    background: var(--color-paper-2);
   }
 }
 
 .em__range {
   width: 100%;
-  accent-color: var(--color-primary, #4e7b6a);
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -553,7 +553,7 @@
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: var(--color-divider, #ccc);
+  background: var(--color-divider);
   transition: background 0.2s;
 
   &::after {
@@ -571,7 +571,7 @@
 }
 
 .em__toggle input:checked + .em__toggle-track {
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
 
   &::after {
     transform: translateX(16px);
@@ -583,7 +583,7 @@
 .em__footer {
   flex-shrink: 0;
   padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid var(--color-divider, #e0e0e0);
+  border-top: 1px solid var(--color-divider);
   background: var(--color-paper, white);
   display: flex;
   align-items: center;
@@ -620,7 +620,7 @@
   }
   border-radius: 10px;
   border: none;
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
@@ -661,9 +661,9 @@
     padding: 8px 20px;
     min-width: 140px;
     justify-content: center;
-    background: var(--color-primary, #4e7b6a);
+    background: var(--color-primary);
     color: #fff;
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
 
     &:not(:disabled):hover {
       filter: brightness(1.1);
@@ -672,11 +672,11 @@
 
   &--cancel {
     background: transparent;
-    color: var(--color-text-2, #666);
-    border-color: var(--color-divider, #e0e0e0);
+    color: var(--color-text-2);
+    border-color: var(--color-divider);
 
     &:not(:disabled):hover {
-      background: var(--color-paper-2, #f0f0f0);
+      background: var(--color-paper-2);
     }
   }
 

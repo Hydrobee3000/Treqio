@@ -97,8 +97,8 @@
   cursor: pointer;
   background: linear-gradient(
     150deg,
-    var(--color-primary, #4e7b6a),
-    var(--color-primary-dark, #3a5c4f)
+    var(--color-primary),
+    var(--color-primary-dark)
   );
   box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -288,7 +288,7 @@
 .cover-card__progress {
   height: 4px;
   border-radius: 999px;
-  background: var(--color-paper-2, #ecf1ea);
+  background: var(--color-paper-2);
   overflow: hidden;
 }
 

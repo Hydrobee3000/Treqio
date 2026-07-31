@@ -44,7 +44,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: white;
   font-size: 13px;
   font-weight: 600;
@@ -99,7 +99,7 @@
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   text-align: center;
 }
 
@@ -164,8 +164,8 @@
   width: 70px;
   aspect-ratio: 2 / 3;
   border-radius: 9px;
-  border: 1.5px dashed var(--ghost-border, #6fa68c4d);
-  background: linear-gradient(160deg, var(--ghost-bg-1, #6fa68c26), var(--ghost-bg-2, #6fa68c0d));
+  border: 1.5px dashed var(--ghost-border);
+  background: linear-gradient(160deg, var(--ghost-bg-1), var(--ghost-bg-2));
   position: relative;
   opacity: 0.9;
   animation: floaty 4.5s ease-in-out infinite;
@@ -182,7 +182,7 @@
     bottom: 10px;
     width: 2px;
     border-radius: 2px;
-    background: var(--ghost-border, #6fa68c4d);
+    background: var(--ghost-border);
   }
 
   &:first-child {
@@ -203,8 +203,8 @@
 
   &--accent {
     border-style: solid;
-    border-color: var(--ghost-primary, #6fa68c);
-    background: linear-gradient(160deg, var(--ghost-chip-bg, #6fa68c33), transparent);
+    border-color: var(--ghost-primary);
+    background: linear-gradient(160deg, var(--ghost-chip-bg), transparent);
     animation-delay: 0.25s;
     z-index: 1;
 
@@ -216,7 +216,7 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      border: 2px dashed var(--ghost-primary, #6fa68c);
+      border: 2px dashed var(--ghost-primary);
 
       @media (max-width: $breakpoint-small) {
         width: 18px;
@@ -239,7 +239,7 @@
   max-width: 36ch;
   font-size: 14px;
   line-height: 1.55;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 .library__empty-actions {
@@ -256,7 +256,7 @@
   padding: 12px 20px;
   border: none;
   border-radius: 11px;
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -277,10 +277,10 @@
   align-items: center;
   gap: 8px;
   padding: 12px 18px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   border-radius: 11px;
   background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-size: 14px;
   font-weight: 500;
   font-family: inherit;

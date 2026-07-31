@@ -18,10 +18,10 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   border-radius: 999px;
   background: transparent;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
@@ -32,12 +32,12 @@
     border-color 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
   }
 
   &--active {
-    background: var(--color-primary, #4e7b6a);
-    border-color: var(--color-primary, #4e7b6a);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
     color: white;
   }
 }
@@ -78,7 +78,7 @@
   border: none;
   border-radius: 10px;
   background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   flex-shrink: 0;
   transition:
@@ -91,7 +91,7 @@
   }
 
   &--active {
-    background: var(--color-primary, #4e7b6a);
+    background: var(--color-primary);
     color: white;
   }
 }
@@ -106,16 +106,16 @@
   padding: 0 12px;
   height: 36px;
   border-radius: 10px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
 
   &:focus-within {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #4e7b6a) 20%, transparent);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
 
   @media (max-width: $breakpoint-small) {
@@ -126,7 +126,7 @@
 }
 
 .collection__search-icon--active {
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
 }
 
 .collection__search-input {
@@ -141,7 +141,7 @@
   font-family: inherit;
 
   &::placeholder {
-    color: var(--color-text-2, #666);
+    color: var(--color-text-2);
   }
 }
 
@@ -156,7 +156,7 @@
   border-radius: 50%;
   padding: 0;
   background: transparent;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   transition:
     background 0.15s,
@@ -177,7 +177,7 @@
   border: none;
   border-radius: 10px;
   background: var(--color-paper-2, rgba(0, 0, 0, 0.06));
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   font-size: 13px;
   font-weight: 500;
   font-family: inherit;
@@ -253,7 +253,7 @@
   flex: 1;
   min-height: 0;
   margin: 0 36px 36px;
-  border: 1px solid var(--color-divider, #d5e4d8);
+  border: 1px solid var(--color-divider);
   border-radius: 14px;
   overflow-y: auto;
   background: var(--color-paper, white);
@@ -276,13 +276,13 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   background: var(--color-paper, white);
 }
 
 // разделение строк таблицы
 .collection__table > :not(:last-child) {
-  border-bottom: 1px solid var(--color-divider, #d5e4d8);
+  border-bottom: 1px solid var(--color-divider);
 }
 
 // ─── Ничего не найдено под текущий фильтр ─────────────────────────────────────
@@ -295,7 +295,7 @@
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   text-align: center;
 }
 

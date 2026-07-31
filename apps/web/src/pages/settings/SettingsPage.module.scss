@@ -46,8 +46,8 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  background: var(--color-chip-bg, #dff0e5);
-  border-bottom: 1px solid var(--color-divider, #e0e0e0);
+  background: var(--color-chip-bg);
+  border-bottom: 1px solid var(--color-divider);
 
   @media (max-width: $breakpoint-small) {
     padding: 0 20px;
@@ -59,7 +59,7 @@
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--header-title-color, #243d35);
+  color: var(--header-title-color);
   animation: rise 0.6s ease both;
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
 .settings__breadcrumb {
   display: inline-flex;
   align-items: center;
-  background: color-mix(in srgb, var(--header-title-color, #243d35) 8%, transparent);
+  background: color-mix(in srgb, var(--header-title-color) 8%, transparent);
   border: none;
   padding: 4px 10px 4px 8px;
   border-radius: 8px;
@@ -84,7 +84,7 @@
   transition: background 0.15s;
 
   &:hover {
-    background: color-mix(in srgb, var(--header-title-color, #243d35) 16%, transparent);
+    background: color-mix(in srgb, var(--header-title-color) 16%, transparent);
   }
 }
 
@@ -99,7 +99,7 @@
 }
 
 .settings__breadcrumb-sep {
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   flex-shrink: 0;
   opacity: 0.5;
 }
@@ -145,7 +145,7 @@
     width: 280px;
     padding: 12px 16px 24px;
     background: color-mix(in srgb, var(--color-paper, white) 70%, transparent);
-    border-right: 1px solid var(--color-divider, #e0e0e0);
+    border-right: 1px solid var(--color-divider);
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
   }
@@ -157,7 +157,7 @@
   gap: 12px;
   padding: 11px 14px;
   border-radius: 12px;
-  border: 1.5px solid var(--color-divider, #e0e0e0);
+  border: 1.5px solid var(--color-divider);
   // Тот же токен, что решает точно такую же проблему у строк в UserRow —
   // фон пунктов сливался с полупрозрачной панелью .settings__nav, в которую
   // они вложены (у обеих был один и тот же --color-paper).
@@ -178,21 +178,21 @@
     color 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
     transform: translateY(-1px);
     box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.18);
   }
 
   &--active {
-    background: var(--color-chip-bg, #dff0e5);
-    border-color: var(--color-primary, #4e7b6a);
+    background: var(--color-chip-bg);
+    border-color: var(--color-primary);
     // Цвет заголовка (.settings__nav-label наследует отсюда) остаётся
     // прежним — активность и так видна по фону, рамке и жирности.
     font-weight: 600;
 
     &:hover {
       transform: none;
-      box-shadow: 0 0 0 1px var(--color-primary, #4e7b6a);
+      box-shadow: 0 0 0 1px var(--color-primary);
     }
   }
 
@@ -209,8 +209,8 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: var(--color-chip-bg, #dff0e5);
-  color: var(--color-chip-text, #3d6a55);
+  background: var(--color-chip-bg);
+  color: var(--color-chip-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -230,7 +230,7 @@
   display: block;
   font-size: 12px;
   font-weight: 400;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
@@ -238,7 +238,7 @@
 }
 
 .settings__nav-chevron {
-  color: var(--color-text-2, #999);
+  color: var(--color-text-2);
   flex-shrink: 0;
 
   // На десктопе стрелку не показываем
@@ -254,7 +254,7 @@
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  background: color-mix(in srgb, var(--color-paper-2, #f5f5f5) 30%, transparent);
+  background: color-mix(in srgb, var(--color-paper-2) 30%, transparent);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   animation: slide-in 0.25s ease both;
@@ -275,7 +275,7 @@
   padding: 16px 20px 8px;
   border: none;
   background: transparent;
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -298,7 +298,7 @@
   margin: 0 0 16px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -307,7 +307,7 @@
 
 .settings-divider {
   border: none;
-  border-top: 1px solid var(--color-divider, #e0e0e0);
+  border-top: 1px solid var(--color-divider);
   margin: 20px 0;
 }
 
@@ -319,7 +319,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 // ─── Цветовая схема (light / dark / system) ───────────────────────────────────
@@ -336,10 +336,10 @@
   align-items: center;
   gap: 6px;
   padding: 12px 8px;
-  border: 2px solid var(--color-divider, #e0e0e0);
+  border: 2px solid var(--color-divider);
   border-radius: 12px;
   background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -350,15 +350,15 @@
     background 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
     color: var(--color-text, inherit);
   }
 
   &--active {
-    border-color: var(--color-primary, #4e7b6a);
-    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 10%, transparent);
-    color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 1px var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
   }
 }
 
@@ -375,10 +375,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--color-divider, #e0e0e0);
+  border: 2px solid var(--color-divider);
   border-radius: 14px;
   background: var(--color-paper, white);
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
@@ -396,9 +396,9 @@
   }
 
   &--active {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 1px var(--color-primary, #4e7b6a);
-    color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
+    color: var(--color-primary);
   }
 }
 
@@ -423,7 +423,7 @@
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 // flex: 1 — расширяется вслед за родителем .user-row__actions, когда тот
@@ -446,8 +446,8 @@
   width: 46px;
   height: 46px;
   border-radius: 13px;
-  background: var(--color-chip-bg, #dff0e5);
-  color: var(--color-chip-text, #3d6a55);
+  background: var(--color-chip-bg);
+  color: var(--color-chip-text);
   text-decoration: none;
   transition:
     background 0.15s,
@@ -458,7 +458,7 @@
   }
 
   &:hover {
-    background: var(--color-primary, #4e7b6a);
+    background: var(--color-primary);
     color: #fff;
   }
 }
@@ -475,7 +475,7 @@
   padding: 14px 16px;
   border-radius: 12px;
   background: var(--color-paper, white);
-  border: 1px solid var(--color-divider, #e0e0e0);
+  border: 1px solid var(--color-divider);
   font-family: inherit;
   cursor: pointer;
   text-align: left;
@@ -484,7 +484,7 @@
   transition: border-color 0.15s;
 
   &:hover {
-    border-color: var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
   }
 }
 
@@ -497,7 +497,7 @@
   width: 44px;
   height: 26px;
   border-radius: 999px;
-  background: var(--color-divider, #ccc);
+  background: var(--color-divider);
   padding: 3px;
   flex-shrink: 0;
   pointer-events: none;
@@ -505,7 +505,7 @@
   transition: background 0.2s;
 
   &--on {
-    background: var(--color-primary, #4e7b6a);
+    background: var(--color-primary);
   }
 }
 
@@ -532,7 +532,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-2, #999);
+  color: var(--color-text-2);
   cursor: default;
   margin-left: 6px;
   padding: 2px;
@@ -542,8 +542,8 @@
     background 0.15s;
 
   &:hover {
-    color: var(--color-primary, #4e7b6a);
-    background: color-mix(in srgb, var(--color-primary, #4e7b6a) 12%, transparent);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   }
 
   &:hover .info-hint__tooltip {
@@ -559,7 +559,7 @@
   width: 240px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: var(--color-text, #1e3328);
+  background: var(--color-text);
   color: var(--color-paper, white);
   font-size: 12px;
   font-weight: 400;
@@ -592,7 +592,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   display: inline-flex;
   align-items: center;
 }
@@ -613,7 +613,7 @@
   margin: 0;
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -634,7 +634,7 @@
 // ─── Карточка темы ────────────────────────────────────────────────────────────
 
 .theme-card {
-  border: 2px solid var(--color-divider, #e0e0e0);
+  border: 2px solid var(--color-divider);
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
@@ -653,8 +653,8 @@
   }
 
   &--active {
-    border-color: var(--color-primary, #4e7b6a);
-    box-shadow: 0 0 0 1px var(--color-primary, #4e7b6a);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
   }
 }
 
@@ -688,7 +688,7 @@
 .theme-card__line {
   height: 6px;
   border-radius: 3px;
-  background: var(--color-divider, #e0e0e0);
+  background: var(--color-divider);
   opacity: 0.6;
 
   &--wide {
@@ -706,7 +706,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-primary, #4e7b6a);
+  background: var(--color-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -715,7 +715,7 @@
 
 .theme-card__footer {
   padding: 8px 10px;
-  border-top: 1px solid var(--color-divider, #e0e0e0);
+  border-top: 1px solid var(--color-divider);
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text, inherit);
@@ -723,7 +723,7 @@
 }
 
 .theme-card--active .theme-card__footer {
-  color: var(--color-primary, #4e7b6a);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -774,7 +774,7 @@
 .guest-card__sub {
   margin: 2px 0 0;
   font-size: 11.5px;
-  color: var(--color-text-2, #666);
+  color: var(--color-text-2);
 }
 
 .guest-card__btn {
