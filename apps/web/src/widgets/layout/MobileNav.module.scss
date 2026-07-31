@@ -1,3 +1,5 @@
+@use '@/shared/styles/variables' as *;
+
 .mobile-nav {
   position: fixed;
   bottom: -5px;
@@ -37,8 +39,8 @@
   border-radius: 10px;
   color: var(--color-text-2);
   transition:
-    color 0.15s,
-    background 0.15s;
+    color $transition-fast,
+    background $transition-fast;
 
   // Подложка под активной иконкой — надёжнее, чем полагаться только на смену
   // цвета: в некоторых темах primary недостаточно контрастен с фоном сам по себе.

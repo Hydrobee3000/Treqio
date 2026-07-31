@@ -27,9 +27,9 @@
   font-family: inherit;
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
+    background $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast;
 
   &:hover {
     border-color: var(--color-primary);
@@ -82,8 +82,8 @@
   cursor: pointer;
   flex-shrink: 0;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
@@ -110,12 +110,12 @@
   background: var(--color-paper, white);
   color: var(--color-text-2);
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow: $focus-ring-shadow;
   }
 
   @media (max-width: $breakpoint-small) {
@@ -159,8 +159,8 @@
   color: var(--color-text-2);
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background: rgba(0, 0, 0, 0.08);
@@ -185,8 +185,8 @@
   cursor: pointer;
   flex-shrink: 0;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);

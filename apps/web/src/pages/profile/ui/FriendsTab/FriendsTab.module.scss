@@ -40,12 +40,12 @@ $requests-width: 400px;
   background: var(--color-paper, white);
   color: var(--color-text-2);
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow: $focus-ring-shadow;
   }
 }
 
@@ -83,8 +83,8 @@ $requests-width: 400px;
   color: var(--color-text-2);
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background: rgba(0, 0, 0, 0.08);
@@ -185,7 +185,7 @@ $requests-width: 400px;
   border-radius: 8px;
   background: transparent;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background $transition-fast;
 
   &:hover {
     background: var(--color-paper-2, rgba(0, 0, 0, 0.05));
@@ -238,9 +238,9 @@ $requests-width: 400px;
   border-radius: 8px;
   cursor: pointer;
   transition:
-    background 0.15s,
-    color 0.15s,
-    filter 0.15s;
+    background $transition-fast,
+    color $transition-fast,
+    filter $transition-fast;
 
   &:disabled {
     opacity: 0.6;
@@ -263,7 +263,7 @@ $requests-width: 400px;
   color: var(--color-chip-text);
 
   &:hover:not(:disabled) {
-    color: #d05c5c;
+    color: $color-danger;
   }
 }
 
@@ -301,8 +301,8 @@ $requests-width: 400px;
   font-family: inherit;
   cursor: pointer;
   transition:
-    filter 0.15s,
-    transform 0.15s;
+    filter $transition-fast,
+    transform $transition-fast;
 
   &:hover {
     filter: brightness(1.08);

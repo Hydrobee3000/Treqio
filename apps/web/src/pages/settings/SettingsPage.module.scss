@@ -81,7 +81,7 @@
   color: inherit;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.15s;
+  transition: background $transition-fast;
 
   &:hover {
     background: color-mix(in srgb, var(--header-title-color) 16%, transparent);
@@ -171,11 +171,11 @@
   text-align: left;
   width: 100%;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s,
-    transform 0.15s,
-    background 0.15s,
-    color 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast,
+    background $transition-fast,
+    color $transition-fast;
 
   &:hover {
     border-color: var(--color-primary);
@@ -345,9 +345,9 @@
   font-weight: 500;
   font-family: inherit;
   transition:
-    border-color 0.15s,
-    color 0.15s,
-    background 0.15s;
+    border-color $transition-fast,
+    color $transition-fast,
+    background $transition-fast;
 
   &:hover {
     border-color: var(--color-primary);
@@ -385,8 +385,8 @@
   font-family: inherit;
   transition:
     border-color 0.2s,
-    color 0.15s,
-    transform 0.15s,
+    color $transition-fast,
+    transform $transition-fast,
     box-shadow 0.2s;
 
   &:hover {
@@ -450,8 +450,8 @@
   color: var(--color-chip-text);
   text-decoration: none;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background $transition-fast,
+    color $transition-fast;
 
   svg {
     font-size: 28px;
@@ -481,7 +481,7 @@
   text-align: left;
   position: relative;
   isolation: isolate;
-  transition: border-color 0.15s;
+  transition: border-color $transition-fast;
 
   &:hover {
     border-color: var(--color-primary);
@@ -538,8 +538,8 @@
   padding: 2px;
   border-radius: 4px;
   transition:
-    color 0.15s,
-    background 0.15s;
+    color $transition-fast,
+    background $transition-fast;
 
   &:hover {
     color: var(--color-primary);
@@ -568,7 +568,7 @@
   letter-spacing: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity $transition-fast;
   z-index: 10;
   white-space: normal;
 
@@ -644,7 +644,7 @@
   text-align: left;
   transition:
     border-color 0.2s,
-    transform 0.15s,
+    transform $transition-fast,
     box-shadow 0.2s;
 
   &:hover {
@@ -791,7 +791,7 @@
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: background $transition-fast;
 
   &:hover {
     background: var(--color-warning-bg);

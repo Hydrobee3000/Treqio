@@ -43,12 +43,12 @@
   box-sizing: border-box;
   outline: none;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    box-shadow: $focus-ring-shadow;
   }
 
   @media (max-width: $breakpoint-small) {
@@ -85,7 +85,7 @@
   margin: 6px 0 0;
   font-size: 12px;
   line-height: 1.35;
-  color: #d05c5c;
+  color: $color-danger;
 }
 
 .footer__btn-cancel {
@@ -96,7 +96,7 @@
   margin-left: auto;
   min-width: 110px !important;
   background-color: var(--color-primary-dark) !important;
-  transition: filter 0.15s !important;
+  transition: filter $transition-fast !important;
 
   &:hover {
     background-color: var(--color-primary-dark) !important;
