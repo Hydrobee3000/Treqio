@@ -82,6 +82,11 @@ function StatusChip({ status }: { status: BookStatus }) {
   )
 }
 
+/** Пилюля с названием записи в тексте события. */
+function EntryTitleChip({ title }: { title: string }) {
+  return <span className={styles['history__entry-chip']}>{title}</span>
+}
+
 /** Фраза-действие события — акцентное слово цветом события, связки серым. */
 function VerbPhrase({ type }: { type: HistoryEventType }) {
   const { t } = useTranslation()
@@ -409,7 +414,7 @@ export const ProfilePage = () => {
                             <div className={styles['history__body']}>
                               <p className={styles['history__text']}>
                                 <VerbPhrase type={event.type} />{' '}
-                                <strong>«{event.entry.book.title}»</strong>
+                                <EntryTitleChip title={event.entry.book.title} />
                                 {event.type === 'ADDED' &&
                                   !hasAccompanyingCreationEvent(event.entry) && (
                                     <>
