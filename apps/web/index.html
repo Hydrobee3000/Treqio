@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Personal library for books and games — track progress, rate, share with friends."
+      content="Personal library for your hobby — track progress, rate, share with friends."
     />
     <title>Treqio</title>
 
@@ -15,33 +15,29 @@
     <meta property="og:title" content="Treqio" />
     <meta
       property="og:description"
-      content="Personal library for books and games — track progress, rate, share with friends."
+      content="Personal library for your hobby — track progress, rate, share with friends."
     />
-    <meta property="og:image" content="https://treqio.online/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content="https://treqio.online/icon-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
 
-    <!-- Twitter Card — свой набор тегов, не всегда падает обратно на og:* -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Treqio" />
     <meta
       name="twitter:description"
-      content="Personal library for books and games — track progress, rate, share with friends."
+      content="Personal library for your hobby — track progress, rate, share with friends."
     />
-    <meta name="twitter:image" content="https://treqio.online/og-image.png" />
+    <meta name="twitter:image" content="https://treqio.online/icon-512.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- media="print" не даёт браузеру считать подключение шрифта блокирующим
-         отрисовку — CSS грузится параллельно, onload переключает media обратно
-         на все устройства после загрузки. noscript — запасной вариант без JS. -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=optional"
       rel="stylesheet"
       media="print"
-      onload="this.media='all'"
+      onload="this.media = 'all'"
     />
     <noscript>
       <link
