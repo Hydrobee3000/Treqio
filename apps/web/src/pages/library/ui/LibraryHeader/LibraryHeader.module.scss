@@ -1,0 +1,79 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.library__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 28px 36px 12px;
+
+  @media (max-width: $breakpoint-small) {
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 20px 20px 10px;
+  }
+}
+
+.library__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    filter $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  // На мобильных у кнопки отображается только иконка
+  @media (max-width: $breakpoint-small) {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+}
+
+.library__add-btn-label {
+  @media (max-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.library__title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+  animation: rise 0.6s ease both;
+
+  @media (min-width: $breakpoint-small) {
+    font-size: 30px;
+  }
+}

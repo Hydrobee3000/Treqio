@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { LayoutGroup } from 'framer-motion'
-import { BookOpen, Plus } from 'lucide-react'
+import { BookOpen, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { BookExpandModal } from '@/entities/book'
@@ -15,8 +15,10 @@ import {
 } from '@/features/book'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
+import { ConfirmCard } from '@/shared/ui'
 import { BooksCollection } from '@/widgets/books-collection'
-import { GuestLoginDialog } from './ui/GuestLoginDialog/GuestLoginDialog'
+import { LibraryEmptyState } from './LibraryEmptyState/LibraryEmptyState'
+import { LibraryHeader } from './LibraryHeader/LibraryHeader'
 import styles from './LibraryPage.module.scss'
 
 /**
@@ -41,7 +43,9 @@ export const LibraryPage = () => {
   const expandedEntry = entries.find((e) => e.id === expandedEntryId) ?? null
   const isEmpty = !isError && entries.length === 0
 
-  /** Открывает форму добавления книги, либо для гостя — предлагает войти. */
+  /**
+   * Открывает форму добавления книги; если гость - предложение залогиниться.
+   */
   const handleAddClick = () => {
     if (isGuest) {
       setGuestPromptOpen(true)
@@ -50,22 +54,34 @@ export const LibraryPage = () => {
     setAddOpen(true)
   }
 
-  /** Сохраняет текущий путь и ведёт на страницу входа. */
+  /**
+   * Сохраняет текущий путь и ведёт на страницу входа.
+   */
   const handleGoToLogin = () => {
     saveRedirectPath('/library')
     void navigate('/login')
   }
 
+  /**
+   * Сохраняет изменения полей книги.
+   */
   const handleSaveBook = async (dto: BookFieldUpdate) => {
     if (!expandedEntry) return
     await updateBook({ id: expandedEntry.book.id, dto }).unwrap()
   }
 
+  /**
+   * Сохраняет изменения полей записи.
+   */
   const handleSaveEntry = async (dto: EntryFieldUpdate) => {
     if (!expandedEntry) return
     await updateEntry({ id: expandedEntry.id, dto }).unwrap()
   }
 
+  /**
+   * Создаёт новую книгу и запись по ней, затем сохраняет необязательные поля
+   * записи отдельным запросом, если они были заданы.
+   */
   const handleCreate = async (payload: CreateBookPayload) => {
     const book = await createBook({
       title: payload.title,
@@ -84,25 +100,18 @@ export const LibraryPage = () => {
     }
   }
 
+  /**
+   * Удаляет запись.
+   */
   const handleExpandDelete = async () => {
     if (!expandedEntry) return
     await deleteEntry(expandedEntry.id).unwrap()
   }
 
-  const header = (
-    <div className={styles['library__header']}>
-      <h1 className={styles['library__title']}>{t('library.title')}</h1>
-      <button className={styles['library__add-btn']} onClick={handleAddClick}>
-        <Plus size={16} />
-        <span className={styles['library__add-btn-label']}>{t('library.addBook')}</span>
-      </button>
-    </div>
-  )
-
   if (isLoading) {
     return (
       <div className={styles.library} style={{ height: '100%' }}>
-        {header}
+        <LibraryHeader onAddClick={handleAddClick} />
         <BooksCollection entries={[]} loading />
       </div>
     )
@@ -111,7 +120,7 @@ export const LibraryPage = () => {
   return (
     <LayoutGroup id="library">
       <div className={styles.library}>
-        {header}
+        <LibraryHeader onAddClick={handleAddClick} />
 
         {isError ? (
           <div className={styles['library__empty']}>
@@ -122,23 +131,7 @@ export const LibraryPage = () => {
             <p className={styles['library__empty-sub']}>{t('library.error.loadSub')}</p>
           </div>
         ) : isEmpty ? (
-          <div className={styles['library__empty-lib']}>
-            <div className={styles['library__empty-shelf']}>
-              <div className={styles['library__ghost']} />
-              <div className={`${styles['library__ghost']} ${styles['library__ghost--tall']}`} />
-              <div className={`${styles['library__ghost']} ${styles['library__ghost--accent']}`} />
-              <div className={`${styles['library__ghost']} ${styles['library__ghost--tall']}`} />
-              <div className={styles['library__ghost']} />
-            </div>
-            <h2 className={styles['library__empty-title']}>{t('library.empty.title')}</h2>
-            <p className={styles['library__empty-desc']}>{t('library.empty.desc')}</p>
-            <div className={styles['library__empty-actions']}>
-              <button className={styles['library__cta-primary']} onClick={handleAddClick}>
-                <Plus size={17} />
-                {t('library.empty.addBook')}
-              </button>
-            </div>
-          </div>
+          <LibraryEmptyState onAddClick={handleAddClick} />
         ) : (
           <BooksCollection
             entries={entries}
@@ -164,10 +157,15 @@ export const LibraryPage = () => {
           }}
         />
 
-        <GuestLoginDialog
+        <ConfirmCard
           open={guestPromptOpen}
-          onClose={() => setGuestPromptOpen(false)}
-          onLogin={handleGoToLogin}
+          title={t('library.loginRequired.title')}
+          description={t('library.loginRequired.desc')}
+          cancelLabel={t('library.loginRequired.cancel')}
+          confirmLabel={t('library.loginRequired.login')}
+          confirmIcon={<LogIn size={15} />}
+          onCancel={() => setGuestPromptOpen(false)}
+          onConfirm={handleGoToLogin}
         />
       </div>
     </LayoutGroup>
