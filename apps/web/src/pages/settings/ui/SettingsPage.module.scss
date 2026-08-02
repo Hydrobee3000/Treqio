@@ -1,0 +1,361 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ─── Страница ─────────────────────────────────────────────────────────────────
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.settings__header {
+  height: 58px;
+  padding: 0 36px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--color-chip-bg);
+  border-bottom: 1px solid var(--color-divider);
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 20px;
+  }
+}
+
+.settings__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--header-title-color);
+  animation: rise 0.6s ease both;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// ─── Хлебные крошки ───────────────────────────────────────────────────────────
+
+.settings__breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--header-title-color) 8%, transparent);
+  border: none;
+  padding: 4px 10px 4px 8px;
+  border-radius: 8px;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: color-mix(in srgb, var(--header-title-color) 16%, transparent);
+  }
+}
+
+.settings__breadcrumb-static {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px 4px 8px;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.settings__breadcrumb-sep {
+  color: var(--color-text-2);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.settings__breadcrumb-current {
+  // Тот же цвет, что у «Settings» слева (--header-title-color через
+  // .settings__title) — раньше был приглушённый серый.
+  color: inherit;
+  font-weight: 500;
+}
+
+// ─── Тело страницы — список + контент ─────────────────────────────────────────
+
+.settings__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// ─── Список разделов ──────────────────────────────────────────────────────────
+
+.settings__nav {
+  flex-shrink: 0;
+  padding: 12px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  animation: rise 0.6s ease 0.1s both;
+
+  // На мобилке — прячем список если открыт раздел
+  @media (max-width: $breakpoint-medium) {
+    width: 100%;
+    padding: 12px 20px 24px;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  @media (min-width: $breakpoint-medium) {
+    width: 280px;
+    padding: 12px 16px 24px;
+    background: color-mix(in srgb, var(--color-paper, white) 70%, transparent);
+    border-right: 1px solid var(--color-divider);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+.settings__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-divider);
+  // Тот же токен, что решает точно такую же проблему у строк в UserRow —
+  // фон пунктов сливался с полупрозрачной панелью .settings__nav, в которую
+  // они вложены (у обеих был один и тот же --color-paper).
+  background: var(--color-row-bg, var(--color-paper, white));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  color: var(--color-text, inherit);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast,
+    background $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.18);
+  }
+
+  &--active {
+    background: var(--color-chip-bg);
+    border-color: var(--color-primary);
+    // Цвет заголовка (.settings__nav-label наследует отсюда) остаётся
+    // прежним — активность и так видна по фону, рамке и жирности.
+    font-weight: 600;
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+  }
+
+  // auto-margin даёт нулевой отступ сам по себе, когда список не помещается
+  // и уже заполняет весь родитель — пункт идёт сразу за остальными, с тем же
+  // gap, что и между любыми двумя соседними пунктами. Если места достаточно —
+  // забирает всё свободное пространство и прижимается к низу.
+  &--pinned {
+    margin-top: auto;
+  }
+}
+
+.settings__nav-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--color-chip-bg);
+  color: var(--color-chip-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings__nav-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__nav-label {
+  display: block;
+}
+
+.settings__nav-desc {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-2);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings__nav-chevron {
+  color: var(--color-text-2);
+  flex-shrink: 0;
+
+  // На десктопе стрелку не показываем
+  @media (min-width: $breakpoint-medium) {
+    display: none;
+  }
+}
+
+// ─── Контент раздела ──────────────────────────────────────────────────────────
+
+.settings__content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: color-mix(in srgb, var(--color-paper-2) 30%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: slide-in 0.25s ease both;
+
+  // На мобилке — прячем если нет выбранного раздела
+  @media (max-width: $breakpoint-medium) {
+    &--hidden {
+      display: none;
+    }
+  }
+}
+
+// Кнопка «Назад» — только мобилка
+.settings__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  @media (min-width: $breakpoint-medium) {
+    display: none;
+  }
+}
+
+.settings__section {
+  padding: 20px 28px 32px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 16px 20px 24px;
+  }
+}
+
+// ─── Карточка гостя ───────────────────────────────────────────────────────────
+
+.guest-card {
+  margin: 20px 24px;
+  padding: 10px 20px;
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: rise 0.3s ease both;
+
+  @media (max-width: $breakpoint-small) {
+    margin: 16px;
+  }
+}
+
+.guest-card__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guest-card__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guest-card__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.guest-card__sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--color-text-2);
+}
+
+.guest-card__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border: 1px solid var(--color-warning);
+  border-radius: 8px;
+  background: none;
+  color: var(--color-warning);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: var(--color-warning-bg);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding: 7px 12px;
+  }
+}
