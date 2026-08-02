@@ -1,0 +1,187 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bento {
+  padding: 0 36px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-auto-rows: 190px;
+  gap: 14px;
+
+  @media (max-width: $breakpoint-medium) {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 16px;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 8px;
+  }
+}
+
+.bento__cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px;
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider);
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  animation: rise 0.6s ease both;
+
+  &:nth-child(1) {
+    animation-delay: 40ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 190ms;
+  }
+
+  // Градиентный блик снизу справа
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 80% at 100% 100%,
+      color-mix(in oklab, var(--color-primary) 14%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  // Первая карточка — большая, занимает 2 строки только на десктопе
+  &--hero {
+    grid-column: 1;
+    grid-row: 1 / 3;
+
+    @media (max-width: $breakpoint-medium) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: $breakpoint-small) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  // Акцентная карточка — в тёмной теме фон совпадает с боковым меню, в
+  // светлой — с приглушённым цветом.
+  &--dark {
+    background: var(--color-surface-variant);
+    border-color: transparent;
+    color: var(--sidebar-text);
+
+    &::before {
+      background: radial-gradient(
+        120% 80% at 100% 100%,
+        rgba(255, 255, 255, 0.14),
+        transparent 60%
+      );
+    }
+
+    .bento__cell-title {
+      color: var(--sidebar-text);
+    }
+
+    .bento__cell-desc {
+      color: var(--sidebar-muted, rgba(216, 235, 228, 0.6));
+    }
+
+    .bento__cell-icon {
+      color: var(--sidebar-text);
+    }
+  }
+}
+
+.bento__cell-content {
+  @media (max-width: $breakpoint-small) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.bento__cell-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .bento__cell:hover & {
+    transform: rotate(-6deg) scale(1.05);
+  }
+}
+
+.bento__cell-title {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+
+  .bento__cell--hero & {
+    font-size: 26px;
+  }
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 14px;
+    margin-top: 6px;
+
+    .bento__cell--hero & {
+      font-size: 14px;
+    }
+  }
+}
+
+.bento__cell-desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-2);
+
+  @media (max-width: $breakpoint-small) {
+    font-size: 11.5px;
+    margin-top: 4px;
+  }
+}

@@ -16,7 +16,7 @@ import {
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
 import { useAppSelector } from '@/shared/lib/store'
 import { BooksCollection } from '@/widgets/books-collection'
-import { GuestLoginCard } from './ui/GuestLoginCard/GuestLoginCard'
+import { GuestLoginDialog } from './ui/GuestLoginDialog/GuestLoginDialog'
 import styles from './LibraryPage.module.scss'
 
 /**
@@ -164,7 +164,7 @@ export const LibraryPage = () => {
           }}
         />
 
-        <GuestLoginCard
+        <GuestLoginDialog
           open={guestPromptOpen}
           onClose={() => setGuestPromptOpen(false)}
           onLogin={handleGoToLogin}

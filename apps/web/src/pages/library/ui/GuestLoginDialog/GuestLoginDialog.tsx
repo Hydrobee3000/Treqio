@@ -17,7 +17,7 @@ interface Props {
 /**
  * Диалог с предложением войти в аккаунт, показывается гостю при попытке добавить книгу.
  */
-export const GuestLoginCard = ({ open, onClose, onLogin }: Props) => {
+export const GuestLoginDialog = ({ open, onClose, onLogin }: Props) => {
   const { t } = useTranslation()
 
   return (
