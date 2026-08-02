@@ -26,7 +26,7 @@ import {
   useSendFriendRequestMutation,
 } from '@/features/friends'
 import type { Friend } from '@/features/friends'
-import { useSearchUsersQuery } from '@/features/user'
+import { useGetMeQuery, useGetUserProfileQuery, useSearchUsersQuery } from '@/features/user'
 import { USERNAME_MAX } from '@/features/user/api/constraints'
 import { useDebouncedValue } from '@/shared/lib/hooks/useDebouncedValue'
 import { saveRedirectPath } from '@/shared/lib/redirectPath'
@@ -39,6 +39,9 @@ const QUERY_MIN_LENGTH = 2
 
 /** Задержка перед запросом, чтобы не дёргать сервер на каждый символ. */
 const SEARCH_DEBOUNCE_MS = 350
+
+/** Никнейм, который по умолчанию рекомендуется всем в друзья. */
+const RECOMMENDED_USERNAME = 'hydrombee'
 
 /**
  * Свойства CollapsibleSection.
@@ -103,12 +106,13 @@ export const FriendsTab = () => {
   const { data: found, isFetching: searching } = useSearchUsersQuery(debouncedQuery, {
     skip: !isSearching || isGuest,
   })
+  const { data: me } = useGetMeQuery(undefined, { skip: isGuest })
+  const { data: recommended } = useGetUserProfileQuery(RECOMMENDED_USERNAME, { skip: isGuest })
 
   const [acceptRequest, { isLoading: accepting }] = useAcceptFriendRequestMutation()
   const [removeFriendship, { isLoading: removing }] = useRemoveFriendshipMutation()
   const [sendRequest] = useSendFriendRequestMutation()
-  // Кнопка отправки нужна только своей строке — общий isLoading заблокировал
-  // бы весь список результатов на время одного запроса.
+  // Кнопка отправки нужна только своей строке.
   const [sendingTo, setSendingTo] = useState<string | null>(null)
   const busy = accepting || removing
 
@@ -126,12 +130,17 @@ export const FriendsTab = () => {
   const outgoingList = outgoing ?? []
   const hasRequests = incomingList.length > 0 || outgoingList.length > 0
 
-  // Отметки в результатах поиска считаются по уже загруженным спискам —
-  // ручка поиска состояние связи не возвращает.
+  // Отметки в результатах поиска считаются по уже загруженным спискам.
   const friendIds = new Set(friendList.map((friend) => friend.user.id))
   const pendingIds = new Set(outgoingList.map((request) => request.receiver.id))
 
-  /** Имя для отображения с запасным вариантом. */
+  // Не рекомендуем, если уже друзья, либо это профиль самого рекомендуемого пользователя.
+  const showRecommended =
+    !!recommended &&
+    me?.username !== RECOMMENDED_USERNAME &&
+    recommended.friendshipState !== 'FRIENDS'
+
+  /** Имя для отображения. */
   const nameOf = (displayName: string | null, username: string | null) =>
     displayName || username || t('profile.defaultName')
 
@@ -147,8 +156,7 @@ export const FriendsTab = () => {
     void navigate('/login')
   }
 
-  // У гостя нет учётной записи на сервере — вместо списков и поиска
-  // показываем призыв войти, без единого запроса к /friends или /users/search.
+  // У гостя нет учётной записи на сервере - показываем кнопку войти.
   if (isGuest) {
     return (
       <div className={`${styles['friends']} ${styles['friends--guest']}`}>
@@ -189,9 +197,7 @@ export const FriendsTab = () => {
   )
 
   if (isSearching) {
-    // Скелетон только на самый первый запрос по новому вводу — data держит
-    // предыдущий успешный результат, пока грузится следующий, и подменять
-    // список на каждое изменение отложенного запроса не нужно.
+    // Скелетон только на самый первый запрос по новому вводу.
     const showSkeleton = searching && found === undefined
 
     return (
@@ -260,6 +266,69 @@ export const FriendsTab = () => {
   return (
     <div className={styles['friends']}>
       {searchField}
+
+      {showRecommended && recommended && (
+        <div className={styles['friends__single']}>
+          <h2 className={styles['friends__title']}>{t('friends.recommended')}</h2>
+          <div className={styles['friends__list']}>
+            <UserRow
+              displayName={nameOf(recommended.displayName, recommended.username)}
+              username={recommended.username}
+              to={`/${recommended.username}`}
+              action={
+                recommended.friendshipState === 'REQUEST_SENT' ? (
+                  <Tooltip title={t('friends.requestPending')}>
+                    <span
+                      className={`${styles['friends__badge']} ${styles['friends__badge--pending']}`}
+                    >
+                      <Clock size={16} />
+                    </span>
+                  </Tooltip>
+                ) : recommended.friendshipState === 'REQUEST_RECEIVED' ? (
+                  <>
+                    <Tooltip title={t('friends.accept')}>
+                      <button
+                        className={styles['friends__accept']}
+                        disabled={busy}
+                        onClick={() =>
+                          recommended.friendshipId && void acceptRequest(recommended.friendshipId)
+                        }
+                        aria-label={t('friends.accept')}
+                      >
+                        <Check size={16} />
+                      </button>
+                    </Tooltip>
+                    <Tooltip title={t('friends.reject')}>
+                      <button
+                        className={styles['friends__reject']}
+                        disabled={busy}
+                        onClick={() =>
+                          recommended.friendshipId &&
+                          void removeFriendship(recommended.friendshipId)
+                        }
+                        aria-label={t('friends.reject')}
+                      >
+                        <X size={16} />
+                      </button>
+                    </Tooltip>
+                  </>
+                ) : recommended.username ? (
+                  <Tooltip title={t('friends.add')}>
+                    <button
+                      className={styles['friends__accept']}
+                      disabled={sendingTo === recommended.username}
+                      onClick={() => recommended.username && void handleSend(recommended.username)}
+                      aria-label={t('friends.add')}
+                    >
+                      <UserPlus size={16} />
+                    </button>
+                  </Tooltip>
+                ) : undefined
+              }
+            />
+          </div>
+        </div>
+      )}
 
       <div
         className={`${styles['friends__panes']} ${hasRequests ? '' : styles['friends__panes--single']}`}
