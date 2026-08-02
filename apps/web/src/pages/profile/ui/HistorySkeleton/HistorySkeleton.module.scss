@@ -1,0 +1,59 @@
+@use '@/shared/styles/variables' as *;
+
+.history {
+  display: flex;
+  flex-direction: column;
+  padding: 0 40px 40px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 18px 32px;
+  }
+}
+
+.history__day {
+  margin-bottom: 4px;
+}
+
+.history__date-skeleton {
+  height: 30px;
+  border-radius: 10px;
+  margin: 10px 0 6px -6px;
+}
+
+.history__timeline {
+  position: relative;
+  padding-left: 34px;
+}
+
+.history__event {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+}
+
+.history__node-skeleton {
+  position: absolute;
+  left: -34px;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  transform: translateY(-50%);
+}
+
+.history__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.history__text-skeleton {
+  width: var(--skeleton-width, 130px);
+  font-size: 14px;
+}
+
+.history__time-skeleton {
+  width: 36px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
