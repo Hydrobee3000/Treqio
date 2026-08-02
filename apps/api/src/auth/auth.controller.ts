@@ -1,19 +1,9 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  NotFoundException,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import type { Request, Response } from 'express'
 import type { User } from '../generated/prisma/client'
 import { AuthService } from './auth.service'
-import { JwtAuthGuard } from './guards/jwt-auth.guard'
 
 /**
  * Контроллер авторизации.
@@ -56,22 +46,6 @@ export class AuthController {
 
     const frontendUrl = process.env['FRONTEND_URL'] ?? 'http://localhost:3000'
     res.redirect(`${frontendUrl}/auth/callback?accessToken=${accessToken}`)
-  }
-
-  /**
-   * Данные текущего авторизованного пользователя.
-   */
-  @ApiOperation({ summary: 'Данные текущего пользователя' })
-  @ApiResponse({ status: 200, description: 'Профиль пользователя' })
-  @ApiResponse({ status: 401, description: 'Токен отсутствует или невалидный' })
-  @ApiBearerAuth()
-  @Get('me')
-  @UseGuards(JwtAuthGuard)
-  async getMe(@Req() req: Request): Promise<User> {
-    const { userId } = req.user as { userId: string }
-    const user = await this.authService.getUserById(userId)
-    if (!user) throw new NotFoundException('User not found')
-    return user
   }
 
   /**

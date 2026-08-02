@@ -86,13 +86,6 @@ export class AuthService {
   }
 
   /**
-   * Поиск пользователя по ID.
-   */
-  async getUserById(userId: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id: userId } })
-  }
-
-  /**
    * Проверка refresh token и извлечение userId из payload.
    */
   verifyRefreshToken(token: string): string {
