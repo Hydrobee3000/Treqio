@@ -1,0 +1,117 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Проход шиммера занимает ~1с в начале цикла, остальное время ждёт за краем
+@keyframes guest-login-card-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  25% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.guest-login-card {
+  margin: 0 36px 32px;
+  padding: 10px 20px;
+  background: var(--color-paper, white);
+  border: 1px solid var(--color-divider);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  animation: rise 0.6s ease 0.25s both;
+  transition: border-color $transition-fast;
+  min-height: 60px;
+
+  @media (min-width: $breakpoint-small) {
+    min-width: 320px;
+  }
+
+  // Шиммер в цвет основного акцента темы - повторная анимация
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--color-primary) 20%, transparent),
+      transparent
+    );
+    transform: translateX(-100%);
+    pointer-events: none;
+    animation: guest-login-card-shimmer 4s ease infinite;
+  }
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    margin: 0 16px 24px;
+  }
+}
+
+.guest-login-card__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guest-login-card__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-chip-bg);
+  color: var(--color-chip-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guest-login-card__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.guest-login-card__sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--color-text-2);
+}
+
+.guest-login-card__arrow {
+  flex-shrink: 0;
+  color: var(--color-text-2);
+  transition:
+    transform 0.2s,
+    color $transition-fast;
+
+  .guest-login-card:hover & {
+    transform: translate(3px, -2px);
+    color: var(--color-primary);
+  }
+}

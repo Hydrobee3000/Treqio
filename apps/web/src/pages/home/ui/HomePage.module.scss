@@ -1,0 +1,100 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Страница ─────────────────────────────────────────────────────────────────
+
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// ─── Шапка ────────────────────────────────────────────────────────────────────
+
+.home__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 36px 12px;
+  gap: 16px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 20px 20px 10px;
+  }
+}
+
+.home__title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+  animation: rise 0.6s ease both;
+
+  @media (min-width: $breakpoint-medium) {
+    font-size: 30px;
+  }
+}
+
+// ─── Лейбл секции ─────────────────────────────────────────────────────────────
+
+.home__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px 8px;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 0 20px 8px;
+  }
+}
+
+.home__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-2);
+}
+
+// ─── Обёртка grid + spacer + полоска ─────────────────────────────────────────
+
+.home__grid-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+// Растягивается чтобы занять свободное место, но всегда оставляет минимальный зазор
+.home__spacer {
+  flex: 1;
+  min-height: 14px;
+
+  @media (max-width: $breakpoint-small) {
+    min-height: 10px;
+  }
+}
+
+// ─── Версия приложения ────────────────────────────────────────────────────────
+
+.home__label-row-end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.home__version {
+  font-size: 12px;
+  color: var(--color-text-2);
+  opacity: 0.55;
+}
