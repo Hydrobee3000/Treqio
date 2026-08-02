@@ -6,19 +6,6 @@ import authReducer, {
   setInitialized,
   GUEST_KEY,
 } from './authSlice'
-import type { User } from '@/entities/user'
-
-const mockUser: User = {
-  id: '1',
-  username: 'alex',
-  displayName: 'Alex',
-  email: 'alex@example.com',
-  avatarUrl: null,
-  bio: null,
-  provider: 'google',
-  createdAt: '2026-01-01T00:00:00.000Z',
-  updatedAt: '2026-01-01T00:00:00.000Z',
-}
 
 describe('authSlice', () => {
   // initialState теперь функция loadAuthState — Redux вызывает её лениво,
@@ -34,7 +21,6 @@ describe('authSlice', () => {
     const state = authReducer(undefined, { type: '' })
 
     expect(state.isGuest).toBe(false)
-    expect(state.user).toBeNull()
     expect(state.accessToken).toBeNull()
     expect(state.isInitialized).toBe(false)
   })
@@ -47,18 +33,14 @@ describe('authSlice', () => {
     expect(state.isGuest).toBe(true)
   })
 
-  it('setCredentials сохраняет токен и пользователя, сбрасывает isGuest', () => {
+  it('setCredentials сохраняет токен, сбрасывает isGuest', () => {
     // Начинаем из гостевого состояния, чтобы проверить что вход в аккаунт его сбрасывает
     localStorage.setItem(GUEST_KEY, 'true')
     const guestState = authReducer(undefined, { type: '' })
 
-    const state = authReducer(
-      guestState,
-      setCredentials({ accessToken: 'token123', user: mockUser }),
-    )
+    const state = authReducer(guestState, setCredentials({ accessToken: 'token123' }))
 
     expect(state.accessToken).toBe('token123')
-    expect(state.user).toEqual(mockUser)
     expect(state.isGuest).toBe(false)
     expect(localStorage.getItem(GUEST_KEY)).toBeNull()
   })
@@ -69,7 +51,6 @@ describe('authSlice', () => {
     const state = authReducer(initial, enterAsGuest())
 
     expect(state.isGuest).toBe(true)
-    expect(state.user).toBeNull()
     expect(state.accessToken).toBeNull()
     expect(localStorage.getItem(GUEST_KEY)).toBe('true')
   })
@@ -77,14 +58,10 @@ describe('authSlice', () => {
   it('logout очищает данные пользователя и localStorage', () => {
     localStorage.setItem(GUEST_KEY, 'true')
     const guestState = authReducer(undefined, { type: '' })
-    const loggedInState = authReducer(
-      guestState,
-      setCredentials({ accessToken: 'token123', user: mockUser }),
-    )
+    const loggedInState = authReducer(guestState, setCredentials({ accessToken: 'token123' }))
 
     const state = authReducer(loggedInState, logout())
 
-    expect(state.user).toBeNull()
     expect(state.accessToken).toBeNull()
     expect(state.isGuest).toBe(false)
     expect(localStorage.getItem(GUEST_KEY)).toBeNull()

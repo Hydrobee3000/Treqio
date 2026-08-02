@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { User } from '@/entities/user'
 
 export const GUEST_KEY = 'treqio_guest'
 
@@ -8,8 +7,6 @@ export const GUEST_KEY = 'treqio_guest'
  * Состояние авторизации в Redux store.
  */
 interface AuthState {
-  /** Данные авторизованного пользователя. */
-  user: User | null
   /** JWT access token для запросов к API. */
   accessToken: string | null
   /** Флаг завершения начальной проверки сессии. */
@@ -21,7 +18,6 @@ interface AuthState {
 /** Начальное состояние — восстанавливаем гостевой режим из localStorage. */
 function loadAuthState(): AuthState {
   return {
-    user: null,
     accessToken: null,
     isInitialized: false,
     isGuest: localStorage.getItem(GUEST_KEY) === 'true',
@@ -36,22 +32,12 @@ const authSlice = createSlice({
   initialState: loadAuthState,
   reducers: {
     /**
-     * Сохранение токена и опционально данных пользователя после логина или refresh.
+     * Сохранение токена после логина или refresh.
      */
-    setCredentials: (state, action: PayloadAction<{ accessToken: string; user?: User }>) => {
+    setCredentials: (state, action: PayloadAction<{ accessToken: string }>) => {
       state.accessToken = action.payload.accessToken
       state.isGuest = false
       localStorage.removeItem(GUEST_KEY)
-      if (action.payload.user) {
-        state.user = action.payload.user
-      }
-    },
-
-    /**
-     * Обновление данных пользователя после запроса /auth/me.
-     */
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload
     },
 
     /**
@@ -59,7 +45,6 @@ const authSlice = createSlice({
      */
     enterAsGuest: (state) => {
       state.isGuest = true
-      state.user = null
       state.accessToken = null
       localStorage.setItem(GUEST_KEY, 'true')
     },
@@ -68,7 +53,6 @@ const authSlice = createSlice({
      * Очистка сессии при выходе из системы.
      */
     logout: (state) => {
-      state.user = null
       state.accessToken = null
       state.isGuest = false
       localStorage.removeItem(GUEST_KEY)
@@ -83,6 +67,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, setUser, enterAsGuest, logout, setInitialized } = authSlice.actions
+export const { setCredentials, enterAsGuest, logout, setInitialized } = authSlice.actions
 
 export default authSlice.reducer
