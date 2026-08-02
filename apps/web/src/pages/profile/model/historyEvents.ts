@@ -2,18 +2,26 @@ import { ArrowRight, Check, Plus, RefreshCw, Star, X } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { BookEntry } from '@/entities/book'
 
-/** Тип события в истории — выводится из текущих полей записи, без отдельного журнала действий. */
+/**
+ * В базе нет отдельного лога действий пользователя — вся лента истории на
+ * этой странице каждый раз восстанавливается заново из дат-полей записи
+ * (createdAt/startDate/finishDate/statusUpdatedAt/ratingUpdatedAt). Функции
+ * в этом файле превращают набор записей (BookEntry[]) в список событий.
+ */
+
+/** Тип события в истории. */
 export type HistoryEventType = 'ADDED' | 'READING' | 'DONE' | 'DROPPED' | 'RATED' | 'STATUS'
 
 /**
- * Событие истории — производное от одной записи BookEntry на конкретную дату.
+ * Одно событие ленты — конкретное действие пользователя в конкретный момент
+ * времени, выведенное из одного из дат-полей записи.
  */
 export interface HistoryEvent {
   /** Тип события. */
   type: HistoryEventType
   /** Дата события (ISO). */
   date: string
-  /** Запись, на основе которой построено событие. */
+  /** Запись, из даты которой выведено событие. */
   entry: BookEntry
 }
 
@@ -35,15 +43,23 @@ export const HISTORY_ICON: Record<HistoryEventType, ComponentType<{ size?: numbe
   STATUS: RefreshCw,
 }
 
-/** Оценку изменили не в момент завершения книги — нужно отдельное событие. */
+/**
+ * Оценку поставили не в момент завершения книги, а отдельно, позже (например
+ * перечитал через месяц и оценил). Тогда `ratingUpdatedAt` не совпадает с
+ * `finishDate`, и оценке нужно своё отдельное событие RATED на ленте —
+ * иначе она молча потеряется, т.к. обычно просто выводится внутри события DONE.
+ */
 export function hasSeparateRatingEvent(entry: BookEntry): boolean {
   return !!entry.ratingUpdatedAt && entry.ratingUpdatedAt !== entry.finishDate
 }
 
 /**
- * Статус менялся в момент, не совпадающий с startDate/finishDate (например
- * откатили «Прочитано» обратно на «Читаю») — такой переход событиями
- * READING/DONE/DROPPED не покрывается, нужно отдельное общее событие.
+ * Статус поменяли не через обычный путь «начал/закончил/бросил» — например
+ * пометили книгу «Прочитано», а потом вручную вернули на «Читаю». Такой
+ * переход не описывается событиями READING/DONE/DROPPED (у каждого свой
+ * фиксированный смысл), поэтому если `statusUpdatedAt` не совпадает ни с
+ * `startDate`, ни с `finishDate` — нужно отдельное общее событие STATUS.
+ * DROPPED сюда не относится — у него уже есть своё событие.
  */
 export function hasSeparateStatusEvent(entry: BookEntry): boolean {
   if (!entry.statusUpdatedAt) return false
@@ -53,9 +69,11 @@ export function hasSeparateStatusEvent(entry: BookEntry): boolean {
 }
 
 /**
- * Книга создана сразу со статусом «Читаю»/«Прочитано»/«Брошено» — рядом есть
- * событие (начал читать/прочитал/забросил) с той же датой, оно уже называет
- * статус, поэтому «со статусом X» в тексте добавления было бы дублированием.
+ * Книгу добавили сразу с финальным статусом («Читаю»/«Прочитано»/«Брошено»),
+ * а не через отдельное действие позже — тогда `createdAt` совпадает с
+ * `startDate`/`finishDate`, и рядом уже есть событие READING/DONE/DROPPED,
+ * которое и так называет статус. Функция говорит: не добавляй в текст
+ * события ADDED фразу «со статусом X» — это было бы дублированием.
  */
 export function hasAccompanyingCreationEvent(entry: BookEntry): boolean {
   if (entry.startDate === entry.createdAt) return true
@@ -70,9 +88,11 @@ export function hasAccompanyingCreationEvent(entry: BookEntry): boolean {
 }
 
 /**
- * Порядок событий при одинаковой дате (книга создана сразу со статусом
- * «Читаю»/«Прочитано» — даты совпадают до миллисекунды) — более «продвинутое»
- * по читательскому пути событие показывается выше, как более актуальное.
+ * Если книгу добавили сразу с финальным статусом, несколько событий получают
+ * одинаковую дату до миллисекунды (createdAt === finishDate) — сортировки
+ * по одной только дате недостаточно. Ранг разруливает такие ничьи: при
+ * равных датах выше показывается событие, которое дальше по пути читателя
+ * (оценил/сменил статус > прочитал/бросил > начал читать > добавил).
  */
 const HISTORY_TYPE_RANK: Record<HistoryEventType, number> = {
   ADDED: 0,
@@ -83,7 +103,12 @@ const HISTORY_TYPE_RANK: Record<HistoryEventType, number> = {
   STATUS: 3,
 }
 
-/** Строит события истории из текущих полей записей — без отдельного журнала действий. */
+/**
+ * Строит ленту событий по всем записям: для каждой записи независимо
+ * проверяет, какие дата-поля заполнены, и добавляет соответствующие события
+ * (от 1 до 4 на запись), затем сортирует всё вместе — сначала по дате
+ * (новые сверху), при равенстве дат — по HISTORY_TYPE_RANK.
+ */
 export function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
   const events: HistoryEvent[] = []
   for (const entry of entries) {
@@ -121,7 +146,10 @@ function formatDayLabel(dateStr: string, lang: string, today: string, yesterday:
   })
 }
 
-/** Группирует отсортированные по дате события по дням. */
+/**
+ * Режет уже отсортированную по дате ленту событий на группы по дням — под
+ * сворачиваемые блоки «Сегодня»/«Вчера»/дата в таймлайне.
+ */
 export function groupEventsByDay(
   events: HistoryEvent[],
   lang: string,
