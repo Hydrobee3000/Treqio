@@ -12,7 +12,7 @@ import { useGetUserProfileQuery } from '@/features/user'
 import { ConfirmCard, EmptyState } from '@/shared/ui'
 import { BooksCollection } from '@/widgets/books-collection'
 import { ProfileHeader, ProfileHeaderSkeleton } from '@/widgets/profile-header'
-import { FriendActionButton } from './ui/FriendActionButton/FriendActionButton'
+import { FriendActionButton } from './FriendActionButton/FriendActionButton'
 import styles from './UserProfilePage.module.scss'
 
 /**
