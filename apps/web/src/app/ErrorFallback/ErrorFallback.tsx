@@ -6,8 +6,7 @@ import { useRouteError } from 'react-router'
 import styles from './ErrorFallback.module.scss'
 
 /**
- * Фолбэк маршрута react-router (errorElement) — показывается вместо упавшего
- * маршрута, в том числе при сбое ленивой подгрузки чанка страницы после деплоя.
+ * Фолбэк маршрута react-router (errorElement).
  */
 export function ErrorFallback() {
   const { t } = useTranslation()
