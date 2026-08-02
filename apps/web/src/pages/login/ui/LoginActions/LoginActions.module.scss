@@ -1,0 +1,116 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-page__buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  width: 100%;
+  padding: 0 32px;
+  animation: fade-slide-up 0.6s ease 0.3s both;
+
+  @media (min-width: $breakpoint-small) {
+    flex-direction: row;
+    gap: 12px;
+    width: auto;
+    padding: 0;
+  }
+}
+
+.login-page__google-btn {
+  font-weight: 600;
+  padding-left: 28px;
+  padding-right: 28px;
+  width: 100%;
+  // MUI contained-кнопка сама затемняет фон на hover — переопределяем на
+  // обратное: фон изначально тёмный вариант, на hover светлее (как у CTA в библиотеке).
+  background-color: var(--color-primary-dark) !important;
+  transition: filter $transition-fast !important;
+
+  &:hover {
+    background-color: var(--color-primary-dark) !important;
+    filter: brightness(1.15);
+  }
+
+  @media (min-width: $breakpoint-small) {
+    width: auto;
+  }
+}
+
+// ─── Разделитель "или" (только мобилка) ───────────────────────────────────────
+
+.login-page__or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 12px 0;
+  color: var(--login-hero-muted);
+  font-size: 13px;
+
+  @media (min-width: $breakpoint-small) {
+    display: none;
+  }
+}
+
+.login-page__or-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+// ─── Обёртка кнопки "Продолжить без входа" ────────────────────────────────────
+
+.login-page__guest-btn-wrapper {
+  display: block;
+  width: 100%;
+
+  @media (min-width: $breakpoint-small) {
+    display: inline;
+    width: auto;
+  }
+
+  // Вложенность даёт специфичность 0,2,0 / 0,3,0 — стабильно бьёт MUI без !important
+  .login-page__guest-btn {
+    padding-left: 28px;
+    padding-right: 28px;
+    width: 100%;
+    border-color: var(--sidebar-btn-outlined-border);
+    color: var(--login-hero-text);
+
+    &.Mui-disabled {
+      border-color: var(--sidebar-btn-disabled-border);
+      color: var(--sidebar-btn-disabled-color);
+    }
+
+    @media (min-width: $breakpoint-small) {
+      width: auto;
+    }
+  }
+}
+
+// ─── Хинт (только мобилка) ────────────────────────────────────────────────────
+
+.login-page__hint {
+  font-size: 12px;
+  color: var(--login-hero-muted);
+  margin-top: 12px;
+  text-align: center;
+
+  @media (min-width: $breakpoint-small) {
+    display: none;
+  }
+}
