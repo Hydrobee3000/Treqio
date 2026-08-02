@@ -329,6 +329,7 @@
     },
     "requestPending": "Request sent",
     "add": "Add friend",
+    "recommended": "Recommended",
     "guest": {
       "title": "Sign in to add friends",
       "desc": "Friends are not available in guest mode",
