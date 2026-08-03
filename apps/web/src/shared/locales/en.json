@@ -51,7 +51,7 @@
     }
   },
   "profile": {
-    "defaultName": "Dreamer",
+    "defaultName": "Guest",
     "login": "Sign in",
     "logout": "Sign out",
     "editProfile": {
