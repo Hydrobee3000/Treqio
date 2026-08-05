@@ -2,12 +2,22 @@ import { Injectable } from '@nestjs/common'
 import { ActivitySubject, ActivityType } from '../generated/prisma/client'
 import type { BookEntry, BookStatus, Prisma } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
+import type { ActivityPayloadMap } from './activity.payload'
 
 /**
  * Клиент Prisma внутри транзакции — события журнала пишутся тем же клиентом,
  * что и само изменение записи, иначе они могут разойтись.
  */
 type TransactionClient = Prisma.TransactionClient
+
+/**
+ * Приводит описанные подробности события к типу, который принимает Prisma.
+ * В схеме `payload` объявлен как произвольный JSON, поэтому проверку имён
+ * полей даёт только тип на входе — здесь она уже пройдена.
+ */
+function toJson<T extends ActivityType>(payload: ActivityPayloadMap[T]): Prisma.InputJsonValue {
+  return payload as unknown as Prisma.InputJsonValue
+}
 
 /**
  * Сервис журнала активности.
@@ -28,7 +38,7 @@ export class ActivityService {
         type: ActivityType.ENTRY_ADDED,
         subject: ActivitySubject.BOOK,
         bookEntryId: entry.id,
-        payload: { status: entry.status },
+        payload: toJson<typeof ActivityType.ENTRY_ADDED>({ status: entry.status }),
         createdAt: entry.createdAt,
       },
     })
@@ -50,7 +60,7 @@ export class ActivityService {
         type: ActivityType.STATUS_CHANGED,
         subject: ActivitySubject.BOOK,
         bookEntryId: entry.id,
-        payload: { from, to },
+        payload: toJson<typeof ActivityType.STATUS_CHANGED>({ from, to }),
         createdAt: at,
       },
     })
@@ -72,7 +82,7 @@ export class ActivityService {
         type: ActivityType.RATED,
         subject: ActivitySubject.BOOK,
         bookEntryId: entry.id,
-        payload: { rating, previous },
+        payload: toJson<typeof ActivityType.RATED>({ rating, previous }),
         createdAt: at,
       },
     })
