@@ -9,7 +9,7 @@ export const PUBLIC_USER_SELECT = {
   displayName: true,
   avatarUrl: true,
   bio: true,
-  isPublic: true,
+  entriesVisibility: true,
   createdAt: true,
 } satisfies Prisma.UserSelect
 

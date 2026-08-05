@@ -11,7 +11,7 @@ const publicUserRow = {
   displayName: 'Jane',
   avatarUrl: null,
   bio: null,
-  isPublic: true,
+  entriesVisibility: 'PUBLIC',
   createdAt: new Date('2026-01-01'),
 }
 
@@ -169,7 +169,10 @@ describe('UsersService', () => {
     })
 
     it('hides entries of a private profile from a stranger', async () => {
-      prisma.user.findUnique.mockResolvedValueOnce({ ...publicUserRow, isPublic: false })
+      prisma.user.findUnique.mockResolvedValueOnce({
+        ...publicUserRow,
+        entriesVisibility: 'FRIENDS',
+      })
       prisma.friendship.findFirst.mockResolvedValueOnce(null)
 
       const result = await service.getPublicProfile('user-1', 'jane')
@@ -178,7 +181,10 @@ describe('UsersService', () => {
     })
 
     it('opens entries of a private profile to a friend', async () => {
-      prisma.user.findUnique.mockResolvedValueOnce({ ...publicUserRow, isPublic: false })
+      prisma.user.findUnique.mockResolvedValueOnce({
+        ...publicUserRow,
+        entriesVisibility: 'FRIENDS',
+      })
       prisma.friendship.findFirst.mockResolvedValueOnce({
         id: 'f-1',
         senderId: 'user-2',
@@ -195,7 +201,7 @@ describe('UsersService', () => {
       prisma.user.findUnique.mockResolvedValueOnce({
         ...publicUserRow,
         id: 'user-1',
-        isPublic: false,
+        entriesVisibility: 'FRIENDS',
       })
 
       const result = await service.getPublicProfile('user-1', 'jane')
@@ -203,11 +209,43 @@ describe('UsersService', () => {
       expect(result.canViewEntries).toBe(true)
       expect(prisma.friendship.findFirst).not.toHaveBeenCalled()
     })
+
+    it('hides entries with PRIVATE visibility even from a friend', async () => {
+      prisma.user.findUnique.mockResolvedValueOnce({
+        ...publicUserRow,
+        entriesVisibility: 'PRIVATE',
+      })
+      prisma.friendship.findFirst.mockResolvedValueOnce({
+        id: 'f-1',
+        senderId: 'user-2',
+        receiverId: 'user-1',
+        status: 'ACCEPTED',
+      })
+
+      const result = await service.getPublicProfile('user-1', 'jane')
+
+      expect(result.canViewEntries).toBe(false)
+    })
+
+    it('opens own entries with PRIVATE visibility', async () => {
+      prisma.user.findUnique.mockResolvedValueOnce({
+        ...publicUserRow,
+        id: 'user-1',
+        entriesVisibility: 'PRIVATE',
+      })
+
+      const result = await service.getPublicProfile('user-1', 'jane')
+
+      expect(result.canViewEntries).toBe(true)
+    })
   })
 
   describe('getUserForEntries', () => {
     it('throws when the viewer has no access to the entries', async () => {
-      prisma.user.findUnique.mockResolvedValueOnce({ ...publicUserRow, isPublic: false })
+      prisma.user.findUnique.mockResolvedValueOnce({
+        ...publicUserRow,
+        entriesVisibility: 'FRIENDS',
+      })
       prisma.friendship.findFirst.mockResolvedValueOnce(null)
 
       await expect(service.getUserForEntries('user-1', 'jane')).rejects.toThrow(ForbiddenException)

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  IsBoolean,
+  IsEnum,
   IsNotIn,
   IsOptional,
   IsString,
@@ -8,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator'
+import { EntriesVisibility } from '../../generated/prisma/client'
 import { RESERVED_USERNAMES } from '../reserved-usernames'
 
 /** Максимальная длина отображаемого имени. */
@@ -54,9 +55,9 @@ export class UpdateProfileDto {
   @MaxLength(BIO_MAX)
   bio?: string
 
-  /** Публичность профиля — виден ли профиль другим пользователям. */
-  @ApiPropertyOptional({ description: 'Публичность профиля' })
+  /** Кому видны записи пользователя. */
+  @ApiPropertyOptional({ description: 'Кому видны записи', enum: EntriesVisibility })
   @IsOptional()
-  @IsBoolean()
-  isPublic?: boolean
+  @IsEnum(EntriesVisibility)
+  entriesVisibility?: EntriesVisibility
 }

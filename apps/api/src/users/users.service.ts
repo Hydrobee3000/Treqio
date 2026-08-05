@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Prisma } from '../generated/prisma/client'
-import type { User } from '../generated/prisma/client'
+import type { EntriesVisibility, User } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import type { UpdateProfileDto } from './dto/update-profile.dto'
 import { PUBLIC_USER_SELECT } from './public-user'
@@ -33,6 +33,20 @@ interface FriendshipView {
   state: FriendshipState
   /** Идентификатор заявки — null, если связи нет. */
   friendshipId: string | null
+}
+
+/**
+ * Проверка доступа к записям пользователя по его настройке видимости.
+ */
+function canViewEntries(
+  visibility: EntriesVisibility,
+  isOwner: boolean,
+  state: FriendshipState,
+): boolean {
+  if (isOwner) return true
+  if (visibility === 'PUBLIC') return true
+  if (visibility === 'FRIENDS') return state === 'FRIENDS'
+  return false
 }
 
 /**
@@ -109,7 +123,7 @@ export class UsersService {
       ...user,
       friendshipState: state,
       friendshipId,
-      canViewEntries: user.id === viewerId || user.isPublic || state === 'FRIENDS',
+      canViewEntries: canViewEntries(user.entriesVisibility, user.id === viewerId, state),
     }
   }
 
