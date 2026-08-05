@@ -35,6 +35,16 @@ export class BookEntriesController {
   }
 
   /**
+   * Возвращает удалённые записи текущего пользователя, доступные для восстановления.
+   */
+  @ApiOperation({ summary: 'Получить удалённые записи из корзины' })
+  @Get('deleted')
+  findDeleted(@Req() req: Request) {
+    const { userId } = req.user as JwtUser
+    return this.booksService.findDeletedEntries(userId)
+  }
+
+  /**
    * Возвращает записи пользователя по никнейму.
    */
   @ApiOperation({ summary: 'Получить записи пользователя по никнейму' })
@@ -65,7 +75,17 @@ export class BookEntriesController {
   }
 
   /**
-   * Удаляет запись текущего пользователя по ID.
+   * Восстанавливает удалённую запись текущего пользователя из корзины.
+   */
+  @ApiOperation({ summary: 'Восстановить запись из корзины' })
+  @Post(':id/restore')
+  restore(@Req() req: Request, @Param('id') id: string) {
+    const { userId } = req.user as JwtUser
+    return this.booksService.restoreEntry(userId, id)
+  }
+
+  /**
+   * Перемещает запись текущего пользователя в корзину.
    */
   @ApiOperation({ summary: 'Удалить запись о книге' })
   @Delete(':id')
