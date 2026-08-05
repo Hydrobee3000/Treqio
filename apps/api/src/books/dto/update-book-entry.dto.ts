@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsInt,
@@ -57,4 +58,10 @@ export class UpdateBookEntryDto {
   @IsString()
   @MaxLength(NOTES_MAX)
   notes?: string
+
+  /** Скрыта ли запись от других пользователей. */
+  @ApiPropertyOptional({ description: 'Скрыть запись от других пользователей' })
+  @IsOptional()
+  @IsBoolean()
+  isHidden?: boolean
 }
