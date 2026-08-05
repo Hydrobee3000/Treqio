@@ -70,11 +70,12 @@ export class BooksService {
   }
 
   /**
-   * Получение всех записей текущего пользователя.
+   * Получение всех записей пользователя.
+   * Скрытые записи возвращаются только их владельцу.
    */
-  findUserEntries(userId: string) {
+  findUserEntries(userId: string, includeHidden = true) {
     return this.prisma.bookEntry.findMany({
-      where: { userId },
+      where: { userId, ...(includeHidden ? {} : { isHidden: false }) },
       include: { book: true },
       orderBy: { createdAt: 'desc' },
     })
@@ -85,7 +86,7 @@ export class BooksService {
    */
   async findEntriesByUsername(viewerId: string, username: string) {
     const user = await this.usersService.getUserForEntries(viewerId, username)
-    return this.findUserEntries(user.id)
+    return this.findUserEntries(user.id, user.id === viewerId)
   }
 
   /**

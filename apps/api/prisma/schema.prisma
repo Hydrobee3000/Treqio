@@ -115,6 +115,8 @@ model BookEntry {
   statusUpdatedAt DateTime?
   /// Заметки пользователя.
   notes           String?
+  /// Скрыта ли запись от других пользователей.
+  isHidden        Boolean    @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

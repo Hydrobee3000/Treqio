@@ -98,6 +98,8 @@ export interface BookEntry {
   statusUpdatedAt: string | null
   /** Заметки пользователя. */
   notes: string | null
+  /** Скрыта ли запись от других пользователей. */
+  isHidden: boolean
   /** Дата создания записи (ISO 8601). */
   createdAt: string
   /** Дата последнего изменения записи (ISO 8601). */

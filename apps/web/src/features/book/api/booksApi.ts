@@ -50,6 +50,8 @@ export interface UpdateBookEntryDto {
   finishDate?: string
   /** Заметки пользователя. */
   notes?: string
+  /** Скрыта ли запись от других пользователей. */
+  isHidden?: boolean
 }
 
 /**
