@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { ActivityService } from '../activity/activity.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
 import { BookStatus } from '../generated/prisma/client'
@@ -34,6 +35,7 @@ export class BooksService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly activityService: ActivityService,
   ) {}
 
   /**
@@ -117,9 +119,16 @@ export class BooksService {
     // (DB-время @default(now()) и App-время new Date() — это две разные засечки).
     const now = new Date()
     const autoDates = autoStatusDates(dto.status, now)
-    return this.prisma.bookEntry.create({
-      data: { userId, ...dto, createdAt: now, ...autoDates },
-      include: { book: true },
+
+    // Запись и событие журнала создаются вместе: если упадёт одно, не должно
+    // остаться и другое.
+    return this.prisma.$transaction(async (tx) => {
+      const entry = await tx.bookEntry.create({
+        data: { userId, ...dto, createdAt: now, ...autoDates },
+        include: { book: true },
+      })
+      await this.activityService.recordEntryAdded(tx, entry)
+      return entry
     })
   }
 
@@ -141,24 +150,35 @@ export class BooksService {
     const ratingChanged = dto.rating !== undefined && dto.rating !== entry.rating
     const statusChanged = dto.status !== undefined && dto.status !== entry.status
 
-    return this.prisma.bookEntry.update({
-      where: { id: entryId },
-      data: {
-        ...dto,
-        startDate: dto.startDate
-          ? new Date(dto.startDate)
-          : entry.startDate === null
-            ? autoDates.startDate
-            : undefined,
-        finishDate: dto.finishDate
-          ? new Date(dto.finishDate)
-          : entry.finishDate === null
-            ? autoDates.finishDate
-            : undefined,
-        ratingUpdatedAt: ratingChanged ? now : undefined,
-        statusUpdatedAt: statusChanged ? now : undefined,
-      },
-      include: { book: true },
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.bookEntry.update({
+        where: { id: entryId },
+        data: {
+          ...dto,
+          startDate: dto.startDate
+            ? new Date(dto.startDate)
+            : entry.startDate === null
+              ? autoDates.startDate
+              : undefined,
+          finishDate: dto.finishDate
+            ? new Date(dto.finishDate)
+            : entry.finishDate === null
+              ? autoDates.finishDate
+              : undefined,
+          ratingUpdatedAt: ratingChanged ? now : undefined,
+          statusUpdatedAt: statusChanged ? now : undefined,
+        },
+        include: { book: true },
+      })
+
+      if (statusChanged && dto.status) {
+        await this.activityService.recordStatusChanged(tx, entry, entry.status, dto.status, now)
+      }
+      if (ratingChanged) {
+        await this.activityService.recordRated(tx, entry, dto.rating ?? null, entry.rating, now)
+      }
+
+      return updated
     })
   }
 

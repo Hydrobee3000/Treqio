@@ -48,6 +48,9 @@ model User {
 
   bookEntries BookEntry[]
 
+  /// События журнала активности этого пользователя.
+  activities Activity[]
+
   /// Заявки в друзья, отправленные этим пользователем.
   sentFriendRequests     Friendship[] @relation("SentFriendRequests")
   /// Заявки в друзья, полученные этим пользователем.
@@ -126,8 +129,58 @@ model BookEntry {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
+  /// События журнала, относящиеся к этой записи.
+  activities Activity[]
+
   /// Одна запись на пользователя на книгу.
   @@unique([userId, bookId])
+}
+
+/// Тип события в журнале активности.
+enum ActivityType {
+  /// Запись добавлена в список.
+  ENTRY_ADDED
+  /// Изменён статус записи.
+  STATUS_CHANGED
+  /// Поставлена или изменена оценка.
+  RATED
+}
+
+/// Тип записи, к которой относится событие.
+enum ActivitySubject {
+  /// Книга.
+  BOOK
+}
+
+/// Событие журнала активности пользователя.
+model Activity {
+  /// Уникальный идентификатор.
+  id      String          @id @default(cuid())
+  /// Автор действия.
+  userId  String
+  /// Тип события.
+  type    ActivityType
+  /// Тип записи — позволяет фильтровать ленту без обращения к самой записи.
+  subject ActivitySubject
+  /// Подробности события: что было и что стало.
+  payload Json?
+
+  /// Запись о книге, к которой относится событие.
+  /// При добавлении других типов записей рядом появится своё поле.
+  bookEntryId String?
+
+  /// Дата удаления — событие скрыто пользователем, но может быть восстановлено.
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookEntry BookEntry? @relation(fields: [bookEntryId], references: [id], onDelete: Cascade)
+
+  /// Лента запрашивает события пользователей по убыванию даты.
+  @@index([userId, createdAt(sort: Desc)])
+  /// Хронология по конкретной записи.
+  @@index([bookEntryId, createdAt(sort: Desc)])
 }
 
 /// Статус заявки в друзья.

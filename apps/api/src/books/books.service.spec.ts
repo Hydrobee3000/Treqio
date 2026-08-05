@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { ActivityService } from '../activity/activity.service'
 import { BooksService, TRASH_RETENTION_DAYS } from './books.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
@@ -7,9 +8,15 @@ import { UsersService } from '../users/users.service'
 describe('BooksService', () => {
   let service: BooksService
   let prisma: {
-    bookEntry: { findMany: jest.Mock; findUnique: jest.Mock; update: jest.Mock }
+    bookEntry: { findMany: jest.Mock; findUnique: jest.Mock; update: jest.Mock; create: jest.Mock }
+    $transaction: jest.Mock
   }
   let usersService: { getUserForEntries: jest.Mock }
+  let activityService: {
+    recordEntryAdded: jest.Mock
+    recordStatusChanged: jest.Mock
+    recordRated: jest.Mock
+  }
 
   beforeEach(async () => {
     prisma = {
@@ -17,15 +24,27 @@ describe('BooksService', () => {
         findMany: jest.fn().mockResolvedValue([]),
         findUnique: jest.fn(),
         update: jest.fn().mockResolvedValue({}),
+        create: jest.fn().mockResolvedValue({}),
       },
+      // Транзакция выполняет колбэк с тем же мок-клиентом — так проверки
+      // на вызовы внутри неё работают как обычно.
+      $transaction: jest.fn(),
     }
+    prisma.$transaction.mockImplementation((fn: (tx: unknown) => unknown) => fn(prisma))
+
     usersService = { getUserForEntries: jest.fn() }
+    activityService = {
+      recordEntryAdded: jest.fn(),
+      recordStatusChanged: jest.fn(),
+      recordRated: jest.fn(),
+    }
 
     const module = await Test.createTestingModule({
       providers: [
         BooksService,
         { provide: PrismaService, useValue: prisma },
         { provide: UsersService, useValue: usersService },
+        { provide: ActivityService, useValue: activityService },
       ],
     }).compile()
 
@@ -171,6 +190,73 @@ describe('BooksService', () => {
       await expect(service.updateEntry('user-1', 'entry-1', { rating: 9 })).rejects.toThrow(
         NotFoundException,
       )
+    })
+  })
+
+  describe('журнал активности', () => {
+    /** Активная запись пользователя в исходном состоянии. */
+    const activeEntry = {
+      id: 'entry-1',
+      userId: 'user-1',
+      status: 'WANT',
+      rating: null,
+      startDate: null,
+      finishDate: null,
+      deletedAt: null,
+    }
+
+    it('записывает событие о добавлении книги', async () => {
+      const created = { ...activeEntry, createdAt: new Date() }
+      prisma.bookEntry.create.mockResolvedValueOnce(created)
+
+      await service.createEntry('user-1', { bookId: 'book-1', status: 'READING' })
+
+      expect(activityService.recordEntryAdded).toHaveBeenCalledWith(prisma, created)
+    })
+
+    it('записывает смену статуса', async () => {
+      prisma.bookEntry.findUnique.mockResolvedValueOnce(activeEntry)
+
+      await service.updateEntry('user-1', 'entry-1', { status: 'READING' })
+
+      expect(activityService.recordStatusChanged).toHaveBeenCalledWith(
+        prisma,
+        activeEntry,
+        'WANT',
+        'READING',
+        expect.any(Date),
+      )
+    })
+
+    it('записывает оценку вместе с предыдущим значением', async () => {
+      prisma.bookEntry.findUnique.mockResolvedValueOnce({ ...activeEntry, rating: 7 })
+
+      await service.updateEntry('user-1', 'entry-1', { rating: 9 })
+
+      expect(activityService.recordRated).toHaveBeenCalledWith(
+        prisma,
+        expect.objectContaining({ rating: 7 }),
+        9,
+        7,
+        expect.any(Date),
+      )
+    })
+
+    it('не записывает событие, если значение не изменилось', async () => {
+      prisma.bookEntry.findUnique.mockResolvedValueOnce({ ...activeEntry, rating: 9 })
+
+      await service.updateEntry('user-1', 'entry-1', { rating: 9, status: 'WANT' })
+
+      expect(activityService.recordRated).not.toHaveBeenCalled()
+      expect(activityService.recordStatusChanged).not.toHaveBeenCalled()
+    })
+
+    it('пишет запись и событие в одной транзакции', async () => {
+      prisma.bookEntry.create.mockResolvedValueOnce({ ...activeEntry, createdAt: new Date() })
+
+      await service.createEntry('user-1', { bookId: 'book-1', status: 'WANT' })
+
+      expect(prisma.$transaction).toHaveBeenCalled()
     })
   })
 })
