@@ -117,6 +117,8 @@ model BookEntry {
   notes           String?
   /// Скрыта ли запись от других пользователей.
   isHidden        Boolean    @default(false)
+  /// Дата удаления — запись хранится в корзине и может быть восстановлена.
+  deletedAt       DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

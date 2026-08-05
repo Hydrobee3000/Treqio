@@ -7,6 +7,12 @@ import type { UpdateBookDto } from './dto/update-book.dto'
 import type { CreateBookEntryDto } from './dto/create-book-entry.dto'
 import type { UpdateBookEntryDto } from './dto/update-book-entry.dto'
 
+/** Сколько дней удалённая запись хранится в корзине и доступна для восстановления. */
+export const TRASH_RETENTION_DAYS = 30
+
+/** Миллисекунд в сутках. */
+const MS_IN_DAY = 24 * 60 * 60 * 1000
+
 /**
  * Даты, которые проставляются автоматически при переходе записи в указанный
  * статус — начало чтения при «Читаю», начало и завершение при «Прочитано».
@@ -71,13 +77,25 @@ export class BooksService {
 
   /**
    * Получение всех записей пользователя.
-   * Скрытые записи возвращаются только их владельцу.
+   * Скрытые записи возвращаются только их владельцу, удалённые — никому.
    */
   findUserEntries(userId: string, includeHidden = true) {
     return this.prisma.bookEntry.findMany({
-      where: { userId, ...(includeHidden ? {} : { isHidden: false }) },
+      where: { userId, deletedAt: null, ...(includeHidden ? {} : { isHidden: false }) },
       include: { book: true },
       orderBy: { createdAt: 'desc' },
+    })
+  }
+
+  /**
+   * Получение удалённых записей пользователя, доступных для восстановления.
+   */
+  findDeletedEntries(userId: string) {
+    const cutoff = new Date(Date.now() - TRASH_RETENTION_DAYS * MS_IN_DAY)
+    return this.prisma.bookEntry.findMany({
+      where: { userId, deletedAt: { gte: cutoff } },
+      include: { book: true },
+      orderBy: { deletedAt: 'desc' },
     })
   }
 
@@ -109,8 +127,7 @@ export class BooksService {
    * Обновление записи пользователя по ID.
    */
   async updateEntry(userId: string, entryId: string, dto: UpdateBookEntryDto) {
-    const entry = await this.prisma.bookEntry.findUnique({ where: { id: entryId } })
-    if (!entry || entry.userId !== userId) throw new NotFoundException('Запись не найдена')
+    const entry = await this.findOwnedEntry(userId, entryId)
 
     // now общий для autoDates и ratingUpdatedAt: если статус и оценка
     // меняются в одном запросе (например отметили книгу прочитанной сразу
@@ -146,11 +163,42 @@ export class BooksService {
   }
 
   /**
-   * Удаление записи пользователя по ID.
+   * Удаление записи пользователя по ID — запись отправляется в корзину,
+   * откуда её можно восстановить в течение срока хранения.
    */
   async deleteEntry(userId: string, entryId: string) {
+    await this.findOwnedEntry(userId, entryId)
+    return this.prisma.bookEntry.update({
+      where: { id: entryId },
+      data: { deletedAt: new Date() },
+      include: { book: true },
+    })
+  }
+
+  /**
+   * Восстановление удалённой записи из корзины.
+   */
+  async restoreEntry(userId: string, entryId: string) {
     const entry = await this.prisma.bookEntry.findUnique({ where: { id: entryId } })
-    if (!entry || entry.userId !== userId) throw new NotFoundException('Запись не найдена')
-    return this.prisma.bookEntry.delete({ where: { id: entryId } })
+    if (!entry || entry.userId !== userId || !entry.deletedAt) {
+      throw new NotFoundException('Запись не найдена')
+    }
+    return this.prisma.bookEntry.update({
+      where: { id: entryId },
+      data: { deletedAt: null },
+      include: { book: true },
+    })
+  }
+
+  /**
+   * Поиск активной записи, принадлежащей пользователю.
+   * Удалённые записи считаются несуществующими.
+   */
+  private async findOwnedEntry(userId: string, entryId: string) {
+    const entry = await this.prisma.bookEntry.findUnique({ where: { id: entryId } })
+    if (!entry || entry.userId !== userId || entry.deletedAt) {
+      throw new NotFoundException('Запись не найдена')
+    }
+    return entry
   }
 }
