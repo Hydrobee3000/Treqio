@@ -1,6 +1,11 @@
 import { baseApi } from '@/shared/api/baseApi'
 
 /**
+ * Кому видны записи пользователя.
+ */
+export type EntriesVisibility = 'PUBLIC' | 'FRIENDS' | 'PRIVATE'
+
+/**
  * Профиль пользователя, возвращаемый API.
  */
 export interface UserProfile {
@@ -16,8 +21,8 @@ export interface UserProfile {
   bio: string | null
   /** URL аватара. */
   avatarUrl: string | null
-  /** Публичность профиля. */
-  isPublic: boolean
+  /** Кому видны записи пользователя. */
+  entriesVisibility: EntriesVisibility
   /** Дата создания. */
   createdAt: string
   /** Дата последнего обновления. */
@@ -43,8 +48,8 @@ export interface PublicUser {
   avatarUrl: string | null
   /** Краткое описание профиля. */
   bio: string | null
-  /** Публичность профиля. */
-  isPublic: boolean
+  /** Кому видны записи пользователя. */
+  entriesVisibility: EntriesVisibility
   /** Дата регистрации. */
   createdAt: string
 }
@@ -71,8 +76,8 @@ export interface UpdateProfileDto {
   username?: string | undefined
   /** Краткое описание профиля. */
   bio?: string | undefined
-  /** Публичность профиля. */
-  isPublic?: boolean | undefined
+  /** Кому видны записи пользователя. */
+  entriesVisibility?: EntriesVisibility | undefined
 }
 
 /**

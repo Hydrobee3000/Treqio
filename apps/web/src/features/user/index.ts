@@ -11,5 +11,6 @@ export type {
   PublicUser,
   PublicProfile,
   FriendshipState,
+  EntriesVisibility,
 } from './api/userApi'
 export * from './api/constraints'

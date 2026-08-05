@@ -11,6 +11,16 @@ datasource db {
   // URL подключения берётся из prisma.config.ts → process.env["DATABASE_URL"]
 }
 
+/// Кому видны записи пользователя.
+enum EntriesVisibility {
+  /// Всем пользователям.
+  PUBLIC
+  /// Только друзьям.
+  FRIENDS
+  /// Только владельцу.
+  PRIVATE
+}
+
 /// Пользователь приложения.
 model User {
   /// Уникальный идентификатор.
@@ -25,8 +35,8 @@ model User {
   avatarUrl   String?
   /// Краткое описание профиля.
   bio         String?
-  /// Флаг публичности профиля.
-  isPublic    Boolean @default(true)
+  /// Кому видны записи пользователя.
+  entriesVisibility EntriesVisibility @default(PUBLIC)
 
   /// OAuth-провайдер: 'google' | 'github'.
   provider   String
