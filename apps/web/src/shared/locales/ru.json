@@ -176,7 +176,7 @@
       },
       "creators": {
         "label": "Создатели",
-        "desc": "Разработчики приложения",
+        "desc": "О нас",
         "roles": {
           "frontend": "Frontend-разработчик",
           "backend": "Backend-разработчик",
