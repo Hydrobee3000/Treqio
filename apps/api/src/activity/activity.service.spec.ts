@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { ActivityService } from './activity.service'
+import { ActivityService, FEED_PAGE_SIZE } from './activity.service'
+import { FriendsService } from '../friends/friends.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
 
@@ -9,9 +10,10 @@ describe('ActivityService', () => {
   let prisma: {
     bookEntry: { findUnique: jest.Mock }
     activity: { findMany: jest.Mock; findUnique: jest.Mock; update: jest.Mock }
-    user: { findUnique: jest.Mock }
+    user: { findUnique: jest.Mock; findMany: jest.Mock }
   }
   let usersService: { canViewUserEntries: jest.Mock }
+  let friendsService: { getFriendIds: jest.Mock }
 
   /** Чужая запись, открытая для просмотра. */
   const foreignEntry = { userId: 'user-2', isHidden: false, deletedAt: null }
@@ -24,15 +26,17 @@ describe('ActivityService', () => {
         findUnique: jest.fn(),
         update: jest.fn().mockResolvedValue({}),
       },
-      user: { findUnique: jest.fn() },
+      user: { findUnique: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
     }
     usersService = { canViewUserEntries: jest.fn().mockResolvedValue(true) }
+    friendsService = { getFriendIds: jest.fn().mockResolvedValue([]) }
 
     const module = await Test.createTestingModule({
       providers: [
         ActivityService,
         { provide: PrismaService, useValue: prisma },
         { provide: UsersService, useValue: usersService },
+        { provide: FriendsService, useValue: friendsService },
       ],
     }).compile()
 
@@ -74,6 +78,104 @@ describe('ActivityService', () => {
       }
       expect(where.deletedAt).toBeNull()
       expect(where.bookEntry.deletedAt).toBeNull()
+    })
+  })
+
+  describe('findFeed', () => {
+    /** Готовит ленту с указанным числом событий у одного друга. */
+    const withEvents = (count: number) => {
+      friendsService.getFriendIds.mockResolvedValueOnce(['friend-1'])
+      prisma.user.findMany.mockResolvedValueOnce([{ id: 'friend-1' }])
+      prisma.activity.findMany.mockResolvedValueOnce(
+        Array.from({ length: count }, (_, i) => ({ id: `act-${i}` })),
+      )
+    }
+
+    it('возвращает пустую ленту, если друзей нет', async () => {
+      friendsService.getFriendIds.mockResolvedValueOnce([])
+
+      const result = await service.findFeed('user-1')
+
+      expect(result).toEqual({ items: [], nextCursor: null })
+      expect(prisma.activity.findMany).not.toHaveBeenCalled()
+    })
+
+    it('исключает друзей, закрывших свои записи', async () => {
+      friendsService.getFriendIds.mockResolvedValueOnce(['friend-1'])
+      prisma.user.findMany.mockResolvedValueOnce([])
+
+      const result = await service.findFeed('user-1')
+
+      expect(result.items).toEqual([])
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: { in: ['friend-1'] }, entriesVisibility: { not: 'PRIVATE' } },
+        }),
+      )
+      expect(prisma.activity.findMany).not.toHaveBeenCalled()
+    })
+
+    it('не отдаёт события скрытых и удалённых книг', async () => {
+      withEvents(1)
+
+      await service.findFeed('user-1')
+
+      const where = prisma.activity.findMany.mock.calls[0][0].where as {
+        deletedAt: null
+        bookEntry: { isHidden: boolean; deletedAt: null }
+      }
+      expect(where.deletedAt).toBeNull()
+      expect(where.bookEntry).toEqual({ isHidden: false, deletedAt: null })
+    })
+
+    it('исключает повторные оценки', async () => {
+      withEvents(1)
+
+      await service.findFeed('user-1')
+
+      const where = prisma.activity.findMany.mock.calls[0][0].where as { OR: unknown[] }
+      // Первая оценка отличается от переоценки тем, что предыдущего значения нет.
+      expect(where.OR).toHaveLength(2)
+    })
+
+    it('не отдаёт курсор, когда лента закончилась', async () => {
+      withEvents(3)
+
+      const result = await service.findFeed('user-1')
+
+      expect(result.items).toHaveLength(3)
+      expect(result.nextCursor).toBeNull()
+    })
+
+    it('отдаёт курсор и обрезает лишнее, когда есть продолжение', async () => {
+      withEvents(FEED_PAGE_SIZE + 1)
+
+      const result = await service.findFeed('user-1')
+
+      expect(result.items).toHaveLength(FEED_PAGE_SIZE)
+      expect(result.nextCursor).toBe(`act-${FEED_PAGE_SIZE - 1}`)
+    })
+
+    it('продолжает ленту с переданного курсора, не повторяя его', async () => {
+      withEvents(1)
+
+      await service.findFeed('user-1', 'act-5')
+
+      const args = prisma.activity.findMany.mock.calls[0][0] as {
+        cursor: { id: string }
+        skip: number
+      }
+      expect(args.cursor).toEqual({ id: 'act-5' })
+      expect(args.skip).toBe(1)
+    })
+
+    it('сортирует по дате, а при совпадении — по идентификатору', async () => {
+      withEvents(1)
+
+      await service.findFeed('user-1')
+
+      const args = prisma.activity.findMany.mock.calls[0][0] as { orderBy: unknown[] }
+      expect(args.orderBy).toEqual([{ createdAt: 'desc' }, { id: 'desc' }])
     })
   })
 

@@ -105,6 +105,21 @@ export class FriendsService {
   }
 
   /**
+   * Идентификаторы друзей — для случаев, когда профили не нужны.
+   */
+  async getFriendIds(userId: string): Promise<string[]> {
+    const rows = await this.prisma.friendship.findMany({
+      where: {
+        status: 'ACCEPTED',
+        OR: [{ senderId: userId }, { receiverId: userId }],
+      },
+      select: { senderId: true, receiverId: true },
+    })
+
+    return rows.map((row) => (row.senderId === userId ? row.receiverId : row.senderId))
+  }
+
+  /**
    * Входящие заявки в друзья, ожидающие решения пользователя.
    */
   getIncomingRequests(userId: string) {
