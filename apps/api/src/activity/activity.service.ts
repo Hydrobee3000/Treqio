@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { ActivitySubject, ActivityType } from '../generated/prisma/client'
 import type { BookEntry, BookStatus, Prisma } from '../generated/prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
+import { UsersService } from '../users/users.service'
 import type { ActivityPayloadMap } from './activity.payload'
 
 /**
@@ -24,7 +25,10 @@ function toJson<T extends ActivityType>(payload: ActivityPayloadMap[T]): Prisma.
  */
 @Injectable()
 export class ActivityService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usersService: UsersService,
+  ) {}
 
   /**
    * Запись события о добавлении книги в список.
@@ -90,8 +94,21 @@ export class ActivityService {
 
   /**
    * Хронология событий по конкретной записи.
+   * Скрытая, удалённая и недоступная запись считается несуществующей —
+   * иначе по ответу можно было бы узнать о её существовании.
    */
-  findByEntry(entryId: string) {
+  async findByEntry(viewerId: string, entryId: string) {
+    const entry = await this.prisma.bookEntry.findUnique({
+      where: { id: entryId },
+      select: { userId: true, isHidden: true, deletedAt: true },
+    })
+    if (!entry || entry.deletedAt) throw new NotFoundException('Запись не найдена')
+
+    if (entry.userId !== viewerId) {
+      const allowed = await this.usersService.canViewUserEntries(viewerId, entry.userId)
+      if (!allowed || entry.isHidden) throw new NotFoundException('Запись не найдена')
+    }
+
     return this.prisma.activity.findMany({
       where: { bookEntryId: entryId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
