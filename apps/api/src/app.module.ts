@@ -6,12 +6,13 @@ import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { BooksModule } from './books/books.module'
 import { FriendsModule } from './friends/friends.module'
+import { ActivityModule } from './activity/activity.module'
 
 /**
  * Корневой модуль приложения.
  */
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, BooksModule, FriendsModule],
+  imports: [PrismaModule, AuthModule, UsersModule, BooksModule, FriendsModule, ActivityModule],
   controllers: [AppController],
   providers: [AppService],
 })
