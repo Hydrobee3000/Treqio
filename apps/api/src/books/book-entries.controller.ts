@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { Request } from 'express'
+import { ActivityService } from '../activity/activity.service'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { BooksService } from './books.service'
 import { CreateBookEntryDto } from './dto/create-book-entry.dto'
@@ -22,7 +23,10 @@ interface JwtUser {
 @UseGuards(JwtAuthGuard)
 @Controller('books/entries')
 export class BookEntriesController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(
+    private readonly booksService: BooksService,
+    private readonly activityService: ActivityService,
+  ) {}
 
   /**
    * Возвращает все записи текущего пользователя.
@@ -72,6 +76,16 @@ export class BookEntriesController {
   update(@Req() req: Request, @Param('id') id: string, @Body() dto: UpdateBookEntryDto) {
     const { userId } = req.user as JwtUser
     return this.booksService.updateEntry(userId, id, dto)
+  }
+
+  /**
+   * Возвращает хронологию событий по конкретной записи.
+   */
+  @ApiOperation({ summary: 'Получить активность по записи' })
+  @Get(':id/activity')
+  findActivity(@Req() req: Request, @Param('id') id: string) {
+    const { userId } = req.user as JwtUser
+    return this.activityService.findByEntry(userId, id)
   }
 
   /**

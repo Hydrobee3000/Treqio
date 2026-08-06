@@ -139,6 +139,23 @@ export class UsersService {
   }
 
   /**
+   * Проверка доступа к записям пользователя по идентификаторам.
+   * Нужна там, где известен владелец записи, но не его никнейм.
+   */
+  async canViewUserEntries(viewerId: string, ownerId: string): Promise<boolean> {
+    if (viewerId === ownerId) return true
+
+    const owner = await this.prisma.user.findUnique({
+      where: { id: ownerId },
+      select: { entriesVisibility: true },
+    })
+    if (!owner) return false
+
+    const { state } = await this.getFriendshipView(viewerId, ownerId)
+    return canViewEntries(owner.entriesVisibility, false, state)
+  }
+
+  /**
    * Поиск пользователей по никнейму и отображаемому имени.
    */
   async searchUsers(viewerId: string, query: string): Promise<PublicUser[]> {
