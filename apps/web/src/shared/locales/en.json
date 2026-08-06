@@ -170,6 +170,10 @@
         "label": "Language",
         "desc": "Interface language"
       },
+      "privacy": {
+        "label": "Privacy",
+        "desc": "Access to your entries and activity"
+      },
       "creators": {
         "label": "Creators",
         "desc": "The people behind the app",
@@ -205,6 +209,10 @@
     "language": {
       "ru": "Русский",
       "en": "English"
+    },
+    "privacy": {
+      "label": "Visibility",
+      "desc": "Visibility of your entries and activity."
     }
   },
   "home": {

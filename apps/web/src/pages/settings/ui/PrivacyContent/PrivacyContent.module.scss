@@ -1,0 +1,19 @@
+@use '@/shared/styles/variables' as *;
+
+.privacy {
+  &__label {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-2);
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+}

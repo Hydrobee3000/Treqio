@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Languages,
+  Lock,
   Palette,
   TriangleAlert,
   UserRound,
@@ -15,6 +16,7 @@ import { useAppSelector } from '@/shared/lib/store'
 import { AppearanceContent } from './AppearanceContent/AppearanceContent'
 import { CreatorsContent } from './CreatorsContent/CreatorsContent'
 import { LanguageContent } from './LanguageContent/LanguageContent'
+import { PrivacyContent } from './PrivacyContent/PrivacyContent'
 import styles from './SettingsPage.module.scss'
 
 /** Раздел, открываемый по умолчанию на десктопе при заходе на /settings без раздела. */
@@ -69,6 +71,13 @@ export function SettingsPage() {
       desc: t('settings.sections.language.desc'),
       icon: <Languages size={18} />,
       content: <LanguageContent />,
+    },
+    {
+      id: 'privacy',
+      label: t('settings.sections.privacy.label'),
+      desc: t('settings.sections.privacy.desc'),
+      icon: <Lock size={18} />,
+      content: <PrivacyContent />,
     },
     {
       id: 'creators',
