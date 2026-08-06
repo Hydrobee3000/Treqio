@@ -8,7 +8,7 @@ describe('ActivityService', () => {
   let service: ActivityService
   let prisma: {
     bookEntry: { findUnique: jest.Mock }
-    activity: { findMany: jest.Mock }
+    activity: { findMany: jest.Mock; findUnique: jest.Mock; update: jest.Mock }
     user: { findUnique: jest.Mock }
   }
   let usersService: { canViewUserEntries: jest.Mock }
@@ -19,7 +19,11 @@ describe('ActivityService', () => {
   beforeEach(async () => {
     prisma = {
       bookEntry: { findUnique: jest.fn() },
-      activity: { findMany: jest.fn().mockResolvedValue([]) },
+      activity: {
+        findMany: jest.fn().mockResolvedValue([]),
+        findUnique: jest.fn(),
+        update: jest.fn().mockResolvedValue({}),
+      },
       user: { findUnique: jest.fn() },
     }
     usersService = { canViewUserEntries: jest.fn().mockResolvedValue(true) }
@@ -70,6 +74,82 @@ describe('ActivityService', () => {
       }
       expect(where.deletedAt).toBeNull()
       expect(where.bookEntry.deletedAt).toBeNull()
+    })
+  })
+
+  describe('deleteEvent', () => {
+    it('помечает событие удалённым, а не стирает его', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'user-1',
+        deletedAt: null,
+      })
+
+      await service.deleteEvent('user-1', 'act-1')
+
+      expect(prisma.activity.update).toHaveBeenCalledWith({
+        where: { id: 'act-1' },
+        data: { deletedAt: expect.any(Date) },
+      })
+    })
+
+    it('не даёт удалить чужое событие', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'someone-else',
+        deletedAt: null,
+      })
+
+      await expect(service.deleteEvent('user-1', 'act-1')).rejects.toThrow(NotFoundException)
+      expect(prisma.activity.update).not.toHaveBeenCalled()
+    })
+
+    it('не даёт удалить уже удалённое', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'user-1',
+        deletedAt: new Date(),
+      })
+
+      await expect(service.deleteEvent('user-1', 'act-1')).rejects.toThrow(NotFoundException)
+    })
+  })
+
+  describe('restoreEvent', () => {
+    it('снимает отметку об удалении', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'user-1',
+        deletedAt: new Date(),
+      })
+
+      await service.restoreEvent('user-1', 'act-1')
+
+      expect(prisma.activity.update).toHaveBeenCalledWith({
+        where: { id: 'act-1' },
+        data: { deletedAt: null },
+      })
+    })
+
+    it('не даёт восстановить то, что не удаляли', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'user-1',
+        deletedAt: null,
+      })
+
+      await expect(service.restoreEvent('user-1', 'act-1')).rejects.toThrow(NotFoundException)
+      expect(prisma.activity.update).not.toHaveBeenCalled()
+    })
+
+    it('не даёт восстановить чужое событие', async () => {
+      prisma.activity.findUnique.mockResolvedValueOnce({
+        id: 'act-1',
+        userId: 'someone-else',
+        deletedAt: new Date(),
+      })
+
+      await expect(service.restoreEvent('user-1', 'act-1')).rejects.toThrow(NotFoundException)
     })
   })
 

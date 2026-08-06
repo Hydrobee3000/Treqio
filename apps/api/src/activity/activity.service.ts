@@ -93,6 +93,43 @@ export class ActivityService {
   }
 
   /**
+   * Удаление события из ленты — само событие остаётся и может быть восстановлено.
+   */
+  async deleteEvent(userId: string, activityId: string) {
+    await this.findOwnEvent(userId, activityId, false)
+    return this.prisma.activity.update({
+      where: { id: activityId },
+      data: { deletedAt: new Date() },
+    })
+  }
+
+  /**
+   * Возврат ранее удалённого события в ленту.
+   */
+  async restoreEvent(userId: string, activityId: string) {
+    await this.findOwnEvent(userId, activityId, true)
+    return this.prisma.activity.update({
+      where: { id: activityId },
+      data: { deletedAt: null },
+    })
+  }
+
+  /**
+   * Поиск своего события в нужном состоянии.
+   * Чужое событие считается несуществующим — по ответу нельзя выяснить,
+   * что оно есть у кого-то другого.
+   */
+  private async findOwnEvent(userId: string, activityId: string, expectDeleted: boolean) {
+    const event = await this.prisma.activity.findUnique({ where: { id: activityId } })
+    const isDeleted = !!event?.deletedAt
+
+    if (!event || event.userId !== userId || isDeleted !== expectDeleted) {
+      throw new NotFoundException('Событие не найдено')
+    }
+    return event
+  }
+
+  /**
    * Лента событий пользователя по его никнейму.
    */
   async findByUsername(viewerId: string, username: string) {

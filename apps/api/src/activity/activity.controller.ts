@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common'
+import { Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { Request } from 'express'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
@@ -40,5 +40,25 @@ export class ActivityController {
   findByUsername(@Req() req: Request, @Param('username') username: string) {
     const { userId } = req.user as JwtUser
     return this.activityService.findByUsername(userId, username)
+  }
+
+  /**
+   * Возвращает удалённое событие обратно в ленту.
+   */
+  @ApiOperation({ summary: 'Восстановить событие' })
+  @Post(':id/restore')
+  restore(@Req() req: Request, @Param('id') id: string) {
+    const { userId } = req.user as JwtUser
+    return this.activityService.restoreEvent(userId, id)
+  }
+
+  /**
+   * Убирает событие из ленты.
+   */
+  @ApiOperation({ summary: 'Удалить событие' })
+  @Delete(':id')
+  remove(@Req() req: Request, @Param('id') id: string) {
+    const { userId } = req.user as JwtUser
+    return this.activityService.deleteEvent(userId, id)
   }
 }
