@@ -1,9 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { ActivitySubject, ActivityType } from '../generated/prisma/client'
-import type { BookEntry, BookStatus, Prisma } from '../generated/prisma/client'
+import {
+  ActivitySubject,
+  ActivityType,
+  EntriesVisibility,
+  Prisma,
+} from '../generated/prisma/client'
+import type { BookEntry, BookStatus } from '../generated/prisma/client'
+import { FriendsService } from '../friends/friends.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
 import type { ActivityPayloadMap } from './activity.payload'
+
+/** Сколько событий отдаётся в одной порции ленты. */
+export const FEED_PAGE_SIZE = 20
 
 /**
  * Клиент Prisma внутри транзакции — события журнала пишутся тем же клиентом,
@@ -28,6 +37,7 @@ export class ActivityService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly friendsService: FriendsService,
   ) {}
 
   /**
@@ -90,6 +100,55 @@ export class ActivityService {
         createdAt: at,
       },
     })
+  }
+
+  /**
+   * Лента событий друзей, от новых к старым, порциями.
+   *
+   * Видимость упрощается тем, что в ленте и так только друзья: настройки
+   * «всем» и «только друзьям» дают одинаковый результат, отличается лишь
+   * «только мне» — такие пользователи из ленты выпадают целиком.
+   */
+  async findFeed(viewerId: string, cursor?: string, limit = FEED_PAGE_SIZE) {
+    const friendIds = await this.friendsService.getFriendIds(viewerId)
+    if (friendIds.length === 0) return { items: [], nextCursor: null }
+
+    const authors = await this.prisma.user.findMany({
+      where: { id: { in: friendIds }, entriesVisibility: { not: EntriesVisibility.PRIVATE } },
+      select: { id: true },
+    })
+    if (authors.length === 0) return { items: [], nextCursor: null }
+
+    // Берём на одну запись больше запрошенного: если она есть, значит лента
+    // не кончилась и клиенту нужно отдать курсор для следующей порции.
+    const rows = await this.prisma.activity.findMany({
+      where: {
+        userId: { in: authors.map((a) => a.id) },
+        deletedAt: null,
+        bookEntry: { isHidden: false, deletedAt: null },
+        // Повторные оценки в ленту не идут: у первой оценки предыдущего
+        // значения нет, у переоценки оно заполнено.
+        OR: [
+          { type: { not: ActivityType.RATED } },
+          { payload: { path: ['previous'], equals: Prisma.JsonNull } },
+        ],
+      },
+      include: {
+        bookEntry: { include: { book: true } },
+        user: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    })
+
+    const hasMore = rows.length > limit
+    const items = hasMore ? rows.slice(0, limit) : rows
+
+    return {
+      items,
+      nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
+    }
   }
 
   /**

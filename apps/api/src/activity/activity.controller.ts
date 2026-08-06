@@ -1,5 +1,5 @@
-import { Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import type { Request } from 'express'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { ActivityService } from './activity.service'
@@ -21,6 +21,17 @@ interface JwtUser {
 @Controller('activity')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
+
+  /**
+   * Возвращает ленту событий друзей порциями.
+   */
+  @ApiOperation({ summary: 'Получить ленту друзей' })
+  @ApiQuery({ name: 'cursor', required: false, description: 'Курсор следующей порции' })
+  @Get('feed')
+  findFeed(@Req() req: Request, @Query('cursor') cursor?: string) {
+    const { userId } = req.user as JwtUser
+    return this.activityService.findFeed(userId, cursor)
+  }
 
   /**
    * Возвращает ленту событий текущего пользователя.
