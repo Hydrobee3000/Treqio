@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { EntriesVisibilityPicker } from '../EntriesVisibilityPicker/EntriesVisibilityPicker'
 import styles from './PrivacyContent.module.scss'
 
 /**
@@ -11,6 +12,9 @@ export function PrivacyContent() {
     <>
       <p className={styles['privacy__label']}>{t('settings.privacy.label')}</p>
       <p className={styles['privacy__desc']}>{t('settings.privacy.desc')}</p>
+      <div className={styles['privacy__block']}>
+        <EntriesVisibilityPicker />
+      </div>
     </>
   )
 }
