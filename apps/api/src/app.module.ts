@@ -7,12 +7,21 @@ import { UsersModule } from './users/users.module'
 import { BooksModule } from './books/books.module'
 import { FriendsModule } from './friends/friends.module'
 import { ActivityModule } from './activity/activity.module'
+import { FeedPreferencesModule } from './feed-preferences/feed-preferences.module'
 
 /**
  * Корневой модуль приложения.
  */
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, BooksModule, FriendsModule, ActivityModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    UsersModule,
+    BooksModule,
+    FriendsModule,
+    ActivityModule,
+    FeedPreferencesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

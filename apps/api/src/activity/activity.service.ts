@@ -6,6 +6,7 @@ import {
   Prisma,
 } from '../generated/prisma/client'
 import type { BookEntry, BookStatus } from '../generated/prisma/client'
+import { FeedPreferencesService } from '../feed-preferences/feed-preferences.service'
 import { FriendsService } from '../friends/friends.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
@@ -38,6 +39,7 @@ export class ActivityService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly friendsService: FriendsService,
+    private readonly feedPreferencesService: FeedPreferencesService,
   ) {}
 
   /**
@@ -113,8 +115,16 @@ export class ActivityService {
     const friendIds = await this.friendsService.getFriendIds(viewerId)
     if (friendIds.length === 0) return { items: [], nextCursor: null }
 
+    const excluded = new Set(await this.feedPreferencesService.getExcludedAuthorIds(viewerId))
+    const candidateIds = friendIds.filter((id) => !excluded.has(id))
+    if (candidateIds.length === 0) return { items: [], nextCursor: null }
+
     const authors = await this.prisma.user.findMany({
-      where: { id: { in: friendIds }, entriesVisibility: { not: EntriesVisibility.PRIVATE } },
+      where: {
+        id: { in: candidateIds },
+        entriesVisibility: { not: EntriesVisibility.PRIVATE },
+        shareActivity: true,
+      },
       select: { id: true },
     })
     if (authors.length === 0) return { items: [], nextCursor: null }
