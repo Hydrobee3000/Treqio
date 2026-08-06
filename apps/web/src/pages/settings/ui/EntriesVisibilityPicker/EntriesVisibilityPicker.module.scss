@@ -1,0 +1,76 @@
+@use '@/shared/styles/variables' as *;
+
+.visibility {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 2px solid var(--color-divider);
+    border-radius: 14px;
+    background: var(--color-paper);
+    color: var(--color-text-2);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition:
+      border-color 0.2s,
+      color $transition-fast,
+      box-shadow 0.2s;
+
+    &:hover:not(:disabled) {
+      color: var(--color-text);
+      box-shadow: $shadow-hover;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    &--active {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+      color: var(--color-primary);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__label {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__desc {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text-2);
+  }
+
+  &__error {
+    margin: 0;
+    font-size: 13px;
+    color: $color-danger;
+  }
+
+  &__guest {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+}

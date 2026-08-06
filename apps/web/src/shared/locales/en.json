@@ -172,7 +172,7 @@
       },
       "privacy": {
         "label": "Privacy",
-        "desc": "Access to your entries and activity"
+        "desc": "Access to entries"
       },
       "creators": {
         "label": "Creators",
@@ -212,7 +212,23 @@
     },
     "privacy": {
       "label": "Visibility",
-      "desc": "Visibility of your entries and activity."
+      "desc": "Visibility of your entries and activity.",
+      "guest": "Sign in to manage privacy settings.",
+      "saveError": "Couldn't save. Please try again.",
+      "visibility": {
+        "PUBLIC": {
+          "label": "Everyone",
+          "desc": "Anyone can see your entries"
+        },
+        "FRIENDS": {
+          "label": "Friends only",
+          "desc": "Only people in your friends list can see your entries"
+        },
+        "PRIVATE": {
+          "label": "Only me",
+          "desc": "Only you can see your entries"
+        }
+      }
     }
   },
   "home": {
