@@ -251,6 +251,34 @@ describe('BooksService', () => {
       expect(activityService.recordStatusChanged).not.toHaveBeenCalled()
     })
 
+    it('ставит событие датой, указанной задним числом', async () => {
+      const finishedLongAgo = new Date('2026-07-01T10:00:00.000Z')
+      prisma.bookEntry.findUnique.mockResolvedValueOnce(activeEntry)
+      prisma.bookEntry.update.mockResolvedValueOnce({
+        ...activeEntry,
+        status: 'DONE',
+        finishDate: finishedLongAgo,
+      })
+
+      await service.updateEntry('user-1', 'entry-1', {
+        status: 'DONE',
+        finishDate: finishedLongAgo.toISOString(),
+      })
+
+      const eventDate = activityService.recordStatusChanged.mock.calls[0][4] as Date
+      expect(eventDate).toEqual(finishedLongAgo)
+    })
+
+    it('ставит событие текущим моментом, если дата не указана', async () => {
+      prisma.bookEntry.findUnique.mockResolvedValueOnce(activeEntry)
+      prisma.bookEntry.update.mockResolvedValueOnce({ ...activeEntry, status: 'DONE' })
+
+      await service.updateEntry('user-1', 'entry-1', { status: 'DONE' })
+
+      const eventDate = activityService.recordStatusChanged.mock.calls[0][4] as Date
+      expect(eventDate.getTime()).toBeCloseTo(Date.now(), -3)
+    })
+
     it('пишет запись и событие в одной транзакции', async () => {
       prisma.bookEntry.create.mockResolvedValueOnce({ ...activeEntry, createdAt: new Date() })
 

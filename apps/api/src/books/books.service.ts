@@ -15,6 +15,21 @@ export const TRASH_RETENTION_DAYS = 30
 const MS_IN_DAY = 24 * 60 * 60 * 1000
 
 /**
+ * Дата события о смене статуса. Если пользователь указал дату начала или
+ * завершения чтения вручную, событие встаёт в ленту этой датой — иначе
+ * отметка о давно прочитанной книге попала бы в сегодняшний день.
+ */
+function statusEventDate(
+  dto: UpdateBookEntryDto,
+  updated: { startDate: Date | null; finishDate: Date | null },
+  fallback: Date,
+): Date {
+  if (dto.status === BookStatus.READING && dto.startDate) return updated.startDate ?? fallback
+  if (dto.status === BookStatus.DONE && dto.finishDate) return updated.finishDate ?? fallback
+  return fallback
+}
+
+/**
  * Даты, которые проставляются автоматически при переходе записи в указанный
  * статус — начало чтения при «Читаю», начало и завершение при «Прочитано».
  */
@@ -172,7 +187,15 @@ export class BooksService {
       })
 
       if (statusChanged && dto.status) {
-        await this.activityService.recordStatusChanged(tx, entry, entry.status, dto.status, now)
+        // Дату можно указать задним числом («дочитал неделю назад») — событие
+        // должно встать в ленту тем же днём, а не днём, когда его отметили.
+        await this.activityService.recordStatusChanged(
+          tx,
+          entry,
+          entry.status,
+          dto.status,
+          statusEventDate(dto, updated, now),
+        )
       }
       if (ratingChanged) {
         await this.activityService.recordRated(tx, entry, dto.rating ?? null, entry.rating, now)

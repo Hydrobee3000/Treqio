@@ -93,6 +93,41 @@ export class ActivityService {
   }
 
   /**
+   * Лента событий пользователя по его никнейму.
+   */
+  async findByUsername(viewerId: string, username: string) {
+    const owner = await this.prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    })
+    if (!owner) throw new NotFoundException('Пользователь не найден')
+
+    return this.findByUser(viewerId, owner.id)
+  }
+
+  /**
+   * Лента событий пользователя для его профиля.
+   * Скрытые записи ведут себя как в библиотеке: владелец видит события по ним,
+   * остальные нет. События удалённых записей не отдаются никому.
+   */
+  async findByUser(viewerId: string, ownerId: string) {
+    const allowed = await this.usersService.canViewUserEntries(viewerId, ownerId)
+    if (!allowed) throw new NotFoundException('Профиль не найден')
+
+    const isOwner = viewerId === ownerId
+
+    return this.prisma.activity.findMany({
+      where: {
+        userId: ownerId,
+        deletedAt: null,
+        bookEntry: { deletedAt: null, ...(isOwner ? {} : { isHidden: false }) },
+      },
+      include: { bookEntry: { include: { book: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+  }
+
+  /**
    * Хронология событий по конкретной записи.
    * Скрытая, удалённая и недоступная запись считается несуществующей —
    * иначе по ответу можно было бы узнать о её существовании.
