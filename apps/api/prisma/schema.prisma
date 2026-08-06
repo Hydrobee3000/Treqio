@@ -37,6 +37,8 @@ model User {
   bio         String?
   /// Кому видны записи пользователя.
   entriesVisibility EntriesVisibility @default(PUBLIC)
+  /// Попадает ли активность пользователя в ленты друзей.
+  shareActivity     Boolean           @default(true)
 
   /// OAuth-провайдер: 'google' | 'github'.
   provider   String
@@ -55,6 +57,11 @@ model User {
   sentFriendRequests     Friendship[] @relation("SentFriendRequests")
   /// Заявки в друзья, полученные этим пользователем.
   receivedFriendRequests Friendship[] @relation("ReceivedFriendRequests")
+
+  /// Настройки ленты, сделанные этим пользователем.
+  feedPreferences         FeedPreference[] @relation("FeedPreferenceOwner")
+  /// Настройки ленты, направленные на этого пользователя.
+  targetedFeedPreferences FeedPreference[] @relation("FeedPreferenceTarget")
 
   @@unique([provider, providerId])
 }
@@ -212,4 +219,36 @@ model Friendship {
 
   /// Одна заявка/дружба на пару отправитель-адресат в конкретном направлении.
   @@unique([senderId, receiverId])
+}
+
+/// Вид настройки ленты.
+enum FeedPreferenceKind {
+  /// Активность владельца настройки не показывается целевому пользователю.
+  HIDDEN_FROM
+  /// Активность целевого пользователя не показывается владельцу настройки.
+  MUTED
+}
+
+/// Настройка ленты, сделанная одним пользователем в отношении другого.
+model FeedPreference {
+  /// Уникальный идентификатор.
+  id       String             @id @default(cuid())
+  /// Пользователь, сделавший настройку.
+  ownerId  String
+  /// Пользователь, которого настройка касается.
+  targetId String
+  /// Вид настройки.
+  kind     FeedPreferenceKind
+
+  createdAt DateTime @default(now())
+
+  /// Пользователь, сделавший настройку.
+  owner  User @relation("FeedPreferenceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  /// Пользователь, которого настройка касается.
+  target User @relation("FeedPreferenceTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  /// Одна настройка каждого вида на пару пользователей.
+  @@unique([ownerId, targetId, kind])
+  /// Лента ищет настройки и по второй стороне — кто скрылся от читателя.
+  @@index([targetId, kind])
 }

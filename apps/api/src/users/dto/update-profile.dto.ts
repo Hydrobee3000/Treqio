@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  IsBoolean,
   IsEnum,
   IsNotIn,
   IsOptional,
@@ -60,4 +61,10 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsEnum(EntriesVisibility)
   entriesVisibility?: EntriesVisibility
+
+  /** Попадает ли активность пользователя в ленты друзей. */
+  @ApiPropertyOptional({ description: 'Делиться активностью с друзьями' })
+  @IsOptional()
+  @IsBoolean()
+  shareActivity?: boolean
 }

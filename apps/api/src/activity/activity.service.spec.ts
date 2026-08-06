@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { ActivityService, FEED_PAGE_SIZE } from './activity.service'
+import { FeedPreferencesService } from '../feed-preferences/feed-preferences.service'
 import { FriendsService } from '../friends/friends.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
@@ -14,6 +15,7 @@ describe('ActivityService', () => {
   }
   let usersService: { canViewUserEntries: jest.Mock }
   let friendsService: { getFriendIds: jest.Mock }
+  let feedPreferencesService: { getExcludedAuthorIds: jest.Mock }
 
   /** Чужая запись, открытая для просмотра. */
   const foreignEntry = { userId: 'user-2', isHidden: false, deletedAt: null }
@@ -30,6 +32,7 @@ describe('ActivityService', () => {
     }
     usersService = { canViewUserEntries: jest.fn().mockResolvedValue(true) }
     friendsService = { getFriendIds: jest.fn().mockResolvedValue([]) }
+    feedPreferencesService = { getExcludedAuthorIds: jest.fn().mockResolvedValue([]) }
 
     const module = await Test.createTestingModule({
       providers: [
@@ -37,6 +40,7 @@ describe('ActivityService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: UsersService, useValue: usersService },
         { provide: FriendsService, useValue: friendsService },
+        { provide: FeedPreferencesService, useValue: feedPreferencesService },
       ],
     }).compile()
 
@@ -100,7 +104,7 @@ describe('ActivityService', () => {
       expect(prisma.activity.findMany).not.toHaveBeenCalled()
     })
 
-    it('исключает друзей, закрывших свои записи', async () => {
+    it('исключает друзей, закрывших свои записи и отключивших обмен активностью', async () => {
       friendsService.getFriendIds.mockResolvedValueOnce(['friend-1'])
       prisma.user.findMany.mockResolvedValueOnce([])
 
@@ -109,10 +113,36 @@ describe('ActivityService', () => {
       expect(result.items).toEqual([])
       expect(prisma.user.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: { in: ['friend-1'] }, entriesVisibility: { not: 'PRIVATE' } },
+          where: {
+            id: { in: ['friend-1'] },
+            entriesVisibility: { not: 'PRIVATE' },
+            shareActivity: true,
+          },
         }),
       )
       expect(prisma.activity.findMany).not.toHaveBeenCalled()
+    })
+
+    it('не запрашивает события заглушённых и скрывшихся', async () => {
+      friendsService.getFriendIds.mockResolvedValueOnce(['friend-1', 'friend-2'])
+      feedPreferencesService.getExcludedAuthorIds.mockResolvedValueOnce(['friend-2'])
+      prisma.user.findMany.mockResolvedValueOnce([{ id: 'friend-1' }])
+
+      await service.findFeed('user-1')
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ id: { in: ['friend-1'] } }) }),
+      )
+    })
+
+    it('возвращает пустую ленту, когда исключены все друзья', async () => {
+      friendsService.getFriendIds.mockResolvedValueOnce(['friend-1'])
+      feedPreferencesService.getExcludedAuthorIds.mockResolvedValueOnce(['friend-1'])
+
+      const result = await service.findFeed('user-1')
+
+      expect(result).toEqual({ items: [], nextCursor: null })
+      expect(prisma.user.findMany).not.toHaveBeenCalled()
     })
 
     it('не отдаёт события скрытых и удалённых книг', async () => {
