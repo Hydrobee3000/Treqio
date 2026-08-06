@@ -176,7 +176,7 @@
       },
       "creators": {
         "label": "Creators",
-        "desc": "The people behind the app",
+        "desc": "About us",
         "roles": {
           "frontend": "Frontend-developer",
           "backend": "Backend-developer",
