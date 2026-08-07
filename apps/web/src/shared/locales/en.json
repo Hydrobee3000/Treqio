@@ -211,8 +211,7 @@
       "en": "English"
     },
     "privacy": {
-      "label": "Visibility",
-      "desc": "Visibility of your entries and activity.",
+      "label": "Entries visibility",
       "guest": "Sign in to manage privacy settings.",
       "saveError": "Couldn't save. Please try again.",
       "visibility": {
@@ -228,6 +227,12 @@
           "label": "Only me",
           "desc": "Only you can see your entries"
         }
+      },
+      "shareActivity": {
+        "title": "Activity visibility",
+        "label": "Share activity with friends",
+        "enable": "Enable activity sharing",
+        "disable": "Disable activity sharing"
       }
     }
   },

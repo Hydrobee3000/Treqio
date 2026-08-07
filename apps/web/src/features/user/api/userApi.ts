@@ -23,6 +23,8 @@ export interface UserProfile {
   avatarUrl: string | null
   /** Кому видны записи пользователя. */
   entriesVisibility: EntriesVisibility
+  /** Попадает ли активность пользователя в ленты друзей. */
+  shareActivity: boolean
   /** Дата создания. */
   createdAt: string
   /** Дата последнего обновления. */
@@ -78,6 +80,8 @@ export interface UpdateProfileDto {
   bio?: string | undefined
   /** Кому видны записи пользователя. */
   entriesVisibility?: EntriesVisibility | undefined
+  /** Попадает ли активность пользователя в ленты друзей. */
+  shareActivity?: boolean | undefined
 }
 
 /**
