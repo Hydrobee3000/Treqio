@@ -3,7 +3,6 @@ import { EyeOff, Globe, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetMeQuery, useUpdateMeMutation } from '@/features/user'
 import type { EntriesVisibility } from '@/features/user'
-import { useAppSelector } from '@/shared/lib/store'
 import styles from './EntriesVisibilityPicker.module.scss'
 
 /**
@@ -27,13 +26,8 @@ const OPTIONS: VisibilityOption[] = [
  */
 export function EntriesVisibilityPicker() {
   const { t } = useTranslation()
-  const isGuest = useAppSelector((s) => s.auth.isGuest)
-  const { data: me, isLoading } = useGetMeQuery(undefined, { skip: isGuest })
+  const { data: me, isLoading } = useGetMeQuery()
   const [updateMe, { isLoading: isSaving, isError }] = useUpdateMeMutation()
-
-  if (isGuest) {
-    return <p className={styles['visibility__guest']}>{t('settings.privacy.guest')}</p>
-  }
 
   const handleSelect = async (value: EntriesVisibility) => {
     if (value === me?.entriesVisibility) return

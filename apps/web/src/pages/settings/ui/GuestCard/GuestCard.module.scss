@@ -1,0 +1,80 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.guest-card {
+  padding: 10px 20px;
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: rise 0.3s ease both;
+}
+
+.guest-card__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guest-card__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guest-card__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.guest-card__sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--color-text-2);
+}
+
+.guest-card__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border: 1px solid var(--color-warning);
+  border-radius: 8px;
+  background: none;
+  color: var(--color-warning);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: var(--color-warning-bg);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding: 7px 12px;
+  }
+}
