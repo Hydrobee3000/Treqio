@@ -13,16 +13,19 @@ export function LanguageContent() {
   ]
 
   return (
-    <div className={styles['language-picker']}>
-      {languages.map(({ code, label }) => (
-        <button
-          key={code}
-          className={`${styles['language-btn']} ${i18n.language === code ? styles['language-btn--active'] : ''}`}
-          onClick={() => void i18n.changeLanguage(code)}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
+    <>
+      <p className={styles['settings-block-label']}>{t('settings.sections.language.desc')}</p>
+      <div className={styles['language-picker']}>
+        {languages.map(({ code, label }) => (
+          <button
+            key={code}
+            className={`${styles['language-btn']} ${i18n.language === code ? styles['language-btn--active'] : ''}`}
+            onClick={() => void i18n.changeLanguage(code)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </>
   )
 }
