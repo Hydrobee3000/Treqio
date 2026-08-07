@@ -175,15 +175,15 @@
   }
 
   &--active {
-    background: var(--color-chip-bg);
     border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    box-shadow: 0 0 0 1px var(--color-primary);
     // Цвет заголовка (.settings__nav-label наследует отсюда) остаётся
     // прежним — активность и так видна по фону, рамке и жирности.
     font-weight: 600;
 
     &:hover {
       transform: none;
-      box-shadow: 0 0 0 1px var(--color-primary);
     }
   }
 
