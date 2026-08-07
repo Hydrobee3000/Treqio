@@ -103,7 +103,7 @@ export const BookEntryView = ({
   const onEditSubmit = handleSubmit((values) => {
     const bookUpdate: BookFieldUpdate = {}
     if (dirtyFields.title && values.title.trim()) bookUpdate.title = values.title.trim()
-    if (dirtyFields.author && values.author.trim()) bookUpdate.author = values.author.trim()
+    if (dirtyFields.author) bookUpdate.author = values.author.trim()
     if (dirtyFields.pageCount && values.pageCount) bookUpdate.pageCount = Number(values.pageCount)
     if (dirtyFields.description) bookUpdate.description = values.description.trim()
 
