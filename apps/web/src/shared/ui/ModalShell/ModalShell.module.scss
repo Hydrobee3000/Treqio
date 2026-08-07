@@ -42,14 +42,10 @@
 
 .hero {
   position: relative;
-  background: linear-gradient(
-    150deg,
-    var(--color-primary),
-    var(--color-primary-dark)
-  );
+  background: linear-gradient(150deg, var(--color-primary), var(--color-primary-dark));
   padding: 14px 48px 34px 16px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   color: #fff;
 
