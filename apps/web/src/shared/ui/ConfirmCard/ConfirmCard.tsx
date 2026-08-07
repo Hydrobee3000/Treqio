@@ -12,7 +12,7 @@ interface Props {
   /** Заголовок в градиентной шапке. */
   title: string
   /** Текст описания. */
-  description: string
+  description: ReactNode
   /** Текст кнопки отмены. */
   cancelLabel: string
   /** Текст кнопки подтверждения. */

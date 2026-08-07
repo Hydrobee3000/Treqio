@@ -1,7 +1,7 @@
 import { ChevronDown, History } from 'lucide-react'
 import { Collapse } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
+import { BookTitleChip, STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
 import type { BookStatus } from '@/entities/book'
 import { EmptyState } from '@/shared/ui'
 import type { HistoryDayGroup, HistoryEventType } from '../../model/historyEvents'
@@ -24,11 +24,6 @@ function StatusChip({ status }: { status: BookStatus }) {
       {t(`book.status.${status}`)}
     </span>
   )
-}
-
-/** Пилюля с названием записи в тексте события. */
-function EntryTitleChip({ title }: { title: string }) {
-  return <span className={styles['history__entry-chip']}>{title}</span>
 }
 
 /** Фраза-действие события — акцентное слово цветом события, связки серым. */
@@ -113,7 +108,7 @@ export function HistoryTimeline({ dayGroups, collapsedDays, onToggleDay, languag
                       <div className={styles['history__body']}>
                         <p className={styles['history__text']}>
                           <VerbPhrase type={event.type} />{' '}
-                          <EntryTitleChip title={event.entry.book.title} />
+                          <BookTitleChip title={event.entry.book.title} />
                           {event.type === 'ADDED' && !hasAccompanyingCreationEvent(event.entry) && (
                             <>
                               {' '}
