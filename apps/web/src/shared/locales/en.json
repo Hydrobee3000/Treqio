@@ -141,7 +141,7 @@
       "noNotes": "No notes",
       "addedOn": "Added {{date}}",
       "deleteTitle": "Delete entry?",
-      "deleteDesc": "The book «{{title}}» will be removed from your library. This action cannot be undone.",
+      "deleteDesc": "The book <chip></chip> will be removed from your library. This action cannot be undone.",
       "discardTitle": "Discard changes?",
       "discardDesc": "Your changes haven't been saved and will be lost.",
       "discard": "Close",

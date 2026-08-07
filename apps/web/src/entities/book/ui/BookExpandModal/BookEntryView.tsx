@@ -3,10 +3,11 @@ import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { Check, Pencil, Trash2, X } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { ConfirmCard } from '@/shared/ui'
 import { STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { BookTitleChip } from '../BookTitleChip/BookTitleChip'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import type { BookFieldUpdate, EntryFieldUpdate } from './BookExpandModal.types'
 import { editBookSchema } from './bookFormSchemas'
@@ -490,7 +491,12 @@ export const BookEntryView = ({
       <ConfirmCard
         open={deleteDialogOpen}
         title={t('book.modal.deleteTitle')}
-        description={t('book.modal.deleteDesc', { title: entry.book.title })}
+        description={
+          <Trans
+            i18nKey="book.modal.deleteDesc"
+            components={{ chip: <BookTitleChip title={entry.book.title} /> }}
+          />
+        }
         cancelLabel={t('book.modal.cancel')}
         confirmLabel={t('book.modal.delete')}
         confirmColor="error"

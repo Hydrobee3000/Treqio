@@ -155,20 +155,6 @@ $history-status-color: #8a6fc4;
   white-space: nowrap;
 }
 
-// Та же формула фона, что у .history__status-chip (color-mix 16%), но цвет
-// фиксированный — акцент темы, а не по статусу записи.
-.history__entry-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
-}
-
 // Нейтральные слова-связки («начал», «новую книгу», «со статусом», «книги»,
 // «на») — фиксированный серый, не --color-text-2 (у части тем он с цветным
 // оттенком, не нейтральный).

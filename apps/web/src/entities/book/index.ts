@@ -1,4 +1,5 @@
 export { BookCoverCard } from './ui/BookCoverCard/BookCoverCard'
+export { BookTitleChip } from './ui/BookTitleChip/BookTitleChip'
 export { ScoreBadge } from './ui/ScoreBadge/ScoreBadge'
 export { BookCoverCardSkeleton } from './ui/BookCoverCardSkeleton/BookCoverCardSkeleton'
 export { BookTableRow } from './ui/BookTableRow/BookTableRow'
