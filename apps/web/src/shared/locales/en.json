@@ -129,9 +129,7 @@
       "creatingAction": "Creating…",
       "cancel": "Cancel",
       "save": "Save",
-      "saving": "Saving…",
       "delete": "Delete",
-      "deleting": "Deleting…",
       "edit": "Edit",
       "titlePlaceholder": "Enter title",
       "titleRequiredError": "Enter title",
@@ -147,10 +145,7 @@
       "discardTitle": "Discard changes?",
       "discardDesc": "Your changes haven't been saved and will be lost.",
       "discard": "Close",
-      "keepEditing": "Go back",
-      "saveError": "Failed to save",
-      "deleteError": "Failed to delete. Please try again.",
-      "createError": "Failed to add book. Please try again."
+      "keepEditing": "Go back"
     }
   },
   "settings": {

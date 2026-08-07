@@ -64,10 +64,7 @@ export const BookEntryView = ({
   const [localStatus, setLocalStatus] = useState<BookStatus | null>(null)
   const [statusOpen, setStatusOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [saveError, setSaveError] = useState<string | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const displayStatus = localStatus ?? entry.status
 
@@ -81,7 +78,7 @@ export const BookEntryView = ({
     handleSubmit,
     reset,
     control,
-    formState: { isSubmitting, dirtyFields, errors, isDirty },
+    formState: { dirtyFields, errors, isDirty },
   } = useForm<EditFormValues>({
     resolver: zodResolver(editBookSchema(t)),
     defaultValues: {
@@ -101,34 +98,30 @@ export const BookEntryView = ({
     onDirtyChange(isEditing && isDirty)
   }, [isEditing, isDirty, onDirtyChange])
 
-  const onEditSubmit = handleSubmit(async (values) => {
-    setSaveError(null)
-    try {
-      const bookUpdate: BookFieldUpdate = {}
-      if (dirtyFields.title && values.title.trim()) bookUpdate.title = values.title.trim()
-      if (dirtyFields.author && values.author.trim()) bookUpdate.author = values.author.trim()
-      if (dirtyFields.pageCount && values.pageCount) bookUpdate.pageCount = Number(values.pageCount)
-      if (dirtyFields.description) bookUpdate.description = values.description.trim()
+  // Выходит из режима редактирования сразу, не дожидаясь ответа сервера —
+  // запросы доделываются в фоне.
+  const onEditSubmit = handleSubmit((values) => {
+    const bookUpdate: BookFieldUpdate = {}
+    if (dirtyFields.title && values.title.trim()) bookUpdate.title = values.title.trim()
+    if (dirtyFields.author && values.author.trim()) bookUpdate.author = values.author.trim()
+    if (dirtyFields.pageCount && values.pageCount) bookUpdate.pageCount = Number(values.pageCount)
+    if (dirtyFields.description) bookUpdate.description = values.description.trim()
 
-      const entryUpdate: EntryFieldUpdate = {}
-      if (dirtyFields.notes) entryUpdate.notes = values.notes.trim()
-      if (dirtyFields.rating && displayStatus === 'DONE') entryUpdate.rating = values.rating
-      if (dirtyFields.progress && (displayStatus === 'READING' || displayStatus === 'DROPPED'))
-        entryUpdate.progress = values.progress
+    const entryUpdate: EntryFieldUpdate = {}
+    if (dirtyFields.notes) entryUpdate.notes = values.notes.trim()
+    if (dirtyFields.rating && displayStatus === 'DONE') entryUpdate.rating = values.rating
+    if (dirtyFields.progress && (displayStatus === 'READING' || displayStatus === 'DROPPED'))
+      entryUpdate.progress = values.progress
 
-      if (Object.keys(bookUpdate).length > 0) await onSaveBook?.(bookUpdate)
-      if (Object.keys(entryUpdate).length > 0) await onSaveEntry?.(entryUpdate)
+    if (Object.keys(bookUpdate).length > 0) onSaveBook?.(bookUpdate).catch(() => {})
+    if (Object.keys(entryUpdate).length > 0) onSaveEntry?.(entryUpdate).catch(() => {})
 
-      setIsEditing(false)
-    } catch {
-      setSaveError(t('book.modal.saveError'))
-    }
+    setIsEditing(false)
   })
 
   const handleCancelEdit = () => {
     reset()
     setIsEditing(false)
-    setSaveError(null)
   }
 
   const handleStatusSelect = (status: BookStatus) => {
@@ -138,24 +131,18 @@ export const BookEntryView = ({
   }
 
   const handleDeleteClick = () => {
-    setDeleteError(null)
     setDeleteDialogOpen(true)
   }
 
-  const handleDeleteConfirmed = async () => {
-    setIsDeleting(true)
-    try {
-      await onDelete?.()
-      setDeleteDialogOpen(false)
-      onClose()
-    } catch {
-      setDeleteError(t('book.modal.deleteError'))
-      setIsDeleting(false)
-    }
+  // Закрывает модалку сразу, не дожидаясь ответа сервера — запрос
+  // доделывается в фоне.
+  const handleDeleteConfirmed = () => {
+    onDelete?.().catch(() => {})
+    setDeleteDialogOpen(false)
+    onClose()
   }
 
   const handleDeleteDialogClose = () => {
-    setDeleteError(null)
     setDeleteDialogOpen(false)
   }
 
@@ -316,8 +303,6 @@ export const BookEntryView = ({
                   <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
                   <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
                 </div>
-
-                {saveError && <p className={styles['em__error']}>{saveError}</p>}
               </div>
             </div>
 
@@ -330,16 +315,11 @@ export const BookEntryView = ({
                 type="button"
                 className={`${styles['em__btn']} ${styles['em__btn--cancel']}`}
                 onClick={handleCancelEdit}
-                disabled={isSubmitting}
               >
                 {t('book.modal.cancel')}
               </button>
-              <button
-                type="submit"
-                className={`${styles['em__btn']} ${styles['em__btn--save']}`}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? t('book.modal.saving') : t('book.modal.save')}
+              <button type="submit" className={`${styles['em__btn']} ${styles['em__btn--save']}`}>
+                {t('book.modal.save')}
               </button>
             </div>
           </form>
@@ -512,12 +492,10 @@ export const BookEntryView = ({
         title={t('book.modal.deleteTitle')}
         description={t('book.modal.deleteDesc', { title: entry.book.title })}
         cancelLabel={t('book.modal.cancel')}
-        confirmLabel={isDeleting ? t('book.modal.deleting') : t('book.modal.delete')}
+        confirmLabel={t('book.modal.delete')}
         confirmColor="error"
-        disabled={isDeleting}
-        error={deleteError ?? undefined}
         onCancel={handleDeleteDialogClose}
-        onConfirm={() => void handleDeleteConfirmed()}
+        onConfirm={handleDeleteConfirmed}
       />
     </motion.div>
   )

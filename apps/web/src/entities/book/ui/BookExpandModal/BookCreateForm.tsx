@@ -34,7 +34,6 @@ export const BookCreateForm = ({
   onDirtyChange,
 }: BookCreateFormProps) => {
   const { t } = useTranslation()
-  const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
   const {
@@ -82,13 +81,8 @@ export const BookCreateForm = ({
         values.progress && { progress: values.progress }),
       ...(values.notes.trim() && { notes: values.notes.trim() }),
     }
-    setError(null)
-    try {
-      await onCreate(payload)
-      setSubmitted(true)
-    } catch {
-      setError(t('book.modal.createError'))
-    }
+    await onCreate(payload)
+    setSubmitted(true)
   })
 
   return (
@@ -224,8 +218,6 @@ export const BookCreateForm = ({
                 <label className={styles['em__field-label']}>{t('book.fields.notes')}</label>
                 <textarea className={styles['em__textarea']} rows={3} {...register('notes')} />
               </div>
-
-              {error && <p className={styles['em__error']}>{error}</p>}
             </div>
           </div>
 
