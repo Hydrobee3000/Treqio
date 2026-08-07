@@ -24,9 +24,15 @@ export const useBookExpandModal = ({
   onClose,
   onCreate,
 }: UseBookExpandModalParams) => {
-  /** Создаёт книгу и закрывает модалку. */
+  /**
+   * Закрывает модалку сразу, не дожидаясь ответа сервера — запрос
+   * доделывается в фоне.
+   */
   const handleCreate = async (payload: CreateBookPayload) => {
-    await onCreate?.(payload)
+    onCreate?.(payload).catch(() => {
+      // Ошибка не показывается — модалка уже закрыта. Уведомление об исходе
+      // придёт отдельной задачей.
+    })
     onClose()
   }
 
