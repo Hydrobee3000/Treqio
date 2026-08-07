@@ -212,7 +212,6 @@
     },
     "privacy": {
       "label": "Entries visibility",
-      "guest": "Sign in to manage privacy settings.",
       "saveError": "Couldn't save. Please try again.",
       "visibility": {
         "PUBLIC": {

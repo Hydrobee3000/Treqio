@@ -1,20 +1,13 @@
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { useMediaQuery, useTheme } from '@mui/material'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Languages,
-  Lock,
-  Palette,
-  TriangleAlert,
-  UserRound,
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, Languages, Lock, Palette, UserRound } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAppSelector } from '@/shared/lib/store'
 import { AppearanceContent } from './AppearanceContent/AppearanceContent'
 import { CreatorsContent } from './CreatorsContent/CreatorsContent'
+import { GuestCard } from './GuestCard/GuestCard'
 import { LanguageContent } from './LanguageContent/LanguageContent'
 import { PrivacyContent } from './PrivacyContent/PrivacyContent'
 import styles from './SettingsPage.module.scss'
@@ -147,19 +140,8 @@ export function SettingsPage() {
         {!active && (
           <div className={`${styles['settings__content']} ${styles['settings__content--hidden']}`}>
             {isGuest && (
-              <div className={styles['guest-card']}>
-                <div className={styles['guest-card__left']}>
-                  <div className={styles['guest-card__icon']}>
-                    <TriangleAlert size={18} />
-                  </div>
-                  <div>
-                    <p className={styles['guest-card__title']}>{t('settings.guest.title')}</p>
-                    <p className={styles['guest-card__sub']}>{t('settings.guest.desc')}</p>
-                  </div>
-                </div>
-                <button className={styles['guest-card__btn']} onClick={() => navigate('/login')}>
-                  {t('settings.guest.login')}
-                </button>
+              <div className={styles['settings__guest']}>
+                <GuestCard />
               </div>
             )}
           </div>
