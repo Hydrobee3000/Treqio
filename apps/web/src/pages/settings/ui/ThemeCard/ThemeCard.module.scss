@@ -15,6 +15,7 @@
     box-shadow 0.2s;
 
   &:hover {
+    border-color: var(--color-primary);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.15);
   }
