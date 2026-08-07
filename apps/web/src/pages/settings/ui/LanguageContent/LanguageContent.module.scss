@@ -26,6 +26,7 @@
     box-shadow 0.2s;
 
   &:hover {
+    border-color: var(--color-primary);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.15);
     color: var(--color-text, inherit);
@@ -33,6 +34,7 @@
 
   &--active {
     border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
     box-shadow: 0 0 0 1px var(--color-primary);
     color: var(--color-primary);
   }

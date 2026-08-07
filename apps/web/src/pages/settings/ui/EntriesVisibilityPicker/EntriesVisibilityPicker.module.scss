@@ -23,6 +23,7 @@
       box-shadow 0.2s;
 
     &:hover:not(:disabled) {
+      border-color: var(--color-primary);
       color: var(--color-text);
       box-shadow: $shadow-hover;
     }
@@ -34,6 +35,7 @@
 
     &--active {
       border-color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary) 10%, transparent);
       box-shadow: 0 0 0 1px var(--color-primary);
       color: var(--color-primary);
     }
