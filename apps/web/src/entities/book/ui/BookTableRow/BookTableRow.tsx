@@ -5,6 +5,7 @@ import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { STATUS_DOT_COLOR, STATUS_OPTIONS, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { AuthorPlaceholder } from '../AuthorPlaceholder/AuthorPlaceholder'
 import { RatingPicker } from '../RatingPicker/RatingPicker'
 import styles from './BookTableRow.module.scss'
 
@@ -80,7 +81,7 @@ export const BookTableRow = ({
         onClick={onEdit}
       >
         <div className={styles['table-row__title']}>{book.title}</div>
-        <div className={styles['table-row__author']}>{book.author || '—'}</div>
+        <div className={styles['table-row__author']}>{book.author || <AuthorPlaceholder />}</div>
       </div>
 
       <span

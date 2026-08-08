@@ -7,6 +7,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { ConfirmCard } from '@/shared/ui'
 import { STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { AuthorPlaceholder } from '../AuthorPlaceholder/AuthorPlaceholder'
 import { BookTitleChip } from '../BookTitleChip/BookTitleChip'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import type { BookFieldUpdate, EntryFieldUpdate } from './BookExpandModal.types'
@@ -331,7 +332,9 @@ export const BookEntryView = ({
               <div className={styles['em__body']}>
                 <div className={styles['em__head']}>
                   <h2 className={styles['em__book-title']}>{entry.book.title}</h2>
-                  <p className={styles['em__book-author']}>{entry.book.author || '—'}</p>
+                  <p className={styles['em__book-author']}>
+                    {entry.book.author || <AuthorPlaceholder />}
+                  </p>
                 </div>
 
                 <div className={styles['em__status-wrap']}>
