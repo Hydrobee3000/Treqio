@@ -23,9 +23,10 @@
       top: 7px;
       right: 7px;
       width: 28px;
-      height: 28px;
-      --score-badge-font-size: 11px;
+      height: 20px;
+      --score-badge-font-size: 13px;
       --score-badge-empty-size: 13px;
+      --score-badge-icon-size: 8px;
     }
 
     .cover-card__status {
@@ -58,9 +59,11 @@
       top: 6px;
       right: 6px;
       width: 22px;
-      height: 22px;
-      --score-badge-font-size: 9px;
+      height: 16px;
+      border-radius: 5px;
+      --score-badge-font-size: 11px;
       --score-badge-empty-size: 11px;
+      --score-badge-icon-size: 7px;
     }
 
     .cover-card__footer {

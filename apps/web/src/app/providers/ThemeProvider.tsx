@@ -84,6 +84,12 @@ export const ThemeProvider = ({ children }: Props) => {
       isDark ? 'rgba(255,255,255,.12)' : background.paper,
     )
 
+    // Фон бейджа оценки в ленте активности.
+    root.style.setProperty(
+      '--color-rating-badge-bg',
+      isDark ? 'rgba(255,255,255,.22)' : 'rgba(15,20,18,.372)',
+    )
+
     root.style.setProperty('--sidebar-btn-border', sidebar.activeBackground)
     root.style.setProperty('--sidebar-btn-outlined-border', 'rgba(255,255,255,.25)')
     root.style.setProperty('--sidebar-btn-disabled-border', 'rgba(255,255,255,.15)')
