@@ -2,8 +2,6 @@
 
 .feed {
   padding: 24px 40px 40px;
-  max-width: 640px;
-  margin: 0 auto;
 
   @media (max-width: $breakpoint-small) {
     padding: 16px 18px 32px;
