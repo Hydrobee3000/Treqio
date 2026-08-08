@@ -98,6 +98,21 @@
   }
 }
 
+.em__hidden-badge {
+  position: absolute;
+  bottom: 28px;
+  right: 16px;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
 .em__score {
   position: absolute;
   top: 14px;
@@ -145,7 +160,6 @@
 .em__scroll {
   flex: 1;
   overflow-y: auto;
-  // Резервирует место под скроллбар заранее — предотвращает скачок ширины при его появлении.
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, currentColor 18%, transparent) transparent;
@@ -386,6 +400,110 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
+  color: var(--color-text-2);
+}
+
+// ─── Настройки записи (выезжающий блок) ───────────────────────────────────────
+
+.em__settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid $color-primary-mix-15;
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-paper, white));
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text, inherit);
+  }
+}
+
+.em__settings-chevron {
+  margin-left: auto;
+  transition: transform $transition-fast;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.em__settings-body {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.em__visibility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-divider);
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+.em__visibility-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.em__visibility-switch {
+  width: 36px;
+  height: 21px;
+  border-radius: 999px;
+  background: var(--color-divider);
+  padding: 2.5px;
+  flex-shrink: 0;
+  position: relative;
+  transition: background $transition-fast;
+
+  &--on {
+    background: var(--color-primary);
+  }
+}
+
+.em__visibility-switch__thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-divider);
+  display: grid;
+  place-items: center;
+  transition: transform $transition-fast;
+
+  .em__visibility-switch--on & {
+    transform: translateX(15px);
+    color: var(--color-primary);
+  }
+}
+
+.em__settings-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
   color: var(--color-text-2);
 }
 

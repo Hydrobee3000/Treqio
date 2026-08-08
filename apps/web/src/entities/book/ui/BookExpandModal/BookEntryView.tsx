@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Collapse, Tooltip } from '@mui/material'
 import { motion } from 'framer-motion'
-import { Check, Pencil, Trash2, X } from 'lucide-react'
+import { Check, ChevronDown, Eye, EyeOff, Pencil, Settings, Trash2, X } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
 import { ConfirmCard } from '@/shared/ui'
 import { STATUS_OPTIONS, STATUS_TEXT_COLOR, scoreColor } from '../../model/book.types'
@@ -67,6 +68,7 @@ export const BookEntryView = ({
   const [statusOpen, setStatusOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [entrySettingsOpen, setEntrySettingsOpen] = useState(false)
 
   const displayStatus = localStatus ?? entry.status
 
@@ -148,6 +150,12 @@ export const BookEntryView = ({
     setDeleteDialogOpen(false)
   }
 
+  // Применяется сразу, не дожидаясь ответа сервера — запрос доделывается в фоне.
+  const handleSelectHidden = (isHidden: boolean) => {
+    if (isHidden === entry.isHidden) return
+    onSaveEntry?.({ isHidden }).catch(() => {})
+  }
+
   return (
     <motion.div
       className={`${styles['em__modal']} ${isMobile ? styles['em__modal--mobile'] : ''}`}
@@ -166,6 +174,13 @@ export const BookEntryView = ({
         <button className={styles['em__close']} onClick={onClose}>
           <X size={15} />
         </button>
+        {entry.isHidden && (
+          <Tooltip title={t('book.modal.hiddenTooltip')}>
+            <span className={styles['em__hidden-badge']}>
+              <EyeOff size={13} />
+            </span>
+          </Tooltip>
+        )}
         {isEditing && (
           <span className={styles['em__mode-label']}>
             <Pencil size={11} />
@@ -460,6 +475,55 @@ export const BookEntryView = ({
                     <p className={styles['em__placeholder']}>{t('book.modal.noNotes')}</p>
                   )}
                 </div>
+
+                <div className={styles['em__divider']} />
+
+                <button
+                  type="button"
+                  className={styles['em__settings-toggle']}
+                  onClick={() => setEntrySettingsOpen((v) => !v)}
+                >
+                  <Settings size={13} />
+                  {t('book.modal.entrySettings')}
+                  <ChevronDown
+                    size={14}
+                    className={`${styles['em__settings-chevron']} ${
+                      entrySettingsOpen ? styles['em__settings-chevron--open'] : ''
+                    }`}
+                  />
+                </button>
+                <Collapse in={entrySettingsOpen}>
+                  <div className={styles['em__settings-body']}>
+                    <span className={styles['em__section-label']}>
+                      {t('book.modal.visibilityTitle')}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles['em__visibility-row']}
+                      onClick={() => handleSelectHidden(!entry.isHidden)}
+                    >
+                      <span className={styles['em__visibility-row__label']}>
+                        {entry.isHidden
+                          ? t('book.modal.visibilityHidden')
+                          : t('book.modal.visibilityShown')}
+                      </span>
+                      <span
+                        className={`${styles['em__visibility-switch']} ${
+                          !entry.isHidden ? styles['em__visibility-switch--on'] : ''
+                        }`}
+                      >
+                        <span className={styles['em__visibility-switch__thumb']}>
+                          {entry.isHidden ? <EyeOff size={11} /> : <Eye size={11} />}
+                        </span>
+                      </span>
+                    </button>
+                    <p className={styles['em__settings-hint']}>
+                      {entry.isHidden
+                        ? t('book.modal.hideExplain')
+                        : t('book.modal.visibleExplain')}
+                    </p>
+                  </div>
+                </Collapse>
               </div>
             </div>
 

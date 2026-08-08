@@ -26,6 +26,8 @@ export interface EntryFieldUpdate {
   progress?: number
   /** Заметки. */
   notes?: string
+  /** Скрыта ли запись от других пользователей. */
+  isHidden?: boolean
 }
 
 /**
