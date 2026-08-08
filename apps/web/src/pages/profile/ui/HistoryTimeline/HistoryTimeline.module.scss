@@ -1,11 +1,5 @@
 @use '@/shared/styles/variables' as *;
 
-// Цвета типов события, не связанные со статусом записи.
-$history-added-color: #7b8694;
-$history-added-text-color: #3f9d91;
-$history-rated-color: #c49a3a;
-$history-status-color: #8a6fc4;
-
 .history {
   display: flex;
   flex-direction: column;
@@ -95,8 +89,8 @@ $history-status-color: #8a6fc4;
   z-index: 1;
 
   &--added {
-    border-color: $history-added-color;
-    color: $history-added-color;
+    border-color: $activity-added-color;
+    color: $activity-added-color;
   }
 
   &--reading {
@@ -115,13 +109,13 @@ $history-status-color: #8a6fc4;
   }
 
   &--rated {
-    border-color: $history-rated-color;
-    color: $history-rated-color;
+    border-color: $activity-rated-color;
+    color: $activity-rated-color;
   }
 
   &--status {
-    border-color: $history-status-color;
-    color: $history-status-color;
+    border-color: $activity-status-color;
+    color: $activity-status-color;
   }
 }
 
@@ -144,18 +138,6 @@ $history-status-color: #8a6fc4;
   overflow-wrap: break-word;
 }
 
-// Пилюля статуса в тексте события — цветной тинт фона, как у статуса на
-// обложке в библиотеке, без точки. Цвет приходит через style.
-.history__status-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
 // Нейтральные слова-связки («начал», «новую книгу», «со статусом», «книги»,
 // «на») — фиксированный серый, не --color-text-2 (у части тем он с цветным
 // оттенком, не нейтральный).
@@ -165,7 +147,7 @@ $history-status-color: #8a6fc4;
 }
 
 .history__verb--added {
-  color: $history-added-text-color;
+  color: $activity-added-text-color;
   font-weight: 600;
 }
 
@@ -185,12 +167,12 @@ $history-status-color: #8a6fc4;
 }
 
 .history__verb--rated {
-  color: $history-rated-color;
+  color: $activity-rated-color;
   font-weight: 600;
 }
 
 .history__verb--status {
-  color: $history-status-color;
+  color: $activity-status-color;
   font-weight: 600;
 }
 

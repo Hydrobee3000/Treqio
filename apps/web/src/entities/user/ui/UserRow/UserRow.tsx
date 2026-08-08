@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Skeleton } from '@mui/material'
 import { Link } from 'react-router'
+import { Avatar } from '../Avatar/Avatar'
 import styles from './UserRow.module.scss'
 
 /**
@@ -18,32 +18,6 @@ interface UserRowProps {
   to?: string | undefined
   /** Кнопки действий справа. */
   action?: ReactNode
-}
-
-/**
- * Кружок аватара — картинка при наличии рабочей ссылки, иначе инициал имени.
- */
-function Avatar({
-  displayName,
-  avatarUrl,
-}: {
-  displayName: string
-  avatarUrl?: string | undefined
-}) {
-  const [failed, setFailed] = useState(false)
-
-  if (avatarUrl && !failed) {
-    return (
-      <img
-        src={avatarUrl}
-        alt=""
-        className={styles['user-row__avatar']}
-        onError={() => setFailed(true)}
-      />
-    )
-  }
-
-  return <div className={styles['user-row__avatar']}>{displayName.charAt(0).toUpperCase()}</div>
 }
 
 /**

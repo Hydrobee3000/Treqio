@@ -237,6 +237,26 @@
       }
     }
   },
+  "feed": {
+    "title": "Feed",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "loadMore": "Load more",
+    "loading": "Loading…",
+    "empty": {
+      "title": "Nothing here yet",
+      "desc": "Once your friends add or rate something, it'll show up here"
+    },
+    "verbs": {
+      "added": "added",
+      "addedSuffix": "a book",
+      "withStatus": "with status",
+      "statusChanged": "changed the status of",
+      "rated": "rated",
+      "unrated": "removed the rating of",
+      "to": "to"
+    }
+  },
   "home": {
     "title": "What are we doing today?",
     "quickActions": "Quick actions",
