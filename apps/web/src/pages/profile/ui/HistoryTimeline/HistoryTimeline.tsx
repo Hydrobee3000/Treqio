@@ -1,8 +1,7 @@
 import { ChevronDown, History } from 'lucide-react'
 import { Collapse } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { BookTitleChip, STATUS_TEXT_COLOR, ScoreBadge } from '@/entities/book'
-import type { BookStatus } from '@/entities/book'
+import { BookTitleChip, ScoreBadge, StatusChip } from '@/entities/book'
 import { EmptyState } from '@/shared/ui'
 import type { HistoryDayGroup, HistoryEventType } from '../../model/historyEvents'
 import {
@@ -11,20 +10,6 @@ import {
   hasSeparateRatingEvent,
 } from '../../model/historyEvents'
 import styles from './HistoryTimeline.module.scss'
-
-/** Пилюля статуса в тексте события. */
-function StatusChip({ status }: { status: BookStatus }) {
-  const { t } = useTranslation()
-  const color = STATUS_TEXT_COLOR[status]
-  return (
-    <span
-      className={styles['history__status-chip']}
-      style={{ color, background: `color-mix(in srgb, ${color} 16%, transparent)` }}
-    >
-      {t(`book.status.${status}`)}
-    </span>
-  )
-}
 
 /** Фраза-действие события — акцентное слово цветом события, связки серым. */
 function VerbPhrase({ type }: { type: HistoryEventType }) {

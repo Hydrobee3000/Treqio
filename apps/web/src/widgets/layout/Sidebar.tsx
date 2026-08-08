@@ -101,7 +101,7 @@ export const Sidebar = ({ collapsed, onToggle }: Props) => {
     { to: '/', icon: HomeOutlinedIcon, label: t('nav.home') },
     { to: profilePath, icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
     { to: '/library', icon: AutoStoriesOutlinedIcon, label: t('nav.library') },
-    { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed'), disabled: true },
+    { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed') },
   ]
 
   const footerItems: NavItemConfig[] = [

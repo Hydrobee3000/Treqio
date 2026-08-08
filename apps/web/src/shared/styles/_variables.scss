@@ -10,6 +10,13 @@ $entry-status-dropped-color: #b94040;
 // Цвет опасного действия/ошибки.
 $color-danger: #d05c5c;
 
+// Цвета типов события активности — история профиля и лента друзей.
+// Не связаны со статусом записи (те заданы отдельно выше).
+$activity-added-color: #7b8694;
+$activity-added-text-color: #3f9d91;
+$activity-rated-color: #c49a3a;
+$activity-status-color: #8a6fc4;
+
 // Фон тёмных бейджей-чипов поверх обложки книги.
 $cover-badge-bg: rgba(15, 20, 18, 0.372);
 

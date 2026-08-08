@@ -1,6 +1,7 @@
 import { ArrowRight, Check, Plus, RefreshCw, Star, X } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { BookEntry } from '@/entities/book'
+import { formatDayLabel } from '@/shared/lib/formatDayLabel'
 
 /**
  * В базе нет отдельного лога действий пользователя — вся лента истории на
@@ -129,20 +130,6 @@ export function buildHistoryEvents(entries: BookEntry[]): HistoryEvent[] {
     const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime()
     if (dateDiff !== 0) return dateDiff
     return HISTORY_TYPE_RANK[b.type] - HISTORY_TYPE_RANK[a.type]
-  })
-}
-
-/** Лейбл дня события — «Сегодня», «Вчера» или дата в локализованном формате. */
-function formatDayLabel(dateStr: string, lang: string, today: string, yesterday: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const prev = new Date(now)
-  prev.setDate(now.getDate() - 1)
-  if (date.toDateString() === now.toDateString()) return today
-  if (date.toDateString() === prev.toDateString()) return yesterday
-  return date.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
-    day: 'numeric',
-    month: 'long',
   })
 }
 

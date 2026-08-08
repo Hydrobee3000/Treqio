@@ -1,0 +1,184 @@
+@use '@/shared/styles/variables' as *;
+
+.feed {
+  padding: 24px 40px 40px;
+  max-width: 640px;
+  margin: 0 auto;
+
+  @media (max-width: $breakpoint-small) {
+    padding: 16px 18px 32px;
+  }
+}
+
+.feed__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.feed__title {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+}
+
+.feed__day {
+  margin-bottom: 4px;
+}
+
+.feed__date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+  padding: 8px 14px;
+  margin: 10px 0 6px -6px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-paper, white));
+  border: 1px solid $color-primary-mix-15;
+}
+
+.feed__timeline {
+  position: relative;
+  padding-left: 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--color-divider);
+    border-radius: 2px;
+  }
+}
+
+.feed__event {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.feed__node {
+  position: absolute;
+  left: -40px;
+  top: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--color-paper, white);
+  border: 2px solid var(--color-divider);
+  z-index: 1;
+
+  &--entry_added {
+    border-color: $activity-added-color;
+    color: $activity-added-color;
+  }
+
+  &--status_changed {
+    border-color: $activity-status-color;
+    color: $activity-status-color;
+  }
+
+  &--rated {
+    border-color: $activity-rated-color;
+    color: $activity-rated-color;
+  }
+}
+
+.feed__avatar {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.feed__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed__author {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text, inherit);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.feed__text {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--color-text, inherit);
+  overflow-wrap: break-word;
+}
+
+.feed__filler {
+  color: #888;
+  font-weight: 600;
+}
+
+.feed__verb--added {
+  color: $activity-added-text-color;
+  font-weight: 600;
+}
+
+.feed__verb--status {
+  color: $activity-status-color;
+  font-weight: 600;
+}
+
+.feed__verb--rated {
+  color: $activity-rated-color;
+  font-weight: 600;
+}
+
+.feed__rating-badge {
+  display: inline-flex;
+  vertical-align: middle;
+  margin: 0 3px;
+}
+
+.feed__time {
+  font-size: 12px;
+  color: var(--color-text-3);
+  flex-shrink: 0;
+  margin-top: 14px;
+}
+
+.feed__load-more {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--color-divider);
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-2);
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-text, inherit);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+}
