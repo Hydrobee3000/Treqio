@@ -2,6 +2,7 @@ import { Box, Paper } from '@mui/material'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
+import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import { Link, useLocation } from 'react-router'
 import type { SvgIconComponent } from '@mui/icons-material'
@@ -28,6 +29,7 @@ export const MobileNav = () => {
     { to: '/', icon: HomeOutlinedIcon, label: t('nav.home') },
     { to: profilePath, icon: AccountCircleOutlinedIcon, label: t('nav.profile') },
     { to: '/library', icon: AutoStoriesOutlinedIcon, label: t('nav.library') },
+    { to: '/feed', icon: RssFeedOutlinedIcon, label: t('nav.feed') },
     { to: '/settings', icon: SettingsOutlinedIcon, label: t('nav.settings') },
   ]
 
