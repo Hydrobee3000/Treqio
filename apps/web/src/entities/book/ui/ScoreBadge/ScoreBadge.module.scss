@@ -5,38 +5,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 0 1px;
+  overflow: hidden;
 }
 
 .score-badge--sm {
   width: 34px;
   height: 24px;
-  --score-badge-icon-size: 9px;
+  --score-badge-scale: 0.857;
 }
 
 .score-badge--md {
   width: 42px;
   height: 28px;
-  --score-badge-font-size: 15px;
-  --score-badge-icon-size: 12px;
+  --score-badge-scale: 1;
+}
+
+.score-badge__inner {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transform: scale(var(--score-badge-scale, 1));
 }
 
 .score-badge__star {
-  width: var(--score-badge-icon-size, 12px);
-  height: var(--score-badge-icon-size, 12px);
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
   color: #fff;
-  // Звезда визуально сидит чуть ниже цифры — сдвигаем вверх.
   position: relative;
   top: -1px;
 }
 
 .score-badge__value {
-  font-size: var(--score-badge-font-size, 14px);
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .score-badge__empty {

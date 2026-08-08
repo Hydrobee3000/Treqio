@@ -39,8 +39,10 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
 
   const badge = (
     <div ref={ref} className={rootClass} onClick={onClick}>
-      <Star className={styles['score-badge__star']} fill="currentColor" strokeWidth={0} />
-      <span className={styles['score-badge__value']}>{rating}</span>
+      <div className={styles['score-badge__inner']}>
+        <Star className={styles['score-badge__star']} fill="currentColor" strokeWidth={0} />
+        <span className={styles['score-badge__value']}>{rating}</span>
+      </div>
     </div>
   )
 

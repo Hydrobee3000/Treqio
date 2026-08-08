@@ -24,9 +24,9 @@
       right: 7px;
       width: 28px;
       height: 20px;
-      --score-badge-font-size: 13px;
+      // 20 / 28 (высота эталонного md-размера ScoreBadge).
+      --score-badge-scale: 0.714;
       --score-badge-empty-size: 13px;
-      --score-badge-icon-size: 8px;
     }
 
     .cover-card__status {
@@ -61,9 +61,9 @@
       width: 22px;
       height: 16px;
       border-radius: 5px;
-      --score-badge-font-size: 11px;
+      // 16 / 28 (высота эталонного md-размера ScoreBadge).
+      --score-badge-scale: 0.571;
       --score-badge-empty-size: 11px;
-      --score-badge-icon-size: 7px;
     }
 
     .cover-card__footer {
