@@ -25,7 +25,6 @@
 
   &--mobile {
     align-items: flex-end;
-    // Тот же отступ, что и у мобильной навигации — иначе футер модалки заезжает в полосу нижней навигации.
     padding: 0 0 calc(52px + env(safe-area-inset-bottom));
   }
 }
@@ -41,12 +40,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  // Тот же градиент что у .cover-card__cover — анимация раскрывается из карточки
-  background: linear-gradient(
-    150deg,
-    var(--color-primary),
-    var(--color-primary-dark)
-  );
+  background: linear-gradient(150deg, var(--color-primary), var(--color-primary-dark));
   box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.55);
 
   &--mobile {
@@ -67,8 +61,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  // Gradient overlay — затемняем центр для читаемости бейджа, низ светлее
-  // чтобы rounded corners контента не показывали тёмное пятно
+
   &::after {
     content: '';
     position: absolute;
@@ -86,7 +79,7 @@
 .em__close {
   position: absolute;
   top: 14px;
-  left: 14px;
+  right: 14px;
   z-index: 1;
   width: 32px;
   height: 32px;
@@ -105,19 +98,21 @@
   }
 }
 
-// Размер, фон и кольцо задаёт ScoreBadge.
 .em__score {
   position: absolute;
   top: 14px;
-  right: 16px;
+  left: 16px;
   z-index: 1;
 }
 
 .em__mode-label {
   position: absolute;
-  top: 18px;
-  right: 16px;
+  bottom: 28px; // отступ от перекрываемой части шапки контентом.
+  left: 16px;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;

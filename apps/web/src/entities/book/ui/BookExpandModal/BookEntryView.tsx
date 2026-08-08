@@ -160,16 +160,17 @@ export const BookEntryView = ({
       transition={{ type: 'spring', damping: 30, stiffness: 200 }}
     >
       <div className={styles['em__hero']}>
+        {entry.status === 'DONE' && entry.rating !== null && (
+          <ScoreBadge rating={entry.rating} size="md" className={styles['em__score']} />
+        )}
         <button className={styles['em__close']} onClick={onClose}>
           <X size={15} />
         </button>
-        {isEditing ? (
-          <span className={styles['em__mode-label']}>{t('book.modal.editing')}</span>
-        ) : (
-          entry.status === 'DONE' &&
-          entry.rating !== null && (
-            <ScoreBadge rating={entry.rating} size="md" className={styles['em__score']} />
-          )
+        {isEditing && (
+          <span className={styles['em__mode-label']}>
+            <Pencil size={11} />
+            {t('book.modal.editing')}
+          </span>
         )}
       </div>
 
