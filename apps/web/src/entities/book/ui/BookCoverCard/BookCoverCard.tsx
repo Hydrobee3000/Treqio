@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { CSSProperties, MouseEvent } from 'react'
 import { Menu, MenuItem } from '@mui/material'
-import { Check } from 'lucide-react'
+import { Check, EyeOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { STATUS_DOT_COLOR, STATUS_OPTIONS } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
@@ -92,6 +92,11 @@ export const BookCoverCard = ({
           className={`${styles['cover-card__cover']} ${onExpand ? '' : styles['cover-card__cover--static']}`}
           onClick={onExpand}
         >
+          {entry.isHidden && (
+            <span className={styles['cover-card__hidden-badge']}>
+              <EyeOff size={12} />
+            </span>
+          )}
           {showsScore && (
             <ScoreBadge
               ref={setScoreEl}
