@@ -5,6 +5,7 @@ import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { STATUS_DOT_COLOR, STATUS_OPTIONS } from '../../model/book.types'
 import type { BookEntry, BookStatus } from '../../model/book.types'
+import { AuthorPlaceholder } from '../AuthorPlaceholder/AuthorPlaceholder'
 import { RatingPicker } from '../RatingPicker/RatingPicker'
 import { ScoreBadge } from '../ScoreBadge/ScoreBadge'
 import styles from './BookCoverCard.module.scss'
@@ -103,7 +104,7 @@ export const BookCoverCard = ({
           <div className={styles['cover-card__title']}>
             <span className={styles['cover-card__title-text']}>{book.title}</span>
           </div>
-          <div className={styles['cover-card__author']}>{book.author || '—'}</div>
+          <div className={styles['cover-card__author']}>{book.author || <AuthorPlaceholder />}</div>
         </div>
         {status === 'DONE' && rating === 10 && <div className={styles['cover-card__gold-ring']} />}
       </div>

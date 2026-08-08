@@ -1,3 +1,4 @@
+export { AuthorPlaceholder } from './ui/AuthorPlaceholder/AuthorPlaceholder'
 export { BookCoverCard } from './ui/BookCoverCard/BookCoverCard'
 export { BookTitleChip } from './ui/BookTitleChip/BookTitleChip'
 export { ScoreBadge } from './ui/ScoreBadge/ScoreBadge'
