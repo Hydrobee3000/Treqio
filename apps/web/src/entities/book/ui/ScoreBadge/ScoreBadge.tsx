@@ -1,7 +1,7 @@
 import type { MouseEvent, Ref } from 'react'
 import { Tooltip } from '@mui/material'
+import { Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { scoreColor } from '../../model/book.types'
 import styles from './ScoreBadge.module.scss'
 
 /**
@@ -20,13 +20,8 @@ interface ScoreBadgeProps {
   ref?: Ref<HTMLDivElement>
 }
 
-const CONFIG = {
-  sm: { dim: 34, r: 14 },
-  md: { dim: 42, r: 18 },
-} satisfies Record<string, { dim: number; r: number }>
-
 /**
- * Круглый бейдж оценки: SVG-кольцо прогресса с числом в центре.
+ * Квадратный бейдж оценки: небольшая звезда и число.
  */
 export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
   const { t } = useTranslation()
@@ -42,30 +37,10 @@ export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: Sco
     )
   }
 
-  const { dim, r } = CONFIG[size]
-  const cx = dim / 2
-  const circumference = 2 * Math.PI * r
-  const offset = circumference * (1 - rating / 10)
-
   const badge = (
     <div ref={ref} className={rootClass} onClick={onClick}>
-      <svg className={styles['score-badge__svg']} viewBox={`0 0 ${dim} ${dim}`}>
-        <circle cx={cx} cy={cx} r={r} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="3" />
-        <circle
-          cx={cx}
-          cy={cx}
-          r={r}
-          fill="none"
-          stroke={scoreColor(rating)}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-        />
-      </svg>
-      <div className={styles['score-badge__content']}>
-        <span className={styles['score-badge__value']}>{rating}</span>
-      </div>
+      <Star className={styles['score-badge__star']} fill="currentColor" strokeWidth={0} />
+      <span className={styles['score-badge__value']}>{rating}</span>
     </div>
   )
 

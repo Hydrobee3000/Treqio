@@ -1,42 +1,39 @@
-// Используем grid-overlay вместо position:absolute для SVG — контейнер не требует
-// position:relative и позиционирование полностью задаётся родительским className.
-
 .score-badge {
-  border-radius: 50%;
-  background: rgba(15, 20, 18, 0.55);
+  border-radius: 8px;
+  background: var(--score-badge-bg, rgba(15, 20, 18, 0.372));
   backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 1px;
 }
 
 .score-badge--sm {
   width: 34px;
-  height: 34px;
+  height: 24px;
+  --score-badge-icon-size: 9px;
 }
 
 .score-badge--md {
   width: 42px;
-  height: 42px;
-  --score-badge-font-size: 13px;
+  height: 28px;
+  --score-badge-font-size: 15px;
+  --score-badge-icon-size: 12px;
 }
 
-.score-badge__svg {
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.score-badge__content {
-  grid-area: 1 / 1;
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
+.score-badge__star {
+  width: var(--score-badge-icon-size, 12px);
+  height: var(--score-badge-icon-size, 12px);
+  flex-shrink: 0;
+  color: #fff;
+  // Звезда визуально сидит чуть ниже цифры — сдвигаем вверх.
+  position: relative;
+  top: -1px;
 }
 
 .score-badge__value {
-  font-size: var(--score-badge-font-size, 12px);
+  font-size: var(--score-badge-font-size, 14px);
   font-weight: 700;
   color: #fff;
   line-height: 1;

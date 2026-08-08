@@ -126,9 +126,10 @@ $history-status-color: #8a6fc4;
 }
 
 .history__rating-badge {
-  display: inline-grid;
+  display: inline-flex;
   vertical-align: middle;
   margin: 0 3px;
+  --score-badge-bg: var(--color-rating-badge-bg);
 }
 
 .history__body {
