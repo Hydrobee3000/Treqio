@@ -10,6 +10,9 @@ $entry-status-dropped-color: #b94040;
 // Цвет опасного действия/ошибки.
 $color-danger: #d05c5c;
 
+// Фон тёмных бейджей-чипов поверх обложки книги.
+$cover-badge-bg: rgba(15, 20, 18, 0.372);
+
 // Тени карточек — пара «в покое / при hover».
 $shadow-resting: 0 1px 4px rgba(0, 0, 0, 0.1);
 $shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.15);

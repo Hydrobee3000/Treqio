@@ -1,6 +1,8 @@
+@use '@/shared/styles/variables' as *;
+
 .score-badge {
   border-radius: 8px;
-  background: var(--score-badge-bg, rgba(15, 20, 18, 0.372));
+  background: var(--score-badge-bg, $cover-badge-bg);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
