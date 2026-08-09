@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Tooltip, useMediaQuery, useTheme } from '@mui/material'
-import { BarChart3, LogIn, LogOut, Settings } from 'lucide-react'
+import { LogIn, LogOut, Settings } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useGetIncomingRequestsQuery } from '@/features/friends'
@@ -9,7 +9,6 @@ import { logout } from '@/features/auth'
 import { useGetMyEntriesQuery } from '@/features/book'
 import { baseApi } from '@/shared/api/baseApi'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
-import { EmptyState } from '@/shared/ui'
 import { ProfileHeader } from '@/widgets/profile-header'
 import { buildHistoryEvents, groupEventsByDay } from '../model/historyEvents'
 import { EditProfileModal } from './EditProfileModal/EditProfileModal'
@@ -18,6 +17,7 @@ import { HistoryTimeline } from './HistoryTimeline/HistoryTimeline'
 import { ProfilePageSkeleton } from './ProfilePageSkeleton/ProfilePageSkeleton'
 import type { ProfileTab } from './ProfileTabs/ProfileTabs'
 import { ProfileTabs } from './ProfileTabs/ProfileTabs'
+import { StatsEmptyState } from './StatsEmptyState/StatsEmptyState'
 import styles from './ProfilePage.module.scss'
 
 /**
@@ -115,7 +115,7 @@ export const ProfilePage = () => {
       ) : activeTab === 'friends' ? (
         <FriendsTab />
       ) : (
-        <EmptyState fullHeight icon={<BarChart3 size={48} />} title={t('profile.stats.empty')} />
+        <StatsEmptyState />
       )}
 
       <EditProfileModal
