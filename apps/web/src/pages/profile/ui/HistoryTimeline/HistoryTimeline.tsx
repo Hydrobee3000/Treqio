@@ -1,9 +1,9 @@
 import { memo, useCallback, useState } from 'react'
-import { ChevronDown, History } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { Collapse } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { BookTitleChip, ScoreBadge, StatusChip } from '@/entities/book'
-import { EmptyState } from '@/shared/ui'
+import { ActivityEmptyState } from '@/shared/ui'
 import type { HistoryDayGroup, HistoryEventType } from '../../model/historyEvents'
 import {
   HISTORY_ICON,
@@ -138,9 +138,6 @@ interface Props {
 
 /**
  * Таймлайн истории — сгруппированные по дням события профиля.
- *
- * Состояние свёрнутых дней живёт внутри компонента, а не в родительской
- * странице — иначе каждый клик по дате перерендеривал бы всю страницу.
  */
 export function HistoryTimeline({ dayGroups, language }: Props) {
   const { t } = useTranslation()
@@ -148,8 +145,6 @@ export function HistoryTimeline({ dayGroups, language }: Props) {
 
   /**
    * Функция переключения состояния блока событий за указанный день.
-   * useCallback без зависимостей — стабильная ссылка нужна, чтобы memo
-   * у DayGroup не ломался при каждом рендере HistoryTimeline.
    */
   const toggleDay = useCallback((label: string) => {
     setCollapsedDays((prev) => {
@@ -162,9 +157,8 @@ export function HistoryTimeline({ dayGroups, language }: Props) {
 
   if (dayGroups.length === 0) {
     return (
-      <EmptyState
-        fullHeight
-        icon={<History size={48} />}
+      <ActivityEmptyState
+        scale={0.8}
         title={t('profile.history.empty.title')}
         description={t('profile.history.empty.desc')}
       />

@@ -14,7 +14,7 @@ import type {
   StatusChangedPayload,
 } from '@/features/activity'
 import { useLazyGetFeedQuery } from '@/features/activity'
-import { FeedEmptyState } from './FeedEmptyState/FeedEmptyState'
+import { ActivityEmptyState } from '@/shared/ui'
 import type { FeedDayGroup } from '../model/feedGrouping'
 import { groupFeedByDay } from '../model/feedGrouping'
 import styles from './FeedPage.module.scss'
@@ -216,7 +216,7 @@ export function FeedPage() {
   }
 
   if (items.length === 0) {
-    return <FeedEmptyState />
+    return <ActivityEmptyState title={t('feed.empty.title')} description={t('feed.empty.desc')} />
   }
 
   return (
