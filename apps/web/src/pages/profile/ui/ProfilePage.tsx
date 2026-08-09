@@ -50,22 +50,10 @@ export const ProfilePage = () => {
   }
   const [activeTab, setActiveTab] = useState<ProfileTab>('history')
   const [editProfileOpen, setEditProfileOpen] = useState(false)
-  const [collapsedDays, setCollapsedDays] = useState<Set<string>>(new Set())
 
   if (isLoading) {
     return <ProfilePageSkeleton />
   }
-
-  /**
-   * Функция переключения состояния блока событий за указанный день.
-   */
-  const toggleDay = (label: string) =>
-    setCollapsedDays((prev) => {
-      const next = new Set(prev)
-      if (next.has(label)) next.delete(label)
-      else next.add(label)
-      return next
-    })
 
   const displayName = isGuest
     ? guestDisplayName || defaultName
@@ -123,12 +111,7 @@ export const ProfilePage = () => {
       <ProfileTabs activeTab={activeTab} onChange={setActiveTab} incomingCount={incomingCount} />
 
       {activeTab === 'history' ? (
-        <HistoryTimeline
-          dayGroups={dayGroups}
-          collapsedDays={collapsedDays}
-          onToggleDay={toggleDay}
-          language={i18n.language}
-        />
+        <HistoryTimeline dayGroups={dayGroups} language={i18n.language} />
       ) : activeTab === 'friends' ? (
         <FriendsTab />
       ) : (
