@@ -245,7 +245,7 @@
     "loading": "Loading…",
     "empty": {
       "title": "Nothing here yet",
-      "desc": "Once your friends add or rate something, it'll show up here"
+      "desc": "Activity will show up here once your friends add or rate something"
     },
     "verbs": {
       "added": "added",

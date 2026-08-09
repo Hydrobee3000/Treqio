@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import type { ComponentType } from 'react'
 import { CircularProgress, Collapse } from '@mui/material'
-import { ChevronDown, Plus, RefreshCw, Rss, Star } from 'lucide-react'
+import { ChevronDown, Plus, RefreshCw, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { BookTitleChip, ScoreBadge, StatusChip } from '@/entities/book'
@@ -14,7 +14,7 @@ import type {
   StatusChangedPayload,
 } from '@/features/activity'
 import { useLazyGetFeedQuery } from '@/features/activity'
-import { EmptyState } from '@/shared/ui'
+import { FeedEmptyState } from './FeedEmptyState/FeedEmptyState'
 import type { FeedDayGroup } from '../model/feedGrouping'
 import { groupFeedByDay } from '../model/feedGrouping'
 import styles from './FeedPage.module.scss'
@@ -216,14 +216,7 @@ export function FeedPage() {
   }
 
   if (items.length === 0) {
-    return (
-      <EmptyState
-        fullHeight
-        icon={<Rss size={48} />}
-        title={t('feed.empty.title')}
-        description={t('feed.empty.desc')}
-      />
-    )
+    return <FeedEmptyState />
   }
 
   return (
