@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { ComponentType } from 'react'
-import { CircularProgress } from '@mui/material'
-import { Plus, RefreshCw, Rss, Star } from 'lucide-react'
+import { CircularProgress, Collapse } from '@mui/material'
+import { ChevronDown, Plus, RefreshCw, Rss, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { BookTitleChip, ScoreBadge, StatusChip } from '@/entities/book'
@@ -78,7 +78,19 @@ export function FeedPage() {
   const [items, setItems] = useState<FeedItem[]>([])
   const [cursor, setCursor] = useState<string | null>(null)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [collapsedDays, setCollapsedDays] = useState<Set<string>>(new Set())
   const [trigger, { isFetching }] = useLazyGetFeedQuery()
+
+  /**
+   * Функция переключения состояния блока событий за указанный день.
+   */
+  const toggleDay = (label: string) =>
+    setCollapsedDays((prev) => {
+      const next = new Set(prev)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
 
   useEffect(() => {
     void trigger(undefined)
@@ -126,52 +138,63 @@ export function FeedPage() {
     <div className={styles['feed']}>
       <h1 className={styles['feed__title']}>{t('feed.title')}</h1>
 
-      {dayGroups.map((group) => (
-        <div key={group.label} className={styles['feed__day']}>
-          <div className={styles['feed__date']}>{group.label}</div>
-          <div className={styles['feed__timeline']}>
-            {group.items.map((item) => {
-              const Icon = FEED_ICON[item.type]
-              return (
-                <div key={item.id} className={styles['feed__event']}>
-                  <div
-                    className={`${styles['feed__node']} ${styles[`feed__node--${item.type.toLowerCase()}`]}`}
-                  >
-                    <Icon size={14} />
-                  </div>
-                  <div className={styles['feed__header']}>
-                    <Avatar
-                      displayName={item.user.displayName ?? item.user.username ?? '?'}
-                      avatarUrl={item.user.avatarUrl ?? undefined}
-                      size={32}
-                      className={styles['feed__avatar']}
-                    />
-                    <div className={styles['feed__author-block']}>
-                      {item.user.username ? (
-                        <Link to={`/${item.user.username}`} className={styles['feed__author']}>
-                          {item.user.displayName ?? item.user.username}
-                        </Link>
-                      ) : (
-                        <span className={styles['feed__author']}>{item.user.displayName}</span>
-                      )}
-                      {item.user.username && (
-                        <span className={styles['feed__username']}>@{item.user.username}</span>
-                      )}
+      {dayGroups.map((group) => {
+        const collapsed = collapsedDays.has(group.label)
+        return (
+          <div key={group.label} className={styles['feed__day']}>
+            <div className={styles['feed__date']} onClick={() => toggleDay(group.label)}>
+              {group.label}
+              <ChevronDown
+                size={14}
+                className={`${styles['feed__date-chevron']} ${collapsed ? styles['feed__date-chevron--collapsed'] : ''}`}
+              />
+            </div>
+            <Collapse in={!collapsed}>
+              <div className={styles['feed__timeline']}>
+                {group.items.map((item) => {
+                  const Icon = FEED_ICON[item.type]
+                  return (
+                    <div key={item.id} className={styles['feed__event']}>
+                      <div
+                        className={`${styles['feed__node']} ${styles[`feed__node--${item.type.toLowerCase()}`]}`}
+                      >
+                        <Icon size={14} />
+                      </div>
+                      <div className={styles['feed__header']}>
+                        <Avatar
+                          displayName={item.user.displayName ?? item.user.username ?? '?'}
+                          avatarUrl={item.user.avatarUrl ?? undefined}
+                          size={32}
+                          className={styles['feed__avatar']}
+                        />
+                        <div className={styles['feed__author-block']}>
+                          {item.user.username ? (
+                            <Link to={`/${item.user.username}`} className={styles['feed__author']}>
+                              {item.user.displayName ?? item.user.username}
+                            </Link>
+                          ) : (
+                            <span className={styles['feed__author']}>{item.user.displayName}</span>
+                          )}
+                          {item.user.username && (
+                            <span className={styles['feed__username']}>@{item.user.username}</span>
+                          )}
+                        </div>
+                        <span className={styles['feed__time']}>
+                          {new Date(item.createdAt).toLocaleTimeString(
+                            i18n.language === 'ru' ? 'ru-RU' : 'en-US',
+                            { hour: '2-digit', minute: '2-digit' },
+                          )}
+                        </span>
+                      </div>
+                      <FeedEventBody item={item} />
                     </div>
-                    <span className={styles['feed__time']}>
-                      {new Date(item.createdAt).toLocaleTimeString(
-                        i18n.language === 'ru' ? 'ru-RU' : 'en-US',
-                        { hour: '2-digit', minute: '2-digit' },
-                      )}
-                    </span>
-                  </div>
-                  <FeedEventBody item={item} />
-                </div>
-              )
-            })}
+                  )
+                })}
+              </div>
+            </Collapse>
           </div>
-        </div>
-      ))}
+        )
+      })}
 
       {cursor && (
         <button
