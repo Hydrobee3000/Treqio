@@ -38,6 +38,29 @@
   border-radius: 10px;
   background: color-mix(in srgb, var(--color-primary) 14%, var(--color-paper, white));
   border: 1px solid $color-primary-mix-15;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-primary) 22%, var(--color-paper, white));
+  }
+}
+
+.feed__date-chevron {
+  opacity: 0.5;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+
+  &--collapsed {
+    transform: rotate(-90deg);
+  }
 }
 
 .feed__timeline {
