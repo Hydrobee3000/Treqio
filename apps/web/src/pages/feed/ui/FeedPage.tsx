@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import type { ComponentType } from 'react'
 import { CircularProgress, Collapse } from '@mui/material'
 import { ChevronDown, Plus, RefreshCw, Rss, Star } from 'lucide-react'
@@ -15,6 +15,7 @@ import type {
 } from '@/features/activity'
 import { useLazyGetFeedQuery } from '@/features/activity'
 import { EmptyState } from '@/shared/ui'
+import type { FeedDayGroup } from '../model/feedGrouping'
 import { groupFeedByDay } from '../model/feedGrouping'
 import styles from './FeedPage.module.scss'
 
@@ -70,6 +71,91 @@ function FeedEventBody({ item }: { item: FeedItem }) {
   )
 }
 
+/** Свойства одного дня ленты. */
+interface FeedDayProps {
+  /** События одного дня. */
+  group: FeedDayGroup
+  /** Свёрнут ли день. */
+  collapsed: boolean
+  /** Колбэк переключения свёрнутости — должен быть стабильной ссылкой. */
+  onToggle: (label: string) => void
+  /** Текущий язык интерфейса — для форматирования времени. */
+  language: string
+}
+
+/**
+ * Один день ленты — вынесен и мемоизирован отдельно, чтобы сворачивание
+ * одного дня не перерендеривало остальные (актуально при большом их числе).
+ */
+const FeedDay = memo(function FeedDay({ group, collapsed, onToggle, language }: FeedDayProps) {
+  return (
+    <div className={styles['feed__day']}>
+      <div className={styles['feed__date']} onClick={() => onToggle(group.label)}>
+        {group.label}
+        <ChevronDown
+          size={14}
+          className={`${styles['feed__date-chevron']} ${collapsed ? styles['feed__date-chevron--collapsed'] : ''}`}
+        />
+      </div>
+      <Collapse in={!collapsed}>
+        <div className={styles['feed__timeline']}>
+          {group.items.map((item) => {
+            const Icon = FEED_ICON[item.type]
+            return (
+              <div key={item.id} className={styles['feed__event']}>
+                <div
+                  className={`${styles['feed__node']} ${styles[`feed__node--${item.type.toLowerCase()}`]}`}
+                >
+                  <Icon size={14} />
+                </div>
+                <div className={styles['feed__header']}>
+                  {item.user.username ? (
+                    <Link to={`/${item.user.username}`} className={styles['feed__avatar-link']}>
+                      <Avatar
+                        displayName={item.user.displayName ?? item.user.username ?? '?'}
+                        size={32}
+                        className={styles['feed__avatar']}
+                      />
+                    </Link>
+                  ) : (
+                    <Avatar
+                      displayName={item.user.displayName ?? item.user.username ?? '?'}
+                      size={32}
+                      className={styles['feed__avatar']}
+                    />
+                  )}
+                  <div className={styles['feed__author-block']}>
+                    {item.user.username ? (
+                      <Link to={`/${item.user.username}`} className={styles['feed__author']}>
+                        {item.user.displayName ?? item.user.username}
+                      </Link>
+                    ) : (
+                      <span className={styles['feed__author']}>{item.user.displayName}</span>
+                    )}
+                    {item.user.username && (
+                      <span className={styles['feed__username']}>@{item.user.username}</span>
+                    )}
+                  </div>
+                  <span className={styles['feed__time']}>
+                    {new Date(item.createdAt).toLocaleTimeString(
+                      language === 'ru' ? 'ru-RU' : 'en-US',
+                      {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      },
+                    )}
+                  </span>
+                </div>
+                <FeedEventBody item={item} />
+              </div>
+            )
+          })}
+        </div>
+      </Collapse>
+    </div>
+  )
+})
+
 /**
  * Страница ленты активности друзей.
  */
@@ -83,14 +169,22 @@ export function FeedPage() {
 
   /**
    * Функция переключения состояния блока событий за указанный день.
+   * useCallback без зависимостей — стабильная ссылка нужна, чтобы memo
+   * у FeedDay не ломался при каждом рендере FeedPage.
    */
-  const toggleDay = (label: string) =>
+  const toggleDay = useCallback((label: string) => {
     setCollapsedDays((prev) => {
       const next = new Set(prev)
       if (next.has(label)) next.delete(label)
       else next.add(label)
       return next
     })
+  }, [])
+
+  const dayGroups = useMemo(
+    () => groupFeedByDay(items, i18n.language, t('feed.today'), t('feed.yesterday')),
+    [items, i18n.language, t],
+  )
 
   useEffect(() => {
     void trigger(undefined)
@@ -132,81 +226,19 @@ export function FeedPage() {
     )
   }
 
-  const dayGroups = groupFeedByDay(items, i18n.language, t('feed.today'), t('feed.yesterday'))
-
   return (
     <div className={styles['feed']}>
       <h1 className={styles['feed__title']}>{t('feed.title')}</h1>
 
-      {dayGroups.map((group) => {
-        const collapsed = collapsedDays.has(group.label)
-        return (
-          <div key={group.label} className={styles['feed__day']}>
-            <div className={styles['feed__date']} onClick={() => toggleDay(group.label)}>
-              {group.label}
-              <ChevronDown
-                size={14}
-                className={`${styles['feed__date-chevron']} ${collapsed ? styles['feed__date-chevron--collapsed'] : ''}`}
-              />
-            </div>
-            <Collapse in={!collapsed}>
-              <div className={styles['feed__timeline']}>
-                {group.items.map((item) => {
-                  const Icon = FEED_ICON[item.type]
-                  return (
-                    <div key={item.id} className={styles['feed__event']}>
-                      <div
-                        className={`${styles['feed__node']} ${styles[`feed__node--${item.type.toLowerCase()}`]}`}
-                      >
-                        <Icon size={14} />
-                      </div>
-                      <div className={styles['feed__header']}>
-                        {item.user.username ? (
-                          <Link
-                            to={`/${item.user.username}`}
-                            className={styles['feed__avatar-link']}
-                          >
-                            <Avatar
-                              displayName={item.user.displayName ?? item.user.username ?? '?'}
-                              size={32}
-                              className={styles['feed__avatar']}
-                            />
-                          </Link>
-                        ) : (
-                          <Avatar
-                            displayName={item.user.displayName ?? item.user.username ?? '?'}
-                            size={32}
-                            className={styles['feed__avatar']}
-                          />
-                        )}
-                        <div className={styles['feed__author-block']}>
-                          {item.user.username ? (
-                            <Link to={`/${item.user.username}`} className={styles['feed__author']}>
-                              {item.user.displayName ?? item.user.username}
-                            </Link>
-                          ) : (
-                            <span className={styles['feed__author']}>{item.user.displayName}</span>
-                          )}
-                          {item.user.username && (
-                            <span className={styles['feed__username']}>@{item.user.username}</span>
-                          )}
-                        </div>
-                        <span className={styles['feed__time']}>
-                          {new Date(item.createdAt).toLocaleTimeString(
-                            i18n.language === 'ru' ? 'ru-RU' : 'en-US',
-                            { hour: '2-digit', minute: '2-digit' },
-                          )}
-                        </span>
-                      </div>
-                      <FeedEventBody item={item} />
-                    </div>
-                  )
-                })}
-              </div>
-            </Collapse>
-          </div>
-        )
-      })}
+      {dayGroups.map((group) => (
+        <FeedDay
+          key={group.label}
+          group={group}
+          collapsed={collapsedDays.has(group.label)}
+          onToggle={toggleDay}
+          language={i18n.language}
+        />
+      ))}
 
       {cursor && (
         <button
