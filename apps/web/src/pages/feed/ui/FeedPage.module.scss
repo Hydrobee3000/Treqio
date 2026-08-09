@@ -126,13 +126,19 @@
   flex-shrink: 0;
 }
 
+.feed__avatar-link {
+  display: flex;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
 .feed__author-block {
   flex: 1;
   min-width: 0;
 }
 
 .feed__author {
-  display: block;
+  display: inline-block;
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text, inherit);
