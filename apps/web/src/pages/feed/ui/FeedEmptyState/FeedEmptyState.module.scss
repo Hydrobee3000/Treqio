@@ -1,0 +1,114 @@
+@use '@/shared/styles/variables' as *;
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateY(0);
+  }
+  // 162px = высота одного набора строк.
+  to {
+    transform: translateY(-162px);
+  }
+}
+
+.feed-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.feed-empty__ticker {
+  position: relative;
+  width: 280px;
+  max-width: 100%;
+  height: 162px;
+  margin-bottom: 26px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+}
+
+.feed-empty__ticker-track {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: ticker-scroll 9s linear infinite;
+  will-change: transform;
+}
+
+.feed-empty__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  flex-shrink: 0;
+  background: var(--color-paper-2);
+  border: 1.5px solid var(--color-divider);
+  border-radius: 12px;
+  padding: 0 14px;
+
+  &--dashed {
+    border-style: dashed;
+  }
+
+  &--accent {
+    border-color: var(--color-primary);
+  }
+}
+
+.feed-empty__row-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+  flex-shrink: 0;
+
+  .feed-empty__row--accent & {
+    border-color: var(--color-primary);
+  }
+}
+
+.feed-empty__row-name {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-divider);
+  flex-shrink: 0;
+
+  .feed-empty__row--accent & {
+    background: color-mix(in srgb, var(--color-primary) 55%, var(--color-divider));
+  }
+}
+
+.feed-empty__row-line {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-paper);
+}
+
+.feed-empty__row-badge {
+  width: 26px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-paper);
+  flex-shrink: 0;
+}
+
+.feed-empty__title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
+}
+
+.feed-empty__desc {
+  margin: 0;
+  max-width: 36ch;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-2);
+}
