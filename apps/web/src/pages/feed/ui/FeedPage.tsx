@@ -161,11 +161,24 @@ export function FeedPage() {
                         <Icon size={14} />
                       </div>
                       <div className={styles['feed__header']}>
-                        <Avatar
-                          displayName={item.user.displayName ?? item.user.username ?? '?'}
-                          size={32}
-                          className={styles['feed__avatar']}
-                        />
+                        {item.user.username ? (
+                          <Link
+                            to={`/${item.user.username}`}
+                            className={styles['feed__avatar-link']}
+                          >
+                            <Avatar
+                              displayName={item.user.displayName ?? item.user.username ?? '?'}
+                              size={32}
+                              className={styles['feed__avatar']}
+                            />
+                          </Link>
+                        ) : (
+                          <Avatar
+                            displayName={item.user.displayName ?? item.user.username ?? '?'}
+                            size={32}
+                            className={styles['feed__avatar']}
+                          />
+                        )}
                         <div className={styles['feed__author-block']}>
                           {item.user.username ? (
                             <Link to={`/${item.user.username}`} className={styles['feed__author']}>
