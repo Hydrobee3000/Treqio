@@ -1,5 +1,3 @@
-@use '@/shared/styles/variables' as *;
-
 @keyframes ticker-scroll {
   from {
     transform: translateY(0);
@@ -10,7 +8,7 @@
   }
 }
 
-.feed-empty {
+.activity-empty {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -20,18 +18,22 @@
   padding: 40px 24px;
 }
 
-.feed-empty__ticker {
-  position: relative;
-  width: 280px;
+.activity-empty__ticker-wrap {
   max-width: 100%;
-  height: 162px;
   margin-bottom: 26px;
   overflow: hidden;
+}
+
+.activity-empty__ticker {
+  position: relative;
+  width: 280px;
+  height: 162px;
+  transform-origin: top left;
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
   mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
 }
 
-.feed-empty__ticker-track {
+.activity-empty__ticker-track {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -39,7 +41,7 @@
   will-change: transform;
 }
 
-.feed-empty__row {
+.activity-empty__row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -59,37 +61,37 @@
   }
 }
 
-.feed-empty__row-dot {
+.activity-empty__row-dot {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   border: 1.5px solid var(--color-divider);
   flex-shrink: 0;
 
-  .feed-empty__row--accent & {
+  .activity-empty__row--accent & {
     border-color: var(--color-primary);
   }
 }
 
-.feed-empty__row-name {
+.activity-empty__row-name {
   height: 8px;
   border-radius: 4px;
   background: var(--color-divider);
   flex-shrink: 0;
 
-  .feed-empty__row--accent & {
+  .activity-empty__row--accent & {
     background: color-mix(in srgb, var(--color-primary) 55%, var(--color-divider));
   }
 }
 
-.feed-empty__row-line {
+.activity-empty__row-line {
   flex: 1;
   height: 8px;
   border-radius: 4px;
   background: var(--color-paper);
 }
 
-.feed-empty__row-badge {
+.activity-empty__row-badge {
   width: 26px;
   height: 8px;
   border-radius: 4px;
@@ -97,7 +99,7 @@
   flex-shrink: 0;
 }
 
-.feed-empty__title {
+.activity-empty__title {
   margin: 0 0 10px;
   font-size: 22px;
   font-weight: 700;
@@ -105,7 +107,7 @@
   color: var(--color-text, inherit);
 }
 
-.feed-empty__desc {
+.activity-empty__desc {
   margin: 0;
   max-width: 36ch;
   font-size: 14px;
