@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import styles from './FeedEmptyState.module.scss'
 
-/** Один ряд ленты-заглушки — задаёт цветовой вариант обводки/кружка/полоски имени. */
+/** Один ряд ленты-заглушки. */
 interface TickerRow {
   dashed?: boolean
   accent?: boolean
   nameWidth: number
 }
 
-/** Три уникальных ряда, зациклённые дублированием — так лента бежит бесшовно. */
+/** Три уникальных ряда, зацикленные дублированием. */
 const TICKER_ROWS: TickerRow[] = [
   { nameWidth: 52 },
   { dashed: true, accent: true, nameWidth: 64 },
