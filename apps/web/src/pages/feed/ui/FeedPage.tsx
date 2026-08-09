@@ -139,28 +139,33 @@ export function FeedPage() {
                   >
                     <Icon size={14} />
                   </div>
-                  <Avatar
-                    displayName={item.user.displayName ?? item.user.username ?? '?'}
-                    avatarUrl={item.user.avatarUrl ?? undefined}
-                    size={32}
-                    className={styles['feed__avatar']}
-                  />
-                  <div className={styles['feed__body']}>
-                    {item.user.username ? (
-                      <Link to={`/${item.user.username}`} className={styles['feed__author']}>
-                        {item.user.displayName ?? item.user.username}
-                      </Link>
-                    ) : (
-                      <span className={styles['feed__author']}>{item.user.displayName}</span>
-                    )}
-                    <FeedEventBody item={item} />
+                  <div className={styles['feed__header']}>
+                    <Avatar
+                      displayName={item.user.displayName ?? item.user.username ?? '?'}
+                      avatarUrl={item.user.avatarUrl ?? undefined}
+                      size={32}
+                      className={styles['feed__avatar']}
+                    />
+                    <div className={styles['feed__author-block']}>
+                      {item.user.username ? (
+                        <Link to={`/${item.user.username}`} className={styles['feed__author']}>
+                          {item.user.displayName ?? item.user.username}
+                        </Link>
+                      ) : (
+                        <span className={styles['feed__author']}>{item.user.displayName}</span>
+                      )}
+                      {item.user.username && (
+                        <span className={styles['feed__username']}>@{item.user.username}</span>
+                      )}
+                    </div>
+                    <span className={styles['feed__time']}>
+                      {new Date(item.createdAt).toLocaleTimeString(
+                        i18n.language === 'ru' ? 'ru-RU' : 'en-US',
+                        { hour: '2-digit', minute: '2-digit' },
+                      )}
+                    </span>
                   </div>
-                  <span className={styles['feed__time']}>
-                    {new Date(item.createdAt).toLocaleTimeString(
-                      i18n.language === 'ru' ? 'ru-RU' : 'en-US',
-                      { hour: '2-digit', minute: '2-digit' },
-                    )}
-                  </span>
+                  <FeedEventBody item={item} />
                 </div>
               )
             })}
