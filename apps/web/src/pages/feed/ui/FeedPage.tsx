@@ -163,7 +163,6 @@ export function FeedPage() {
                       <div className={styles['feed__header']}>
                         <Avatar
                           displayName={item.user.displayName ?? item.user.username ?? '?'}
-                          avatarUrl={item.user.avatarUrl ?? undefined}
                           size={32}
                           className={styles['feed__avatar']}
                         />
