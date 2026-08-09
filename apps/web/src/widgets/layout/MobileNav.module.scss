@@ -11,7 +11,7 @@
 
 .mobile-nav__items {
   display: flex;
-  height: 56px;
+  height: $mobile-nav-height;
   background: var(--color-paper, white);
 }
 
@@ -24,8 +24,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  // Настоящая ссылка вместо div с onClick — фокус и клавиатура работают сами,
-  // но нужно снять браузерные стили ссылки по умолчанию.
   text-decoration: none;
   color: inherit;
 }
@@ -42,8 +40,6 @@
     color $transition-fast,
     background $transition-fast;
 
-  // Подложка под активной иконкой — надёжнее, чем полагаться только на смену
-  // цвета: в некоторых темах primary недостаточно контрастен с фоном сам по себе.
   &--active {
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 14%, transparent);
