@@ -12,6 +12,9 @@ interface ScoreBadgeProps {
   rating: number | null
   /** Размер рейтинга */
   size?: 'sm' | 'md'
+  /** Фон бейджа: `cover` — тёмный полупрозрачный поверх обложки (по умолчанию),
+   * `plain` — тема-зависимый цвет для мест без обложки под бейджем (лента, история). */
+  variant?: 'cover' | 'plain'
   /** Класс позиционирования в родителе. */
   className?: string | undefined
   /** Функция при нажатии. */
@@ -23,9 +26,21 @@ interface ScoreBadgeProps {
 /**
  * Квадратный бейдж оценки: небольшая звезда и число.
  */
-export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
+export const ScoreBadge = ({
+  rating,
+  size = 'sm',
+  variant = 'cover',
+  className,
+  onClick,
+  ref,
+}: ScoreBadgeProps) => {
   const { t } = useTranslation()
-  const rootClass = [styles['score-badge'], styles[`score-badge--${size}`], className]
+  const rootClass = [
+    styles['score-badge'],
+    styles[`score-badge--${size}`],
+    variant === 'plain' && styles['score-badge--plain'],
+    className,
+  ]
     .filter(Boolean)
     .join(' ')
 

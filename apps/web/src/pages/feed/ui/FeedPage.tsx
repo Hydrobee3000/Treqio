@@ -66,7 +66,12 @@ function FeedEventBody({ item }: { item: FeedItem }) {
     <p className={styles['feed__text']}>
       <span className={styles['feed__verb--rated']}>{t('feed.verbs.rated')}</span> {chip}{' '}
       <span className={styles['feed__filler']}>{t('feed.verbs.to')}</span>{' '}
-      <ScoreBadge rating={payload.rating} size="sm" className={styles['feed__rating-badge']} />
+      <ScoreBadge
+        rating={payload.rating}
+        size="sm"
+        variant="plain"
+        className={styles['feed__rating-badge']}
+      />
     </p>
   )
 }
