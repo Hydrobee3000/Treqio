@@ -12,19 +12,18 @@ interface ScoreBadgeProps {
   rating: number | null
   /** Размер рейтинга */
   size?: 'sm' | 'md'
-  /** Фон бейджа: `cover` — тёмный полупрозрачный поверх обложки (по умолчанию),
-   * `plain` — тема-зависимый цвет для мест без обложки под бейджем (лента, история). */
+  /** Фон бейджа. */
   variant?: 'cover' | 'plain'
   /** Класс позиционирования в родителе. */
   className?: string | undefined
   /** Функция при нажатии. */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void
-  /** Ref на корневой div — React 19: ref как обычный проп, без forwardRef. */
+  /** Ref на корневой div. */
   ref?: Ref<HTMLDivElement>
 }
 
 /**
- * Квадратный бейдж оценки: небольшая звезда и число.
+ * Бейдж оценки.
  */
 export const ScoreBadge = ({
   rating,
