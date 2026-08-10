@@ -40,9 +40,7 @@ export const ThemeProvider = ({ children }: Props) => {
     return () => mq.removeEventListener('change', handler)
   }, [themeMode, dispatch])
 
-  // useLayoutEffect (не useEffect) — переменные должны попасть в DOM до того,
-  // как браузер покажет кадр, иначе на долю секунды элементы отрисуются без
-  // цветов темы (var() без фолбэка).
+  // Переменные должны попасть в DOM до того, как браузер покажет кадр.
   useLayoutEffect(() => {
     const root = document.documentElement
     const { sidebar, primary, warning, divider, text, background } = theme.palette
@@ -96,14 +94,16 @@ export const ThemeProvider = ({ children }: Props) => {
     root.style.setProperty('--sidebar-btn-disabled-color', 'rgba(255,255,255,.35)')
 
     // Токены для страницы входа — всегда из светлой темы, не зависят от isDark.
-    // Это гарантирует что login page выглядит одинаково при любом режиме.
     const lightColors = THEME_COLORS[lightVariant]
     root.style.setProperty('--login-hero-bg', lightColors.sidebarBg)
     root.style.setProperty('--login-hero-text', lightColors.sidebarText)
     root.style.setProperty('--login-hero-muted', lightColors.sidebarMuted)
 
-    // Токены для ghost-карточек пустой библиотеки — все завязаны на primary тёмной темы
-    // (тот же цвет, что и у акцентной карточки), просто с разной степенью прозрачности.
+    // Фон аватара-заглушки.
+    root.style.setProperty('--avatar-fallback-primary', lightColors.primary)
+    root.style.setProperty('--avatar-fallback-paper-2', lightColors.bgDefault)
+
+    // Токены для ghost-карточек пустой библиотеки.
     const ghostPalette = ghostTheme.palette
     root.style.setProperty('--ghost-primary', ghostPalette.primary.main)
     root.style.setProperty('--ghost-chip-bg', ghostPalette.primary.light + '33') // ~20%
@@ -122,8 +122,7 @@ export const ThemeProvider = ({ children }: Props) => {
       <MuiThemeProvider theme={theme}>
         {/* MuiThemeProvider предоставляет тему всем компонентам MUI внутри приложения. */}
         <CssBaseline />
-        {/* Скроллбар берёт цвета из CSS-переменных темы — иначе на тёмных темах
-            остаётся светлый системный скроллбар, выбивающийся из общего вида. */}
+        {/* Скроллбар берёт цвета из CSS-переменных темы. */}
         <GlobalStyles
           styles={{
             '*': {
