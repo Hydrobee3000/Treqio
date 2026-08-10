@@ -12,20 +12,34 @@ interface ScoreBadgeProps {
   rating: number | null
   /** Размер рейтинга */
   size?: 'sm' | 'md'
+  /** Фон бейджа. */
+  variant?: 'cover' | 'plain'
   /** Класс позиционирования в родителе. */
   className?: string | undefined
   /** Функция при нажатии. */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void
-  /** Ref на корневой div — React 19: ref как обычный проп, без forwardRef. */
+  /** Ref на корневой div. */
   ref?: Ref<HTMLDivElement>
 }
 
 /**
- * Квадратный бейдж оценки: небольшая звезда и число.
+ * Бейдж оценки.
  */
-export const ScoreBadge = ({ rating, size = 'sm', className, onClick, ref }: ScoreBadgeProps) => {
+export const ScoreBadge = ({
+  rating,
+  size = 'sm',
+  variant = 'cover',
+  className,
+  onClick,
+  ref,
+}: ScoreBadgeProps) => {
   const { t } = useTranslation()
-  const rootClass = [styles['score-badge'], styles[`score-badge--${size}`], className]
+  const rootClass = [
+    styles['score-badge'],
+    styles[`score-badge--${size}`],
+    variant === 'plain' && styles['score-badge--plain'],
+    className,
+  ]
     .filter(Boolean)
     .join(' ')
 

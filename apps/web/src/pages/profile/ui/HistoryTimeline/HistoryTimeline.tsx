@@ -107,6 +107,7 @@ const DayGroup = memo(function DayGroup({ group, collapsed, onToggle, language }
                         <ScoreBadge
                           rating={rating}
                           size="sm"
+                          variant="plain"
                           className={styles['history__rating-badge']}
                         />
                       </>
