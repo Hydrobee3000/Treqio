@@ -34,7 +34,11 @@
   height: 80px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-paper-2));
+  background: color-mix(
+    in srgb,
+    var(--avatar-fallback-primary) 22%,
+    var(--avatar-fallback-paper-2)
+  );
   display: grid;
   place-items: center;
   font-size: 28px;
