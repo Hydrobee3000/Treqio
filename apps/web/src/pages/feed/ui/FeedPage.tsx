@@ -113,14 +113,14 @@ const FeedDay = memo(function FeedDay({ group, collapsed, onToggle, language }: 
                     <Link to={`/${item.user.username}`} className={styles['feed__avatar-link']}>
                       <Avatar
                         displayName={item.user.displayName ?? item.user.username ?? '?'}
-                        size={32}
+                        size={44}
                         className={styles['feed__avatar']}
                       />
                     </Link>
                   ) : (
                     <Avatar
                       displayName={item.user.displayName ?? item.user.username ?? '?'}
-                      size={32}
+                      size={44}
                       className={styles['feed__avatar']}
                     />
                   )}
