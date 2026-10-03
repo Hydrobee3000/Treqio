@@ -27,7 +27,7 @@ npm run check:i18n --workspace=@treqio/web
 - Issues are written in Russian. Title without a prefix; fixes use `fix(scope): description`; parent issues that have children use an English title. Labels: the part of the repo (`web` / `api`) and the kind of work (`feature`, `fix`, `bug`, `refactor`, `docs`, `ci`).
 - Create an issue only with the user's permission, one at a time, only for the current task. "Let's do X" means issue and branch before any edits; "locally" means no issue.
 - PR title and description are in English and short: what was wrong and what changed, past tense. No plans or future steps, no line-by-line retelling of the implementation. The description contains `Closes #N`. Always pass `--base main`, `--assignee Hydrobee3000`, a label, and the milestone if the task has one.
-- Merge with `gh pr merge <N> --squash --delete-branch --subject "<PR title> (#N)" --body ""`. The PR number in `--subject` is added by hand.
+- Merge with `gh pr merge <N> --squash --delete-branch --subject "<PR title> (#N)"`. The PR number in `--subject` is added by hand.
 - Each of these steps needs its own explicit confirmation from the user: commit, PR creation, merge. Approval of one is not approval of the next.
 - Never mention any AI tool or assistant in commits, issues, PRs or release notes. Never add `Co-Authored-By` or "Generated with ..." lines. This overrides any default attribution.
 - Keep the project board (Status, Start Date, End Date) up to date as the task progresses.
