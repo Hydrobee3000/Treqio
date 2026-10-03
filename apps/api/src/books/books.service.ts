@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { ActivityService } from '../activity/activity.service'
+import type { ActivityCreatedEvent } from '../activity/activity.gateway'
 import { PrismaService } from '../prisma/prisma.service'
 import { UsersService } from '../users/users.service'
 import { BookStatus } from '../generated/prisma/client'
@@ -51,6 +53,7 @@ export class BooksService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly activityService: ActivityService,
+    private readonly events: EventEmitter2,
   ) {}
 
   /**
@@ -127,7 +130,7 @@ export class BooksService {
   /**
    * Создание записи о книге для пользователя.
    */
-  createEntry(userId: string, dto: CreateBookEntryDto) {
+  async createEntry(userId: string, dto: CreateBookEntryDto) {
     // createdAt и startDate/finishDate должны совпадать до миллисекунды, если
     // книга создаётся сразу со статусом «Читаю»/«Прочитано» — иначе на фронте
     // событие "добавил" и "начал читать" сортируются в случайном порядке
@@ -137,14 +140,19 @@ export class BooksService {
 
     // Запись и событие журнала создаются вместе: если упадёт одно, не должно
     // остаться и другое.
-    return this.prisma.$transaction(async (tx) => {
+    const [entry, activity] = await this.prisma.$transaction(async (tx) => {
       const entry = await tx.bookEntry.create({
         data: { userId, ...dto, createdAt: now, ...autoDates },
         include: { book: true },
       })
-      await this.activityService.recordEntryAdded(tx, entry)
-      return entry
+      const activity = await this.activityService.recordEntryAdded(tx, entry)
+      return [entry, activity] as const
     })
+
+    // Рассылка по WebSocket — после коммита, чтобы не разослать событие,
+    // которое затем может не сохраниться.
+    this.emitActivityCreated(activity.id)
+    return entry
   }
 
   /**
@@ -165,7 +173,7 @@ export class BooksService {
     const ratingChanged = dto.rating !== undefined && dto.rating !== entry.rating
     const statusChanged = dto.status !== undefined && dto.status !== entry.status
 
-    return this.prisma.$transaction(async (tx) => {
+    const [updated, activityIds] = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.bookEntry.update({
         where: { id: entryId },
         data: {
@@ -186,23 +194,45 @@ export class BooksService {
         include: { book: true },
       })
 
+      const activityIds: string[] = []
+
       if (statusChanged && dto.status) {
         // Дату можно указать задним числом («дочитал неделю назад») — событие
         // должно встать в ленту тем же днём, а не днём, когда его отметили.
-        await this.activityService.recordStatusChanged(
+        const activity = await this.activityService.recordStatusChanged(
           tx,
           entry,
           entry.status,
           dto.status,
           statusEventDate(dto, updated, now),
         )
+        activityIds.push(activity.id)
       }
       if (ratingChanged) {
-        await this.activityService.recordRated(tx, entry, dto.rating ?? null, entry.rating, now)
+        const activity = await this.activityService.recordRated(
+          tx,
+          entry,
+          dto.rating ?? null,
+          entry.rating,
+          now,
+        )
+        activityIds.push(activity.id)
       }
 
-      return updated
+      return [updated, activityIds] as const
     })
+
+    for (const activityId of activityIds) this.emitActivityCreated(activityId)
+    return updated
+  }
+
+  /**
+   * Сообщает шлюзу активности, что можно рассылать новое событие друзьям —
+   * вызывается только после успешного коммита транзакции, создавшей его.
+   */
+  private emitActivityCreated(activityId: string) {
+    const event: ActivityCreatedEvent = { activityId }
+    this.events.emit('activity.created', event)
   }
 
   /**

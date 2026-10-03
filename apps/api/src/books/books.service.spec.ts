@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Test } from '@nestjs/testing'
 import { ActivityService } from '../activity/activity.service'
 import { BooksService, TRASH_RETENTION_DAYS } from './books.service'
@@ -17,6 +18,7 @@ describe('BooksService', () => {
     recordStatusChanged: jest.Mock
     recordRated: jest.Mock
   }
+  let events: { emit: jest.Mock }
 
   beforeEach(async () => {
     prisma = {
@@ -34,10 +36,11 @@ describe('BooksService', () => {
 
     usersService = { getUserForEntries: jest.fn() }
     activityService = {
-      recordEntryAdded: jest.fn(),
-      recordStatusChanged: jest.fn(),
-      recordRated: jest.fn(),
+      recordEntryAdded: jest.fn().mockResolvedValue({ id: 'activity-1' }),
+      recordStatusChanged: jest.fn().mockResolvedValue({ id: 'activity-2' }),
+      recordRated: jest.fn().mockResolvedValue({ id: 'activity-3' }),
     }
+    events = { emit: jest.fn() }
 
     const module = await Test.createTestingModule({
       providers: [
@@ -45,6 +48,7 @@ describe('BooksService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: UsersService, useValue: usersService },
         { provide: ActivityService, useValue: activityService },
+        { provide: EventEmitter2, useValue: events },
       ],
     }).compile()
 

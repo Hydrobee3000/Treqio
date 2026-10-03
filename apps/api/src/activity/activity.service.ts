@@ -162,6 +162,30 @@ export class ActivityService {
   }
 
   /**
+   * Событие со всеми данными для рассылки по WebSocket — та же форма,
+   * что и строки `findFeed`, плюс поля автора, нужные только для проверки
+   * видимости (шлюз их из ответа клиенту вырезает).
+   */
+  findForBroadcast(activityId: string) {
+    return this.prisma.activity.findUnique({
+      where: { id: activityId },
+      include: {
+        bookEntry: { include: { book: true } },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+            entriesVisibility: true,
+            shareActivity: true,
+          },
+        },
+      },
+    })
+  }
+
+  /**
    * Удаление события из ленты — само событие остаётся и может быть восстановлено.
    */
   async deleteEvent(userId: string, activityId: string) {
