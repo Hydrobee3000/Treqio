@@ -8,10 +8,6 @@ A personal media tracker — books, games, movies and more. Track what you've re
 > <img width="1917" height="907" alt="image" src="https://github.com/user-attachments/assets/a8bb2290-b3b9-468f-acf3-c0cc466c689b" />
 > <img width="445" height="801" alt="image" src="https://github.com/user-attachments/assets/0c4cddba-45de-4beb-9875-1474866bda9d" />
 
-
-
-
-
 > **Status:** In active development. Core features are being built iteratively.
 
 ---
@@ -275,17 +271,17 @@ npm run db:studio
 ### Branch naming
 
 ```
-<type>/<issue-number>-<short-description>
+feature/<issue-number>-<short-description>
 ```
 
-`<type>` matches the nature of the change — `feature`, `fix`, `docs`, `refactor`, etc. (same vocabulary as [Commit convention](#commit-convention)). Whenever work is tied to a filed issue, its number is always included.
+The `feature/` prefix is used for every kind of task, fixes and docs included; the kind of work is expressed by the issue label and the [commit type](#commit-convention). Whenever work is tied to a filed issue, its number is always included.
 
 Examples:
 
 ```
 feature/16-app-layout
-fix/42-auth-token-refresh
-docs/220-release-process
+feature/42-auth-token-refresh
+feature/220-release-process
 ```
 
 ### Commit convention
