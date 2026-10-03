@@ -83,6 +83,34 @@ export class FeedPreferencesService {
   }
 
   /**
+   * Из списка кандидатов-друзей исключает тех, кто заглушил автора или от
+   * кого автор скрылся — обратное направление относительно чтения ленты,
+   * нужно при рассылке нового события автора его друзьям.
+   */
+  async filterEligibleRecipients(authorId: string, candidateIds: string[]): Promise<string[]> {
+    if (candidateIds.length === 0) return []
+
+    const rows = await this.prisma.feedPreference.findMany({
+      where: {
+        OR: [
+          { ownerId: { in: candidateIds }, targetId: authorId, kind: FeedPreferenceKind.MUTED },
+          {
+            ownerId: authorId,
+            targetId: { in: candidateIds },
+            kind: FeedPreferenceKind.HIDDEN_FROM,
+          },
+        ],
+      },
+      select: { ownerId: true, targetId: true, kind: true },
+    })
+
+    const blocked = new Set(
+      rows.map((row) => (row.kind === FeedPreferenceKind.MUTED ? row.ownerId : row.targetId)),
+    )
+    return candidateIds.filter((id) => !blocked.has(id))
+  }
+
+  /**
    * Проверка пользователя, на которого делается настройка.
    */
   private async assertTargetExists(ownerId: string, targetId: string): Promise<void> {
