@@ -1,0 +1,43 @@
+{
+  "repo": "Hydrobee3000/Treqio",
+  "baseBranch": "main",
+  "branchPrefix": "feature",
+  "assignee": "Hydrobee3000",
+  "issueLanguage": "ru",
+  "prLanguage": "en",
+  "commitFormat": "conventional",
+  "titleRules": "Plain Russian title for regular tasks. Prefix `fix(scope): ` for fixes. English title for parent issues that have children.",
+  "labelTypes": ["feature", "fix", "bug", "refactor", "docs", "ci"],
+  "checks": [
+    { "command": "npm run lint", "cwd": "." },
+    { "command": "npm run typecheck", "cwd": "." },
+    { "command": "npm run test", "cwd": "." },
+    { "command": "npm run check:i18n --workspace=@treqio/web", "cwd": "." }
+  ],
+  "release": {
+    "branch": "main",
+    "versionCommand": "npm version {bump} --no-git-tag-version --allow-same-version",
+    "versionFiles": ["package.json", "package-lock.json"],
+    "tagPrefix": "v",
+    "commitMessage": "chore: release {tag}",
+    "notesLanguage": "en"
+  },
+  "usePhases": false,
+  "project": {
+    "owner": "Hydrobee3000",
+    "number": 5,
+    "id": "PVT_kwHOBBswrM4BWLyC",
+    "fields": {
+      "status": {
+        "id": "PVTSSF_lAHOBBswrM4BWLyCzhRiEf0",
+        "options": {
+          "todo": "f75ad846",
+          "inProgress": "47fc9ee4",
+          "done": "98236657"
+        }
+      },
+      "startDate": "PVTF_lAHOBBswrM4BWLyCzhRiR0o",
+      "endDate": "PVTF_lAHOBBswrM4BWLyCzhRiR0s"
+    }
+  }
+}
