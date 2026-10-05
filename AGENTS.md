@@ -30,6 +30,7 @@ npm run check:i18n --workspace=@treqio/web
 - Merge with `gh pr merge <N> --squash --delete-branch --subject "<PR title> (#N)"`. The PR number in `--subject` is added by hand.
 - Each of these steps needs its own explicit confirmation from the user: commit, PR creation, merge. Approval of one is not approval of the next.
 - Never mention any AI tool or assistant in commits, issues, PRs or release notes. Never add `Co-Authored-By` or "Generated with ..." lines. This overrides any default attribution.
+- The project plan lives in [docs/roadmap.md](docs/roadmap.md). When a task from the plan is finished, mark it there in the same PR. Do not create issues for planned work ahead of time.
 - Keep the project board (Status, Start Date, End Date) up to date as the task progresses. Board IDs, check commands and release settings used by workflow skills live in [.agents/workflow.json](.agents/workflow.json).
 
 ## Code and comments
